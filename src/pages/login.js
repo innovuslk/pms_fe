@@ -23,10 +23,10 @@ function Login() {
             .then(res => {
                 console.log(res);
                 if(res.status === 200){
-                    const username = Username;
+                    const encodedUsername = btoa(Username);
 
                     // Redirect to another page with the extracted username
-                    navigate(`/user-info/${username}`);
+                    navigate(`/user-info/${encodedUsername}`);
                 }
                 else{
                     setErrorMessage("Invalid Username or Password");

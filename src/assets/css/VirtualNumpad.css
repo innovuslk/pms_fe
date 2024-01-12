@@ -1,0 +1,36 @@
+/* VirtualNumPad.css */
+.virtual-num-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.num-pad-row {
+    display: flex;
+    justify-content: space-around;
+}
+
+button {
+    width: 50px;
+    height: 50px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #e0e0e0;
+}
+
+.delete-btn {
+    background-color: #ff8c8c;
+    color: #fff;
+}
+
+.ok-btn {
+    background-color: #4caf50;
+    color: #fff;
+}

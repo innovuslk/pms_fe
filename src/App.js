@@ -1,6 +1,6 @@
 // App.js
 import './App.css';
-import GetUserInfo from './pages/getUserInfo';
+import MyDashboard from './pages/MyDashboard';
 import Login from './pages/login';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
@@ -11,7 +11,7 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/" element={<Login />} />
-                <Route path="/user-info/:username" element={<GetUserInfo />} />
+                <Route path="/user-info/:username" element={<MyDashboard />} />
             </Routes>
         </Router>
     );
