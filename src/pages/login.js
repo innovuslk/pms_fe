@@ -22,13 +22,13 @@ function Login() {
         })
             .then(res => {
                 console.log(res);
-                if(res.status === 200){
+                if (res.status === 200) {
                     const encodedUsername = btoa(Username);
 
                     // Redirect to another page with the extracted username
                     navigate(`/user-info/${encodedUsername}`);
                 }
-                else{
+                else {
                     setErrorMessage("Invalid Username or Password");
                     setTimeout(() => {
                         setErrorMessage('');
@@ -41,8 +41,12 @@ function Login() {
                 setErrorMessage('Invalid Username or Password');
                 setTimeout(() => {
                     setErrorMessage('');
-                }, 5000); 
+                }, 5000);
             });
+    }
+
+    function handleRegister(){
+        navigate(`/register`)
     }
 
     return (
@@ -95,6 +99,9 @@ function Login() {
 
                                                         <div className="mt-4 text-center">
                                                             <Button color="primary" className="w-md waves-effect waves-light" type="submit">Log In</Button>
+                                                        </div>
+                                                        <div className="mt-4 text-center">
+                                                            <h7 className = 'text-decoration-underline'><a onClick={handleRegister}>Register</a></h7>
                                                         </div>
                                                         <p></p>
                                                     </form>

@@ -1,18 +1,14 @@
 // Modal.js
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import VirtualNumPad from './VirtualNumPad';
 import axios from 'axios';
 
 const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
     const [pieceCount, setPieceCount] = useState('');
     const [username, setUsername] = useState();
-    const [pieceCountInfo,setPieceCountInfo] = useState();
+    const [pieceCountInfo, setPieceCountInfo] = useState();
 
 
-    useEffect(() => {
-        // Fetch the latest piece count when component mounts
-        fetchLatestPieceCount();
-    }, []);
 
     const handleKeyPress = (value) => {
         setPieceCount((prevCount) => prevCount + value);
@@ -38,12 +34,27 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
         }
     };
 
-    const handleOk = () => {
-        // You don't need to send a POST request here; just update the piece count
-        onPieceCountUpdate(pieceCountInfo);
-        handleCloseModal();
-    };
 
+
+
+    const handleOk = async () => {
+        try {
+            // Fetch the latest piece count
+            await fetchLatestPieceCount()
+                .then(
+                    onPieceCountUpdate(pieceCount),
+                    handleCloseModal()
+                    , setPieceCount('')
+                );
+
+
+            // Close the modal
+
+
+        } catch (error) {
+            console.error('Error handling OK:', error);
+        }
+    };
 
     return (
         <div
@@ -61,16 +72,10 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
                     <div className="modal-body align-content-center justify-content-center mx-3">
                         <h4 className='mb-3'>Pieces for 3rd Hour</h4>
                         <label htmlFor="pieceCount" className='mb-2'>Piece Count:</label>
-                        <input name="pieceCount" type="number" className="form-control" id="pieceCount" validate={{ required: true }} placeholder="Enter Piece Count" value={pieceCount}/>           
+                        <input name="pieceCount" type="number" className="form-control" id="pieceCount" validate={{ required: true }} placeholder="Enter Piece Count" value={pieceCount} />
                     </div>
-                    <VirtualNumPad onKeyPress={handleKeyPress} onDelete={handleDelete} onOk={handleOk}/>
+                    <VirtualNumPad onKeyPress={handleKeyPress} onDelete={handleDelete} onOk={handleOk} />
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary w-auto" onClick={handleCloseModal}>
-                            Close
-                        </button>
-                        <button type="button" className="btn btn-primary w-auto" onClick={handleOk}>
-                            Save changes
-                        </button>
                     </div>
                 </div>
             </div>

@@ -1,29 +1,35 @@
-// BarChart.js
 import React, { useEffect } from 'react';
 import Chart from 'chart.js/auto';
 
-function BarChart({ canvasId, data }) {
+function BarChart({ canvasId, data, shift }) {
     useEffect(() => {
-        const ctx = document.getElementById(canvasId).getContext('2d');
+        const canvas = document.getElementById(canvasId);
+
+        if (!canvas) {
+            console.error(`Canvas element with id ${canvasId} not found.`);
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
         const chart = new Chart(ctx, {
             type: 'bar',
             data: data,
             options: {
                 maintainAspectRatio: false,
-                barPercentage: 0.6,
+                barPercentage: 0.4,
                 categoryPercentage: 0.5,
                 plugins: {
                     legend: {
                         position: 'bottom',
                         display: true,
-                    }
+                    },
                 },
                 scales: {
                     x: {
                         type: 'linear',
                         position: 'bottom',
                         ticks: {
-                            min: 8,
+                            min: 10,
                             max: 16,
                             stepSize: 1,
                         },
@@ -41,8 +47,8 @@ function BarChart({ canvasId, data }) {
 
         // Customize the bar colors with gradient
         const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-        gradient.addColorStop(0, 'rgba(232,44,87,1)');  // Start color
-        gradient.addColorStop(1, 'rgb(246,147,49)');  // End color
+        gradient.addColorStop(0, 'rgba(232,44,87,1)'); // Start color
+        gradient.addColorStop(1, 'rgb(246,147,49)'); // End color
 
         // Apply gradient to the first dataset (Google)
         chart.data.datasets[0].backgroundColor = gradient;
@@ -53,9 +59,7 @@ function BarChart({ canvasId, data }) {
         };
     }, [canvasId, data]);
 
-    return (
-        <canvas id={canvasId} width="400" height="200"></canvas>
-    );
+    return <canvas id={canvasId} width="100%" height="200"></canvas>;
 }
 
 export default BarChart;

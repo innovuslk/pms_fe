@@ -10,7 +10,42 @@ import axios from 'axios';
 function MyDashboard() {
 
     const [showModal, setShowModal] = useState(false);
-    const [dashboardPieceCount, setDashboardPieceCount] = useState('');
+    const [dashboardPieceCount, setDashboardPieceCount] = useState(0);
+    const [username, setUsername] = useState();
+    const [shift, setShift] = useState();
+    const [pieceCountInfo, setPieceCountInfo] = useState();
+
+    useEffect(() => {
+        // Fetch latest piece count on component mount
+        fetchLatestPieceCount();
+
+        // Set up an interval to fetch latest piece count every X seconds
+        const intervalId = setInterval(fetchLatestPieceCount, 5000); // Adjust the interval as needed
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    useEffect(() => {
+        getShift();
+
+        const intervalId = setInterval(getShift, 5000); 
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    const [pieceCountData, setPieceCountData] = useState({
+        labels: ["08.00", "09.00", "10.00", "11.00", "12.00", "13.00", "14.00","15.00", "16.00","17.00"],
+        datasets: [
+            {
+                label: 'Piece Count',
+                data: Array(10).fill(0),
+                backgroundColor: ['#0d6efd'],
+                tension: 0,
+                borderColor: ['#02c27a'],
+                borderWidth: 0
+            }
+        ]
+    });
 
 
     const handleAddPieceCountClick = () => {
@@ -21,28 +56,61 @@ function MyDashboard() {
         setShowModal(false);
     };
 
-    const handlePieceCountUpdate = (newPieceCount) => {
-        setDashboardPieceCount((prevPieceCount) => {
-            const parsedPrevPieceCount = parseInt(prevPieceCount, 10) || 0;
-            const parsedNewPieceCount = parseInt(newPieceCount, 10) || 0;
-            const updatedPieceCount = parsedPrevPieceCount + parsedNewPieceCount;
-            return updatedPieceCount;
+    const fetchLatestPieceCount = async () => {
+        const username = window.location.pathname.split('/').pop();
+        setUsername(username);
+
+        try {
+            const response = await axios.post('http://localhost:5000/set/getPieceCount', {
+                username: username,
+            });
+
+            setPieceCountInfo(response.data.totalPieceCount);
+        } catch (error) {
+            console.error('Error fetching latest Piece count data:', error);
+        }
+    };
+
+    const getShift = async () => {
+        try {
+            const username = window.location.pathname.split('/').pop();
+        setUsername(username);
+            const response = await axios.post('http://localhost:5000/get/getShift', {
+                username: username,
+            });
+            setShift(response.Shift)
+
+        }
+        catch(error) {
+            console.error("Failed to shift pieces");
+        }
+    }
+
+
+    const handlePieceCountUpdate = (updatedPieceCount) => {
+        setDashboardPieceCount(updatedPieceCount);
+    
+        // Update pieceCountData with the new piece count
+        setPieceCountData((prevData) => {
+            const newData = [...prevData.datasets[0].data];
+            const currentIndex = newData.findIndex(count => count === 0);
+    
+            if (currentIndex !== -1) {
+                newData[currentIndex] = updatedPieceCount;
+    
+                return {
+                    ...prevData,
+                    datasets: [{ ...prevData.datasets[0], data: newData }]
+                };
+            }
+    
+            // All time slots are filled, you may want to handle this case based on your requirements
+            console.warn('All time slots are filled.');
+            return prevData;
         });
     };
 
-    const facebookData = {
-        labels: ["08.00", "09.00", "10.00", "11.00", "12.00", "13.00", "14.00"],
-        datasets: [
-            {
-                label: 'Piece Count',
-                data: [12, 30, 16, 23, 8, 14, 11],
-                backgroundColor: ['#0d6efd'],
-                tension: 0,
-                borderColor: ['#02c27a'],
-                borderWidth: 0
-            }
-        ]
-    };
+
 
     return (
         <html lang="en" data-bs-theme="dark">
@@ -58,7 +126,7 @@ function MyDashboard() {
                                         <div className="card-body align-items-center justify-content-center">
                                             <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 p-1">
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">{(dashboardPieceCount && dashboardPieceCount) || '0'}</h3>
+                                                    <h3 className="mb-0">{(pieceCountInfo) || '0'}</h3>
                                                     <p className="mb-0">Pieces</p>
                                                 </div>
                                                 <div className="vr"></div>
@@ -192,7 +260,7 @@ function MyDashboard() {
                                     </div>
                                     <div className="card-body">
                                         <div classNameName="chart-container1">
-                                            <BarChart canvasId="chart2-facebook" data={facebookData} />
+                                            <BarChart canvasId="chart2-facebook" data={pieceCountData} shift ={shift}/>
                                         </div>
                                     </div>
                                 </div>
@@ -224,7 +292,7 @@ function MyDashboard() {
                     </div>
                 </div>
                 {showModal && <div className="modal-backdrop show"></div>}
-                <Modal showModal={showModal} handleCloseModal={handleCloseModal} onPieceCountUpdate={handlePieceCountUpdate} />
+                <Modal showModal={showModal} handleCloseModal={handleCloseModal} onPieceCountUpdate={handlePieceCountUpdate}/>
             </body>
         </html>
     )

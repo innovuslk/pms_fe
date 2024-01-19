@@ -70,8 +70,8 @@ function Navbar() {
                                 </li>
                             </ul>
                             <form class="d-flex">
-                                <button class="btn btn-light px-3" type="submit"><i class='bx bx-cart'></i> User123</button>
-                                <button class="btn btn-light radius-30 px-4" type="submit"><span class="material-symbols-outlined" style={{ fontSize: 30 }}>
+                                <button class="btn btn-light mx-2 w-auto" type="submit"><i class='bx bx-cart'></i> {operatorInfo && operatorInfo.decodedUsername || 'User'}</button>
+                                <button class="btn btn-light radius-30 px-2" type="submit"><span class="material-symbols-outlined" style={{ fontSize: 30 }}>
                                     account_circle
                                 </span></button>
                             </form>
