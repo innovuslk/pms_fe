@@ -5,6 +5,7 @@ import BarChart from '../components/barchart';
 import RadialBarChart from '../components/efficiency_guage';
 import Modal from '../components/Modals/pieceCountModal';
 import axios from 'axios';
+import Deviation from '../components/Deviation';
 
 
 function MyDashboard() {
@@ -14,6 +15,7 @@ function MyDashboard() {
     const [username, setUsername] = useState();
     const [shift, setShift] = useState();
     const [pieceCountInfo, setPieceCountInfo] = useState();
+    const [latestHour, setLatestHour] = useState('');
 
     useEffect(() => {
         // Fetch latest piece count on component mount
@@ -29,6 +31,8 @@ function MyDashboard() {
         getShift();
 
         const intervalId = setInterval(getShift, 5000); 
+    console.log(shift)
+
 
         return () => clearInterval(intervalId);
     }, []);
@@ -66,6 +70,7 @@ function MyDashboard() {
             });
 
             setPieceCountInfo(response.data.totalPieceCount);
+            setLatestHour(response.data.latestHour);
         } catch (error) {
             console.error('Error fetching latest Piece count data:', error);
         }
@@ -130,10 +135,7 @@ function MyDashboard() {
                                                     <p className="mb-0">Pieces</p>
                                                 </div>
                                                 <div className="vr"></div>
-                                                <div className="d-flex flex-column align-items-center justify-content-center gap-2 ">
-                                                    <h3 className="mb-0">20</h3>
-                                                    <p className="mb-0">Deviation</p>
-                                                </div>
+                                                    <Deviation shift = {shift} latestHour = {latestHour} pieceCount = {pieceCountInfo}/>
                                             </div>
                                         </div>
                                     </div>
@@ -259,7 +261,7 @@ function MyDashboard() {
                                         </div>
                                     </div>
                                     <div className="card-body">
-                                        <div classNameName="chart-container1">
+                                        <div className="chart-container1">
                                             <BarChart canvasId="chart2-facebook" data={pieceCountData} shift ={shift}/>
                                         </div>
                                     </div>

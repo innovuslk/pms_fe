@@ -43,21 +43,21 @@ function Navbar() {
         <html lang="en" data-bs-theme="dark">
 
             <body>
-                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                    <div class="container-fluid">	<a class="navbar-brand mx-2 bg-primary rounded" href="#">Softmatter</a>
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent2" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span>
+                <nav  className="navbar navbar-expand-lg navbar-dark bg-dark">
+                    <div  className="container-fluid">	<a  className="navbar-brand mx-2 bg-primary rounded" href="#">Softmatter</a>
+                        <button  className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent2" aria-expanded="false" aria-label="Toggle navigation"> <span  className="navbar-toggler-icon"></span>
                         </button>
-                        <div class="collapse navbar-collapse" id="navbarSupportedContent2">
-                            <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-2 align-items-center">
-                                <li class="nav-item"><a class="nav-link active d-flex align-items-center gap-1" aria-current="page" href="#"><span class="material-symbols-outlined">
+                        <div  className="collapse navbar-collapse" id="navbarSupportedContent2">
+                            <ul  className="navbar-nav me-auto mb-2 mb-lg-0 gap-2 align-items-center">
+                                <li  className="nav-item"><a  className="nav-link active d-flex align-items-center gap-1" aria-current="page" href="#"><span  className="material-symbols-outlined">
                                     factory
                                 </span>{operatorInfo && operatorInfo.plantName || 'Plant'}</a>
                                 </li>
-                                <li class="nav-item me-auto"><a class="nav-link d-flex align-items-center gap-1" href="javascript:;"><span class="material-symbols-outlined">
+                                <li  className="nav-item me-auto"><a  className="nav-link d-flex align-items-center gap-1" href="javascript:;"><span  className="material-symbols-outlined">
                                 view_module
                                 </span>Line - {operatorInfo && operatorInfo.lineNo || 'Line'}</a>
                                 </li>
-                                <li class="nav-item me-auto"><a class="nav-link d-flex align-items-center gap-1" href="javascript:;"><span class="material-symbols-outlined">
+                                <li  className="nav-item me-auto"><a  className="nav-link d-flex align-items-center gap-1" href="javascript:;"><span  className="material-symbols-outlined">
                                 styler
                                 </span>Style</a>
                                 </li>
@@ -69,9 +69,9 @@ function Navbar() {
                                     </a>
                                 </li>
                             </ul>
-                            <form class="d-flex">
-                                <button class="btn btn-light mx-2 w-auto" type="submit"><i class='bx bx-cart'></i> {operatorInfo && operatorInfo.decodedUsername || 'User'}</button>
-                                <button class="btn btn-light radius-30 px-2" type="submit"><span class="material-symbols-outlined" style={{ fontSize: 30 }}>
+                            <form  className="d-flex">
+                                <button  className="btn btn-light mx-2 w-auto" type="submit"><i  className='bx bx-cart'></i> {operatorInfo && operatorInfo.decodedUsername || 'User'}</button>
+                                <button  className="btn btn-light radius-30 px-2" type="submit"><span  className="material-symbols-outlined" style={{ fontSize: 30 }}>
                                     account_circle
                                 </span></button>
                             </form>
