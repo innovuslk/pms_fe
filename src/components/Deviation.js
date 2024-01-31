@@ -2,16 +2,21 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios';
 
-function Deviation({ shift, latestHour , pieceCount }) {
+function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     const [shiftHours, setShiftHours] = useState();
     const [shiftID, setShiftID] = useState('');
     const [dailyTarget, setDaillytarget] = useState();
     const [intHour, setIntHour] = useState()
     const [deviation,setDeviation] = useState();
+    const [requiredRate, setRequiredRate] = useState(0);
 
     useEffect(() => {
         setShiftID(shift);
     }, [shift]);
+
+    useEffect(() => {
+        sendDataToParent(requiredRate)
+    },[requiredRate])
 
     useEffect(() => {
         getShiftHours();
@@ -35,12 +40,6 @@ function Deviation({ shift, latestHour , pieceCount }) {
 
     useEffect(() => {
         calculateDeviation(shiftHours,dailyTarget,intHour,pieceCount);
-
-        const intervalId = setInterval(getDailyTarget, 10000);
-
-        return () => {
-            clearInterval(intervalId);
-        };
 
     },[shift, shiftHours, dailyTarget, intHour, pieceCount])
 
@@ -105,6 +104,9 @@ function Deviation({ shift, latestHour , pieceCount }) {
             let alreadyDone = parseInt(pieceCount)/ intHour
             let deviation = hourlyTarget - alreadyDone
             setDeviation(parseInt(deviation));
+            setRequiredRate(hourlyTarget)
+
+            
 
     }
 

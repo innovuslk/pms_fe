@@ -6,6 +6,8 @@ import RadialBarChart from '../components/efficiency_guage';
 import Modal from '../components/Modals/pieceCountModal';
 import axios from 'axios';
 import Deviation from '../components/Deviation';
+import LineEndPieceCount from '../components/LineEndPieceCount';
+import DailyTarget from '../components/DailyTarget';
 
 
 function MyDashboard() {
@@ -16,13 +18,14 @@ function MyDashboard() {
     const [shift, setShift] = useState();
     const [pieceCountInfo, setPieceCountInfo] = useState();
     const [latestHour, setLatestHour] = useState('');
+    const [requiredRate, setRequiredRate] = useState(0);
+    const [svm, setSvm] = useState(0);
 
     useEffect(() => {
         // Fetch latest piece count on component mount
         fetchLatestPieceCount();
 
-        // Set up an interval to fetch latest piece count every X seconds
-        const intervalId = setInterval(fetchLatestPieceCount, 5000); // Adjust the interval as needed
+        const intervalId = setInterval(fetchLatestPieceCount, 5000);
 
         return () => clearInterval(intervalId);
     }, []);
@@ -30,26 +33,69 @@ function MyDashboard() {
     useEffect(() => {
         getShift();
 
-        const intervalId = setInterval(getShift, 5000); 
-    console.log(shift)
-
+        const intervalId = setInterval(getShift, 5000);
 
         return () => clearInterval(intervalId);
     }, []);
 
+    useEffect(() => {
+        getBarChartData();
+
+        const intervalId = setInterval(getBarChartData, 10000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    useEffect(() => {
+        getSvm();
+
+        const intervalId = setInterval(getSvm, 20000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+
+
+
     const [pieceCountData, setPieceCountData] = useState({
-        labels: ["08.00", "09.00", "10.00", "11.00", "12.00", "13.00", "14.00","15.00", "16.00","17.00"],
+        labels: ["08.20", "08.40", "09.40", "10.40", "12.00", "13.00", "14.00", "15.00", "16.00", "17.00"],
         datasets: [
             {
                 label: 'Piece Count',
                 data: Array(10).fill(0),
-                backgroundColor: ['#0d6efd'],
+                tension: 0,
+                borderColor: ['#02c27a'],
+                borderWidth: 0
+            },
+            {
+                label: 'Piece Count',
+                data: Array(10).fill(0),
                 tension: 0,
                 borderColor: ['#02c27a'],
                 borderWidth: 0
             }
         ]
-    });
+    },[requiredRate]);
+
+    const options = {
+        scales: {
+            x: {
+                type: '', 
+                position: 'bottom',
+                min: 8.2, 
+                max: 17.0, // set the maximum value for the x-axis
+                stepSize: 1, // set the step size between labels
+                callback: function (value, index) {
+                    return value % 1 === 0 ? `${value}.40` : ''; // customize label display
+                }
+            },
+            // other scales if needed
+        }
+    };
+
+    const receiveDataFromChild = (data) => {
+        setRequiredRate(data);
+    };
 
 
     const handleAddPieceCountClick = () => {
@@ -79,41 +125,128 @@ function MyDashboard() {
     const getShift = async () => {
         try {
             const username = window.location.pathname.split('/').pop();
-        setUsername(username);
+            setUsername(username);
             const response = await axios.post('http://localhost:5000/get/getShift', {
                 username: username,
             });
             setShift(response.Shift)
 
         }
-        catch(error) {
+        catch (error) {
+            console.error("Failed to shift pieces");
+        }
+    }
+
+    const getBarChartData = async () => {
+
+        try {
+            const response = await axios.post('http://localhost:5000/get/getDataForBarChart',{
+                operatorType:'operator'
+            });
+            const response2 = await axios.post('http://localhost:5000/get/getDataForBarChart',{
+                operatorType:'LineEnd'
+            });
+            const labels = ["08.20", "08.40", "09.40", "10.40", "12.00", "13.00", "14.00", "15.00", "16.00", "17.00"];
+
+            const getGradientFillStyle = () => {
+                const ctx = document.createElement('canvas').getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+            
+                gradient.addColorStop(0, 'rgba(232,44,87,1)');  // Gradient start color
+                gradient.addColorStop(1, 'rgb(246,147,49)');   // Gradient end color
+                
+                return gradient;
+            };
+
+            const getGradientFillStyle2 = () => {
+                const ctx = document.createElement('canvas').getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+            
+                gradient.addColorStop(0, 'rgba(103,59,183,1)');  // Gradient start color
+                gradient.addColorStop(1, 'rgb(35,148,242)');   // Gradient end color
+                
+                return gradient;
+            };
+            
+            const newData = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Piece Count',
+                        data: [],
+                        backgroundColor:getGradientFillStyle(),
+                        tension: 0,
+                        borderColor: ['#02c27a'],
+                        borderWidth: 0,
+                        order:2
+                    },
+                    {
+                        label: 'Line End Piece Count',
+                        data: [],
+                        backgroundColor:getGradientFillStyle2(),
+                        tension: 0,
+                        borderColor: ['#02c27a'],
+                        borderWidth: 0,
+                        order:2
+                    },
+                    {
+                        label: 'Required Rate',
+                        data: [requiredRate,requiredRate,requiredRate,requiredRate,requiredRate,requiredRate,requiredRate,requiredRate,requiredRate,requiredRate],
+                        backgroundColor:'#ff7588',
+                        tension: 0,
+                        borderColor: ['#ff7588'],
+                        borderWidth: 1,
+                        type:'line',
+                        order:1
+                    }
+                ]
+            };
+    
+            // Accessing the totalPieceCountByHour object from the response
+            const totalPieceCountByHour = response.data.totalPieceCountByHour;
+
+            Object.keys(totalPieceCountByHour).forEach(hour => {
+                const pieceCountForHour = totalPieceCountByHour[hour];
+                console.log(`${hour}: ${pieceCountForHour}`);
+                newData.datasets[0].data.push(pieceCountForHour);
+            });
+
+            const totalLineEndPieceCountByHour = response2.data.totalPieceCountByHour;
+
+            Object.keys(totalLineEndPieceCountByHour).forEach(hour => {
+                const pieceCountForHour = totalLineEndPieceCountByHour[hour];
+                console.log(`${hour}: ${pieceCountForHour}`);
+                newData.datasets[1].data.push(pieceCountForHour);
+            });
+    
+    
+            // Setting the new data to the state
+            setPieceCountData(newData);
+
+        } catch (error) {
+            console.error("Failed to get barchart data", error);
+        }
+    };
+
+    const getSvm = async () => {
+        try {
+            const username = window.location.pathname.split('/').pop();
+            setUsername(username);
+            const response = await axios.post('http://localhost:5000/get/getSvm', {
+                username: username,
+            });
+
+            console.log("svm response",response)
+            setSvm(response.data.Svm)
+
+        }
+        catch (error) {
             console.error("Failed to shift pieces");
         }
     }
 
 
-    const handlePieceCountUpdate = (updatedPieceCount) => {
-        setDashboardPieceCount(updatedPieceCount);
-    
-        // Update pieceCountData with the new piece count
-        setPieceCountData((prevData) => {
-            const newData = [...prevData.datasets[0].data];
-            const currentIndex = newData.findIndex(count => count === 0);
-    
-            if (currentIndex !== -1) {
-                newData[currentIndex] = updatedPieceCount;
-    
-                return {
-                    ...prevData,
-                    datasets: [{ ...prevData.datasets[0], data: newData }]
-                };
-            }
-    
-            // All time slots are filled, you may want to handle this case based on your requirements
-            console.warn('All time slots are filled.');
-            return prevData;
-        });
-    };
+
 
 
 
@@ -135,7 +268,7 @@ function MyDashboard() {
                                                     <p className="mb-0">Pieces</p>
                                                 </div>
                                                 <div className="vr"></div>
-                                                    <Deviation shift = {shift} latestHour = {latestHour} pieceCount = {pieceCountInfo}/>
+                                                <Deviation shift={shift} latestHour={latestHour} pieceCount={pieceCountInfo} sendDataToParent={receiveDataFromChild} />
                                             </div>
                                         </div>
                                     </div>
@@ -148,7 +281,7 @@ function MyDashboard() {
                                             <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
                                                     <div style={{ width: '13rem' }}>
-                                                        <RadialBarChart />
+                                                        <RadialBarChart svm = {svm} pieceCount={pieceCountInfo} latestHour = {latestHour}/>
                                                     </div>
                                                     <h3 className="mb-0 gap-1">20</h3>
                                                     <p>Deviation</p>
@@ -220,16 +353,20 @@ function MyDashboard() {
                             <div className='row'>
                                 <div className="card border-primary border-bottom rounded-4">
                                     <div className="card-body">
-                                        <div className="d-flex align-items-center justify-content-between mt-3">
-                                            <div className="">
-                                                <h4 className="mb-0 fw-bold">20</h4>
-                                                <div className="d-flex align-items-center justify-content-start gap-1 text-success mt-3">
+                                        <div className="d-flex align-items-center justify-content-around mt-2">
+                                            <div className="d-flex flex-column align-items-center justify-content-center">
+                                                <h4 className="mb-0 fw-bold">{requiredRate || '0'}</h4>
+                                                <div className="d-flex align-items-center justify-content-center gap-1 text-success mt-1">
                                                     <span className="material-symbols-outlined">
                                                         trending_up
                                                     </span>
                                                     <p className="mb-0 fs-6">Required Rate</p>
                                                 </div>
                                             </div>
+                                            <div className="vr"></div>
+                                            <LineEndPieceCount />
+                                            <div className="vr"></div>
+                                            <DailyTarget/>
                                         </div>
                                     </div>
                                 </div>
@@ -262,7 +399,7 @@ function MyDashboard() {
                                     </div>
                                     <div className="card-body">
                                         <div className="chart-container1">
-                                            <BarChart canvasId="chart2-facebook" data={pieceCountData} shift ={shift}/>
+                                            <BarChart canvasId="chart2-facebook" data={pieceCountData} shift={shift} options={options} />
                                         </div>
                                     </div>
                                 </div>
@@ -294,7 +431,7 @@ function MyDashboard() {
                     </div>
                 </div>
                 {showModal && <div className="modal-backdrop show"></div>}
-                <Modal showModal={showModal} handleCloseModal={handleCloseModal} onPieceCountUpdate={handlePieceCountUpdate}/>
+                <Modal showModal={showModal} handleCloseModal={handleCloseModal} />
             </body>
         </html>
     )

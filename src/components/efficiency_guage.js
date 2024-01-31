@@ -1,7 +1,73 @@
 import React from 'react';
 import ApexCharts from 'react-apexcharts';
+import { useState, useEffect } from 'react';
 
-const RadialBarChart = () => {
+const RadialBarChart = ({ svm, pieceCount, latestHour }) => {
+
+    const [intHour, setIntHour] = useState();
+    const [efficiency, setEfficiency] = useState();
+
+    useEffect(() => {
+        let efficiency = calculateEfficiency(svm, pieceCount, intHour)
+
+        setEfficiency(efficiency)
+
+        const intervalId = setInterval(calculateEfficiency, 10000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    })
+
+    useEffect(() => {
+        switch (latestHour) {
+            case "1st Hour":
+                setIntHour(1);
+                break;
+            case "2nd Hour":
+                setIntHour(2);
+                break;
+            case "3rd Hour":
+                setIntHour(3);
+                break;
+            case "4th Hour":
+                setIntHour(4);
+                break;
+            case "5th Hour":
+                setIntHour(5);
+                break;
+            case "6th Hour":
+                setIntHour(6);
+                break;
+            case "7th Hour":
+                setIntHour(7);
+                break;
+            case "8th Hour":
+                setIntHour(8);
+                break;
+        }
+    }, [latestHour])
+
+    const calculateEfficiency = (svm, pieceCount, intHour) => {
+
+        console.log("svm details", svm, pieceCount, intHour)
+        let targetRatePerHour = 60 / svm;
+        let pieceCountRate = pieceCount / intHour;
+
+        let difference = targetRatePerHour - pieceCountRate;
+
+        let efficiency;
+
+        if (Math.round(difference) <= 0) {
+            efficiency = 100;
+        } else {
+            efficiency = 100 - Math.round((difference / targetRatePerHour) * 100);
+        }
+
+        return efficiency;
+
+    }
+
     const options = {
         chart: {
             // height: 'auto',
@@ -58,7 +124,7 @@ const RadialBarChart = () => {
     return (
         <ApexCharts
             options={options}
-            series={[67]}
+            series={[efficiency || 0]}
             type="radialBar"
         />
     );

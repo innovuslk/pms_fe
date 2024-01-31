@@ -24,26 +24,14 @@ function BarChart({ canvasId, data, shift }) {
                         display: true,
                     },
                 },
-                scales: {
-                    x: {
-                        type: 'linear',
-                        position: 'bottom',
-                        ticks: {
-                            min: 10,
-                            max: 16,
-                            stepSize: 1,
-                        },
-                        title: {
-                            display: true,
-                            text: 'Hours',
-                        },
-                    },
+                scales: {  
                     y: {
                         beginAtZero: true,
                     },
                 },
+                },
             },
-        });
+        );
 
         // Customize the bar colors with gradient
         const gradient = ctx.createLinearGradient(0, 0, 0, 200);

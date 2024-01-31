@@ -1,0 +1,41 @@
+import React, { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.css';
+import axios from 'axios';
+
+function DailyTarget() {
+
+    const [dailyTarget, setDaillytarget] = useState();
+
+    useEffect(() => {
+        getDailyTarget();
+
+        const intervalId = setInterval(getDailyTarget, 10000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [dailyTarget]);
+
+    const getDailyTarget = async () => {
+        try {
+
+            const response = await axios.post('http://localhost:5000/get/getDailyTarget');
+            setDaillytarget(response.data.dailyTarget)
+
+        }
+        catch (error) {
+            console.error("Failed to dailyTarget");
+        }
+    }
+
+    return (
+        <div className="d-flex flex-column align-items-center justify-content-center mx-1">
+        <h3 className="mb-0">{dailyTarget || '0'}</h3>
+        <p className="mb-0">Target</p>
+    </div>
+    )
+
+}
+
+
+export default DailyTarget;
