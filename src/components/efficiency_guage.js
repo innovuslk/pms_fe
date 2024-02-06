@@ -2,13 +2,13 @@ import React from 'react';
 import ApexCharts from 'react-apexcharts';
 import { useState, useEffect } from 'react';
 
-const RadialBarChart = ({ svm, pieceCount, latestHour }) => {
+const RadialBarChart = ({ Smv, pieceCount, latestHour }) => {
 
     const [intHour, setIntHour] = useState();
     const [efficiency, setEfficiency] = useState();
 
     useEffect(() => {
-        let efficiency = calculateEfficiency(svm, pieceCount, intHour)
+        let efficiency = calculateEfficiency(Smv, pieceCount, intHour)
 
         setEfficiency(efficiency)
 
@@ -48,10 +48,9 @@ const RadialBarChart = ({ svm, pieceCount, latestHour }) => {
         }
     }, [latestHour])
 
-    const calculateEfficiency = (svm, pieceCount, intHour) => {
+    const calculateEfficiency = (Smv, pieceCount, intHour) => {
 
-        console.log("svm details", svm, pieceCount, intHour)
-        let targetRatePerHour = 60 / svm;
+        let targetRatePerHour = 60 / Smv;
         let pieceCountRate = pieceCount / intHour;
 
         let difference = targetRatePerHour - pieceCountRate;

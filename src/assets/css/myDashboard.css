@@ -1,0 +1,16 @@
+.downtime-blur {
+    filter:blur(4px);
+    opacity: 0.3;
+    pointer-events: none; 
+}
+
+.downtime-unblured-content {
+    filter:blur(0);
+    pointer-events: auto;  
+}
+
+.downtime-button-active {
+    background-color: #dc3545; 
+    border-color: #dc3545; 
+    color: #fff; 
+}

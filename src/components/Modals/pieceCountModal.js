@@ -86,7 +86,7 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
                 { startHour: 10, startMinute: 40, endHour: 11, endMinute: 40, label: '5th Hour' },
                 { startHour: 11, startMinute: 40, endHour: 12, endMinute: 0, label: '6th Hour' },
                 { startHour: 12, startMinute: 0, endHour: 13, endMinute: 0, label: '7th Hour' },
-                { startHour: 18, startMinute: 0, endHour: 19, endMinute: 0, label: '8th Hour' },
+                { startHour: 13, startMinute: 0, endHour: 14, endMinute: 0, label: '8th Hour' },
             ];
     
             // Find the matching time range

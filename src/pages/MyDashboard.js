@@ -8,24 +8,71 @@ import axios from 'axios';
 import Deviation from '../components/Deviation';
 import LineEndPieceCount from '../components/LineEndPieceCount';
 import DailyTarget from '../components/DailyTarget';
+import '../assets/css/myDashboard.css';
+import AvgCycle from '../components/avgCycle';
 
 
 function MyDashboard() {
 
     const [showModal, setShowModal] = useState(false);
-    const [dashboardPieceCount, setDashboardPieceCount] = useState(0);
-    const [username, setUsername] = useState();
+    const [Username, setUsername] = useState();
     const [shift, setShift] = useState();
     const [pieceCountInfo, setPieceCountInfo] = useState();
     const [latestHour, setLatestHour] = useState('');
     const [requiredRate, setRequiredRate] = useState(0);
-    const [svm, setSvm] = useState(0);
+    const [Smv, setSmv] = useState(0);
+    const [downtimeClicked, setDowntimeClicked] = useState(false);
+    const [machineClicked, setMachineClicked] = useState(false);
+    const [finalTimerValue, setFinalTimerValue] = useState();
+    const [timerInterval, setTimerInterval] = useState();
+    const [downtimeStartTime, setDowntimeStartTime] = useState(null);
+    const [downtimeEndTime, setDowntimeEndTime] = useState(null);
+    const [GSDPieceRate, setGSDPieceRate] = useState()
+    const [dailyTarget, setDaillytarget] = useState()
+
+    const [timer, setTimer] = useState(0);
+
+    useEffect(() => {
+        let intervalId;
+
+        if (downtimeClicked || machineClicked) {
+            // Start the timer when downtimeClicked is true
+            intervalId = setInterval(() => {
+                setTimer((prevTimer) => prevTimer + 1);
+            }, 1000);
+
+            setTimerInterval(intervalId);
+        } else {
+
+            clearInterval(intervalId);
+            // Use the callback version to get the current state value
+            setTimer((prevTimer) => {
+                setFinalTimerValue(prevTimer);
+                setTimer(0);
+                setTimerInterval(null);
+            });
+        }
+        console.log("finalTimerValue", finalTimerValue)
+
+        return () => clearInterval(intervalId);
+    }, [downtimeClicked,machineClicked]);
 
     useEffect(() => {
         // Fetch latest piece count on component mount
         fetchLatestPieceCount();
 
         const intervalId = setInterval(fetchLatestPieceCount, 5000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    useEffect(() => {
+        // Fetch latest piece count on component mount
+        let gsd = calculateGSDPieceRate(Smv);
+
+        setGSDPieceRate(gsd)
+
+        const intervalId = setInterval(calculateGSDPieceRate, 10000);
 
         return () => clearInterval(intervalId);
     }, []);
@@ -44,19 +91,92 @@ function MyDashboard() {
         const intervalId = setInterval(getBarChartData, 10000);
 
         return () => clearInterval(intervalId);
-    }, []);
+    }, [requiredRate]);
 
     useEffect(() => {
-        getSvm();
+        getSmv();
 
-        const intervalId = setInterval(getSvm, 20000);
+        const intervalId = setInterval(getSmv, 20000);
 
         return () => clearInterval(intervalId);
     }, []);
 
+    const handleStopTimerClick = async () => {
+        setDowntimeClicked(false);
+        setMachineClicked(false);
+
+        const downtimeEndTime = new Date();
+
+        downtimeEndTime.setTime(downtimeEndTime.getTime() + (5.5 * 60 * 60 * 1000));
+
+        try {
+            const username = window.location.pathname.split('/').pop();
+            setUsername(username);
+            await axios.post('http://localhost:5000/update/updateEndTime', {
+                username: username,
+                type: machineClicked ? 'Machine' : 'Material',
+                endTime: downtimeEndTime.toISOString().slice(0, 19).replace('T', ' '),
+            });
+
+        } catch (error) {
+            console.error("Failed to send downTime", error);
+        }
+        // Clear the interval to stop the timer
+        clearInterval(timerInterval);
+        // Set the final timer value
+        setFinalTimerValue(timer);
+        // Reset the timer value to 0
+        setTimer(0);
+    };
 
 
+    const handleDowntimeClick = async (type) => {
 
+
+        if (type === 'Material') {
+            setDowntimeClicked(true);
+            setDowntimeStartTime(new Date());
+
+            try {
+                downtimeStartTime.setTime(downtimeStartTime.getTime() + (5.5 * 60 * 60 * 1000));
+                const username = window.location.pathname.split('/').pop();
+                setUsername(username);
+                const response = await axios.post('http://localhost:5000/send/downTime', {
+                    username: username,
+                    type: 'Material',
+                    downTime: finalTimerValue,
+                    startTime: downtimeStartTime.toISOString().slice(0, 19).replace('T', ' '),
+                });
+                console.log(response)
+
+                // Handle response if needed
+            } catch (error) {
+                console.error("Failed to send downTime", error);
+                // Handle error (e.g., display an error message)
+            }
+        }
+
+        if (type === 'Machine') {
+            setMachineClicked(true);
+            setDowntimeStartTime(new Date());
+            try {
+                const username = window.location.pathname.split('/').pop();
+                setUsername(username);
+                const response = await axios.post('http://localhost:5000/send/downTime', {
+                    username: username,
+                    type: 'Machine',
+                    downTime: finalTimerValue,
+                    startTime: downtimeStartTime.toISOString().slice(0, 19).replace('T', ' '),
+                });
+                console.log(response)
+
+                // Handle response if needed
+            } catch (error) {
+                console.error("Failed to send downTime", error);
+                // Handle error (e.g., display an error message)
+            }
+        }
+    };
     const [pieceCountData, setPieceCountData] = useState({
         labels: ["08.20", "08.40", "09.40", "10.40", "12.00", "13.00", "14.00", "15.00", "16.00", "17.00"],
         datasets: [
@@ -75,14 +195,14 @@ function MyDashboard() {
                 borderWidth: 0
             }
         ]
-    },[requiredRate]);
+    }, [requiredRate]);
 
     const options = {
         scales: {
             x: {
-                type: '', 
+                type: '',
                 position: 'bottom',
-                min: 8.2, 
+                min: 8.2,
                 max: 17.0, // set the maximum value for the x-axis
                 stepSize: 1, // set the step size between labels
                 callback: function (value, index) {
@@ -93,8 +213,9 @@ function MyDashboard() {
         }
     };
 
-    const receiveDataFromChild = (data) => {
-        setRequiredRate(data);
+    const receiveDataFromChild = (requiredRate, dailyTarget) => {
+        setRequiredRate(requiredRate);
+        setDaillytarget(dailyTarget)
     };
 
 
@@ -140,68 +261,73 @@ function MyDashboard() {
     const getBarChartData = async () => {
 
         try {
-            const response = await axios.post('http://localhost:5000/get/getDataForBarChart',{
-                operatorType:'operator'
+            const username = window.location.pathname.split('/').pop();
+            setUsername(username);
+            const response = await axios.post('http://localhost:5000/get/getDataForBarChart', {
+                operatorType: 'operator',
+                username: Username
             });
-            const response2 = await axios.post('http://localhost:5000/get/getDataForBarChart',{
-                operatorType:'LineEnd'
+            console.log(username)
+            const response2 = await axios.post('http://localhost:5000/get/getDataForBarChart', {
+                operatorType: 'LineEnd',
+                username: Username
             });
             const labels = ["08.20", "08.40", "09.40", "10.40", "12.00", "13.00", "14.00", "15.00", "16.00", "17.00"];
 
             const getGradientFillStyle = () => {
                 const ctx = document.createElement('canvas').getContext('2d');
                 const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-            
+
                 gradient.addColorStop(0, 'rgba(232,44,87,1)');  // Gradient start color
                 gradient.addColorStop(1, 'rgb(246,147,49)');   // Gradient end color
-                
+
                 return gradient;
             };
 
             const getGradientFillStyle2 = () => {
                 const ctx = document.createElement('canvas').getContext('2d');
                 const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-            
+
                 gradient.addColorStop(0, 'rgba(103,59,183,1)');  // Gradient start color
                 gradient.addColorStop(1, 'rgb(35,148,242)');   // Gradient end color
-                
+
                 return gradient;
             };
-            
+
             const newData = {
                 labels: labels,
                 datasets: [
                     {
                         label: 'Piece Count',
                         data: [],
-                        backgroundColor:getGradientFillStyle(),
+                        backgroundColor: getGradientFillStyle(),
                         tension: 0,
                         borderColor: ['#02c27a'],
                         borderWidth: 0,
-                        order:2
+                        order: 2
                     },
                     {
                         label: 'Line End Piece Count',
                         data: [],
-                        backgroundColor:getGradientFillStyle2(),
+                        backgroundColor: getGradientFillStyle2(),
                         tension: 0,
                         borderColor: ['#02c27a'],
                         borderWidth: 0,
-                        order:2
+                        order: 2
                     },
                     {
                         label: 'Required Rate',
-                        data: [requiredRate,requiredRate,requiredRate,requiredRate,requiredRate,requiredRate,requiredRate,requiredRate,requiredRate,requiredRate],
-                        backgroundColor:'#ff7588',
+                        data: [requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate],
+                        backgroundColor: '#ff7588',
                         tension: 0,
                         borderColor: ['#ff7588'],
                         borderWidth: 1,
-                        type:'line',
-                        order:1
+                        type: 'line',
+                        order: 1
                     }
                 ]
             };
-    
+
             // Accessing the totalPieceCountByHour object from the response
             const totalPieceCountByHour = response.data.totalPieceCountByHour;
 
@@ -218,8 +344,8 @@ function MyDashboard() {
                 console.log(`${hour}: ${pieceCountForHour}`);
                 newData.datasets[1].data.push(pieceCountForHour);
             });
-    
-    
+
+
             // Setting the new data to the state
             setPieceCountData(newData);
 
@@ -228,21 +354,40 @@ function MyDashboard() {
         }
     };
 
-    const getSvm = async () => {
+    const getSmv = async () => {
         try {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
-            const response = await axios.post('http://localhost:5000/get/getSvm', {
+            const response = await axios.post('http://localhost:5000/get/getsmv', {
                 username: username,
             });
 
-            console.log("svm response",response)
-            setSvm(response.data.Svm)
+            setSmv(response.data.smv)
 
         }
         catch (error) {
             console.error("Failed to shift pieces");
         }
+    }
+
+    const calculateGSDPieceRate = (smv)=>{
+
+        let GSDPieceRate = 60/smv;
+        return Math.round(GSDPieceRate);
+    }
+
+
+    function formatTime(seconds) {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const remainingSeconds = seconds % 60;
+
+        return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
+    }
+
+    // Helper function to pad single-digit numbers with leading zeros
+    function pad(value) {
+        return value < 10 ? `0${value}` : value;
     }
 
 
@@ -254,10 +399,26 @@ function MyDashboard() {
         <html lang="en" data-bs-theme="dark">
             <body>
                 <Navbar />
-                <div className='container-fluid'>
 
+                <div className='container-fluid'>
+                    {(downtimeClicked || machineClicked) && <div className="d-flex flex-column align-items-center justify-content-center position-fixed top-50 start-50 translate-middle">
+                        <h1 className="mb-0">{formatTime(timer)}</h1>
+                        <p className="mb-0 f-20" style={{fontWeight: '600', color:'white'}}>DownTime Timer</p>
+                        {machineClicked ? <p className="mb-0 f-18 mt-2">Machine DownTime Started</p> : ''}
+                        {downtimeClicked ? <p className="mb-0 f-18 mt-2">Material DownTime Started</p> : ''}
+                        <button
+                            type="button"
+                            className="btn btn-danger w-auto mt-4 align-items-center justify-content-center"
+                            style={{ height: "3rem", fontWeight: "600" }}
+                            onClick={handleStopTimerClick}
+                        >
+                            <div className='d-flex'>
+                                <span className="material-symbols-outlined">close</span> Stop
+                            </div>
+                        </button>
+                    </div>}
                     <div className='row mx-2 mt-3'>
-                        <div className='col-3 col-md-4' style={{ height: '100dvh' }}>
+                        <div style={{ height: '100dvh' }} className={downtimeClicked || machineClicked ? 'downtime-blur col-3 col-md-4' : 'col-3 col-md-4'}>
                             <div className='row'>
                                 <div className="col">
                                     <div className="card rounded-4">
@@ -281,7 +442,7 @@ function MyDashboard() {
                                             <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
                                                     <div style={{ width: '13rem' }}>
-                                                        <RadialBarChart svm = {svm} pieceCount={pieceCountInfo} latestHour = {latestHour}/>
+                                                        <RadialBarChart Smv={Smv} pieceCount={pieceCountInfo} latestHour={latestHour} />
                                                     </div>
                                                     <h3 className="mb-0 gap-1">20</h3>
                                                     <p>Deviation</p>
@@ -301,10 +462,7 @@ function MyDashboard() {
                                                     <p className="mb-0">Best Cycle</p>
                                                 </div>
                                                 <div className="vr"></div>
-                                                <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">10</h3>
-                                                    <p className="mb-0">Avg Cycle</p>
-                                                </div>
+                                                <AvgCycle latestHour={latestHour} pieceCount={pieceCountInfo}/>
                                             </div>
                                         </div>
                                     </div>
@@ -316,12 +474,12 @@ function MyDashboard() {
                                         <div className="card-body">
                                             <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 p-1">
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">10</h3>
+                                                    <h3 className="mb-0">{GSDPieceRate || '0'}</h3>
                                                     <p className="mb-0">GSD Piece Rate</p>
                                                 </div>
                                                 <div className="vr"></div>
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">10</h3>
+                                                    <h3 className="mb-0">{dailyTarget /10 || '0'}</h3>
                                                     <p className="mb-0">Target Piece Rate</p>
                                                 </div>
                                             </div>
@@ -349,7 +507,7 @@ function MyDashboard() {
                                 </div>
                             </div>
                         </div>
-                        <div className='col-6 mx-4'>
+                        <div className={downtimeClicked || machineClicked ? 'downtime-blur col-6 mx-4' : 'col-6 mx-4'}>
                             <div className='row'>
                                 <div className="card border-primary border-bottom rounded-4">
                                     <div className="card-body">
@@ -366,7 +524,7 @@ function MyDashboard() {
                                             <div className="vr"></div>
                                             <LineEndPieceCount />
                                             <div className="vr"></div>
-                                            <DailyTarget/>
+                                            <DailyTarget />
                                         </div>
                                     </div>
                                 </div>
@@ -407,13 +565,23 @@ function MyDashboard() {
                         </div>
                         <div className='col'>
                             <div className="row">
-                                <button type="button" className="btn btn-warning col mb-4" style={{ height: "3rem", color: 'black', fontWeight: "600" }}>Downtime</button>
+                                <h2
+                                    className='d-flex align-content-center justify-content-center mb-4'
+                                    style={{ color: 'white', fontWeight: "500", fontSize: "1rem"}}
+                                >
+                                    DownTime
+                                </h2>
                             </div>
                             <div className="row">
-                                <button type="button" className="btn btn-warning col mb-4" style={{ height: "3rem", color: 'black', fontWeight: "600" }}>Machine</button>
+                                <button type="button" className={`btn btn-warning col mb-4 ${machineClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }} onClick={() => handleDowntimeClick('Machine')}>
+                                    Machine
+                                </button>
                             </div>
                             <div className="row">
-                                <button type="button" className="btn btn-warning col mb-4" style={{ height: "3rem", color: 'black', fontWeight: "600" }}>Material</button>
+                                <button type="button" className={`btn btn-warning col mb-4 ${downtimeClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }}
+                                    onClick={() => handleDowntimeClick('Material')}>
+                                    Material
+                                </button>
                             </div>
                             <div className="row">
                                 <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3.5rem", fontWeight: "600" }}>Call Supervisor</button>
@@ -425,7 +593,10 @@ function MyDashboard() {
                                 <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3rem", fontWeight: "600" }}>Machine</button>
                             </div>
                             <div className="row">
-                                <button type="button" className="btn ripple btn-primary col mb-4" style={{ height: "3.5rem", fontWeight: "600", fontSize: "0.9rem" }} onClick={handleAddPieceCountClick}>Add Piece Count</button>
+                                <button type="button" style={{ height: "3.5rem", fontWeight: "600", fontSize: "0.9rem" }} onClick={handleAddPieceCountClick}
+                                    className={downtimeClicked ? 'downtime-blur btn ripple btn-primary col mb-4' : 'btn ripple btn-primary col mb-4'}>
+                                    Add Piece Count
+                                </button>
                             </div>
                         </div>
                     </div>
