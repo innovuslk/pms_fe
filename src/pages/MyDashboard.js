@@ -83,7 +83,7 @@ function MyDashboard() {
         const intervalId = setInterval(getShift, 5000);
 
         return () => clearInterval(intervalId);
-    }, []);
+    }, [shift]);
 
     useEffect(() => {
         getBarChartData();
@@ -91,7 +91,7 @@ function MyDashboard() {
         const intervalId = setInterval(getBarChartData, 10000);
 
         return () => clearInterval(intervalId);
-    }, [requiredRate]);
+    }, [requiredRate,shift]);
 
     useEffect(() => {
         getSmv();
@@ -195,7 +195,7 @@ function MyDashboard() {
                 borderWidth: 0
             }
         ]
-    }, [requiredRate]);
+    }, [requiredRate,shift]);
 
     const options = {
         scales: {
@@ -425,8 +425,8 @@ function MyDashboard() {
                         </button>
                     </div>}
                     <div className='row mx-2 mt-3'>
-                        <div style={{ height: '100dvh' }} className={downtimeClicked || machineClicked ? 'downtime-blur col-3 col-md-4' : 'col-3 col-md-4'}>
-                            <div className='row'>
+                        <div style={{ height: '100dvh' }} className={downtimeClicked || machineClicked ? 'downtime-blur col-3 col-md-4' : 'col-3 col-md-4 '}>
+                            <div className='row mx-0'>
                                 <div className="col">
                                     <div className="card rounded-4">
                                         <div className="card-body align-items-center justify-content-center">
@@ -442,7 +442,7 @@ function MyDashboard() {
                                     </div>
                                 </div>
                             </div>
-                            <div className='row'>
+                            <div className='row mx-0'>
                                 <div className="col">
                                     <div className="card rounded-4 h-80">
                                         <div className="card-body">
@@ -459,7 +459,7 @@ function MyDashboard() {
                                     </div>
                                 </div>
                             </div>
-                            <div className='row'>
+                            <div className='row mx-0'>
                                 <div className="col">
                                     <div className="card rounded-4">
                                         <div className="card-body">
@@ -475,26 +475,28 @@ function MyDashboard() {
                                     </div>
                                 </div>
                             </div>
-                            <div className='row'>
+                            <div className='row mx-0'>
                                 <div className="col">
                                     <div className="card rounded-4">
                                         <div className="card-body">
                                             <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 p-1">
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                     <h3 className="mb-0">{GSDPieceRate || '0'}</h3>
-                                                    <p className="mb-0">GSD Piece Rate</p>
+                                                    <p className="mb-0">GSD Piece</p>
+                                                    <p className="mb-0" style={{marginTop:"-10px"}}>Rate</p>
                                                 </div>
                                                 <div className="vr"></div>
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                     <h3 className="mb-0">{dailyTarget / 10 || '0'}</h3>
-                                                    <p className="mb-0">Target Piece Rate</p>
+                                                    <p className="mb-0">Target Piece</p>
+                                                    <p className="mb-0" style={{marginTop:"-10px"}}>Rate</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className='row'>
+                            <div className='row mx-0'>
                                 <div className="col">
                                     <div className="card rounded-4">
                                         <div className="card-body">
@@ -514,7 +516,7 @@ function MyDashboard() {
                                 </div>
                             </div>
                         </div>
-                        <div className={downtimeClicked || machineClicked ? 'downtime-blur col-6 mx-4' : 'col-6 mx-4'}>
+                        <div className={downtimeClicked || machineClicked ? 'downtime-blur col-6 mx-4' : 'col-6 mx-3'}>
                             <div className='row'>
                                 <div className="card border-primary border-bottom rounded-4">
                                     <div className="card-body">
@@ -570,7 +572,7 @@ function MyDashboard() {
                                 </div>
                             </div>
                         </div>
-                        <div className='col'>
+                        <div className='col mx-1'>
                             <div className="row">
                                 <h2
                                     className='d-flex align-content-center justify-content-center mb-4'
