@@ -55,7 +55,7 @@ function MyDashboard() {
         console.log("finalTimerValue", finalTimerValue)
 
         return () => clearInterval(intervalId);
-    }, [downtimeClicked,machineClicked]);
+    }, [downtimeClicked, machineClicked]);
 
     useEffect(() => {
         // Fetch latest piece count on component mount
@@ -75,7 +75,7 @@ function MyDashboard() {
         const intervalId = setInterval(calculateGSDPieceRate, 10000);
 
         return () => clearInterval(intervalId);
-    }, []);
+    }, [Smv]);
 
     useEffect(() => {
         getShift();
@@ -178,7 +178,7 @@ function MyDashboard() {
         }
     };
     const [pieceCountData, setPieceCountData] = useState({
-        labels: ["08.20", "08.40", "09.40", "10.40", "12.00", "13.00", "14.00", "15.00", "16.00", "17.00"],
+        labels: ["08.20", "08.40", "09.40", "10.40", "12.40", "13.00", "14.00", "15.00", "16.00", "17.00"],
         datasets: [
             {
                 label: 'Piece Count',
@@ -250,7 +250,8 @@ function MyDashboard() {
             const response = await axios.post('http://localhost:5000/get/getShift', {
                 username: username,
             });
-            setShift(response.Shift)
+            console.log("shift",response)
+            setShift(response.data.Shift)
 
         }
         catch (error) {
@@ -272,7 +273,13 @@ function MyDashboard() {
                 operatorType: 'LineEnd',
                 username: Username
             });
-            const labels = ["08.20", "08.40", "09.40", "10.40", "12.00", "13.00", "14.00", "15.00", "16.00", "17.00"];
+
+            let labels = [];
+            if (shift === 'A') {
+                labels = ["08.20", "08.40", "09.40", "10.40", "12.40", "13.00", "14.00", "15.00", "16.00", "17.00"];
+            } else if (shift === 'B') {
+                labels = ["14.00", "14.20", "15.20", "16.20", "18.20", "18.40", "19.40", "20.40", "21.40", "22.40"];
+            }
 
             const getGradientFillStyle = () => {
                 const ctx = document.createElement('canvas').getContext('2d');
@@ -370,9 +377,9 @@ function MyDashboard() {
         }
     }
 
-    const calculateGSDPieceRate = (smv)=>{
+    const calculateGSDPieceRate = (smv) => {
 
-        let GSDPieceRate = 60/smv;
+        let GSDPieceRate = 60 / smv;
         return Math.round(GSDPieceRate);
     }
 
@@ -403,7 +410,7 @@ function MyDashboard() {
                 <div className='container-fluid'>
                     {(downtimeClicked || machineClicked) && <div className="d-flex flex-column align-items-center justify-content-center position-fixed top-50 start-50 translate-middle">
                         <h1 className="mb-0">{formatTime(timer)}</h1>
-                        <p className="mb-0 f-20" style={{fontWeight: '600', color:'white'}}>DownTime Timer</p>
+                        <p className="mb-0 f-20" style={{ fontWeight: '600', color: 'white' }}>DownTime Timer</p>
                         {machineClicked ? <p className="mb-0 f-18 mt-2">Machine DownTime Started</p> : ''}
                         {downtimeClicked ? <p className="mb-0 f-18 mt-2">Material DownTime Started</p> : ''}
                         <button
@@ -462,7 +469,7 @@ function MyDashboard() {
                                                     <p className="mb-0">Best Cycle</p>
                                                 </div>
                                                 <div className="vr"></div>
-                                                <AvgCycle latestHour={latestHour} pieceCount={pieceCountInfo}/>
+                                                <AvgCycle latestHour={latestHour} pieceCount={pieceCountInfo} />
                                             </div>
                                         </div>
                                     </div>
@@ -479,7 +486,7 @@ function MyDashboard() {
                                                 </div>
                                                 <div className="vr"></div>
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">{dailyTarget /10 || '0'}</h3>
+                                                    <h3 className="mb-0">{dailyTarget / 10 || '0'}</h3>
                                                     <p className="mb-0">Target Piece Rate</p>
                                                 </div>
                                             </div>
@@ -567,7 +574,7 @@ function MyDashboard() {
                             <div className="row">
                                 <h2
                                     className='d-flex align-content-center justify-content-center mb-4'
-                                    style={{ color: 'white', fontWeight: "500", fontSize: "1rem"}}
+                                    style={{ color: 'white', fontWeight: "500", fontSize: "1rem" }}
                                 >
                                     DownTime
                                 </h2>

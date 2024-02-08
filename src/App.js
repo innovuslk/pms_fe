@@ -3,6 +3,7 @@ import './App.css';
 import MyDashboard from './pages/MyDashboard';
 import Login from './pages/login';
 import Register from './pages/UserReg';
+import AdminHome from './pages/AdminHome';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import './assets/scss/theme.scss'

@@ -87,8 +87,10 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
 
     const getDailyTarget = async () => {
         try {
-
-            const response = await axios.post('http://localhost:5000/get/getDailyTarget');
+            const username = window.location.pathname.split('/').pop();
+            const response = await axios.post('http://localhost:5000/get/getDailyTarget',{
+                username:username
+            });
             setDaillytarget(response.data.dailyTarget)
 
         }

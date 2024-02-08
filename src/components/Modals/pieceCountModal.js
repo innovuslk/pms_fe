@@ -123,14 +123,14 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
     
             // Define time ranges with start and end minutes
             const timeRanges = [
-                { startHour: 6, startMinute: 20, endHour: 7, endMinute: 40, label: '1st Hour' },
-                { startHour: 7, startMinute: 40, endHour: 8, endMinute: 40, label: '2nd Hour' },
-                { startHour: 8, startMinute: 40, endHour: 9, endMinute: 40, label: '3rd Hour' },
-                { startHour: 9, startMinute: 40, endHour: 10, endMinute: 40, label: '4th Hour' },
-                { startHour: 10, startMinute: 40, endHour: 11, endMinute: 40, label: '5th Hour' },
-                { startHour: 11, startMinute: 40, endHour: 12, endMinute: 0, label: '6th Hour' },
-                { startHour: 12, startMinute: 0, endHour: 13, endMinute: 0, label: '7th Hour' },
-                { startHour: 18, startMinute: 0, endHour: 19, endMinute: 0, label: '8th Hour' },
+                { startHour: 14, startMinute: 0, endHour: 14, endMinute: 20, label: '1st Hour' },
+                { startHour: 14, startMinute: 20, endHour: 15, endMinute: 20, label: '2nd Hour' },
+                { startHour: 15, startMinute: 20, endHour: 16, endMinute: 20, label: '3rd Hour' },
+                { startHour: 16, startMinute: 20, endHour: 17, endMinute: 20, label: '4th Hour' },
+                { startHour: 17, startMinute: 20, endHour: 18, endMinute: 20, label: '5th Hour' },
+                { startHour: 18, startMinute: 20, endHour: 19, endMinute: 20, label: '6th Hour' },
+                { startHour: 19, startMinute: 20, endHour: 19, endMinute: 40, label: '7th Hour' },
+                { startHour: 19, startMinute: 40, endHour: 20, endMinute: 0, label: '8th Hour' },
             ];
     
             // Find the matching time range
