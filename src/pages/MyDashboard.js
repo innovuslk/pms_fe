@@ -141,7 +141,7 @@ function MyDashboard() {
                 downtimeStartTime.setTime(downtimeStartTime.getTime() + (5.5 * 60 * 60 * 1000));
                 const username = window.location.pathname.split('/').pop();
                 setUsername(username);
-                const response = await axios.post('http://localhost:5000/send/downTime', {
+                const response = await axios.post('http://4.193.94.82:5000/send/downTime', {
                     username: username,
                     type: 'Material',
                     downTime: finalTimerValue,
@@ -162,7 +162,7 @@ function MyDashboard() {
             try {
                 const username = window.location.pathname.split('/').pop();
                 setUsername(username);
-                const response = await axios.post('http://localhost:5000/send/downTime', {
+                const response = await axios.post('http://4.193.94.82:5000/send/downTime', {
                     username: username,
                     type: 'Machine',
                     downTime: finalTimerValue,
@@ -232,7 +232,7 @@ function MyDashboard() {
         setUsername(username);
 
         try {
-            const response = await axios.post('http://localhost:5000/set/getPieceCount', {
+            const response = await axios.post('http://4.193.94.82:5000/set/getPieceCount', {
                 username: username,
             });
 
@@ -247,7 +247,7 @@ function MyDashboard() {
         try {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
-            const response = await axios.post('http://localhost:5000/get/getShift', {
+            const response = await axios.post('http://4.193.94.82:5000/get/getShift', {
                 username: username,
             });
             console.log("shift",response)
@@ -264,12 +264,12 @@ function MyDashboard() {
         try {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
-            const response = await axios.post('http://localhost:5000/get/getDataForBarChart', {
+            const response = await axios.post('http://4.193.94.82:5000/get/getDataForBarChart', {
                 operatorType: 'operator',
                 username: Username
             });
             console.log(username)
-            const response2 = await axios.post('http://localhost:5000/get/getDataForBarChart', {
+            const response2 = await axios.post('http://4.193.94.82:5000/get/getDataForBarChart', {
                 operatorType: 'LineEnd',
                 username: Username
             });
@@ -365,7 +365,7 @@ function MyDashboard() {
         try {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
-            const response = await axios.post('http://localhost:5000/get/getsmv', {
+            const response = await axios.post('http://4.193.94.82:5000/get/getsmv', {
                 username: username,
             });
 
