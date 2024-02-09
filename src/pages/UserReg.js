@@ -19,7 +19,7 @@ function Register() {
     function handleSubmit(event) {
         event.preventDefault();
 
-        axios.post('http://localhost:5000/register', {
+        axios.post('http://4.193.94.82:5000/register', {
             PN: PN,
             userId: userId,
             username: Username,
