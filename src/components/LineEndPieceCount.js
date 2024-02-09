@@ -19,7 +19,7 @@ function LineEndPieceCount() {
     const getLineEndPieceCount = async () => {
         try {
 
-            const response = await axios.post('http://localhost:5000/get/getLineEndPieceCount', {
+            const response = await axios.post('http://4.193.94.82:5000/get/getLineEndPieceCount', {
                 operation: "LineEnd",
             });
             setPieceCount(response.data.totalLineEndPieceCount)
