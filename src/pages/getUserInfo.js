@@ -17,7 +17,7 @@ function GetUserInfo() {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
             try {
-                const response = await axios.get(`http://localhost:5000/info/getInfo/${username}`);
+                const response = await axios.get(`http://4.193.94.82:5000/info/getInfo/${username}`);
                 setUserInfo(response.data);
             } catch (error) {
                 console.error('Error fetching user information:', error.message);
