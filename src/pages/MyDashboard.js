@@ -112,7 +112,7 @@ function MyDashboard() {
         try {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
-            await axios.post('http://localhost:5000/update/updateEndTime', {
+            await axios.post('http://4.193.94.82:5000/update/updateEndTime', {
                 username: username,
                 type: machineClicked ? 'Machine' : 'Material',
                 endTime: downtimeEndTime.toISOString().slice(0, 19).replace('T', ' '),
