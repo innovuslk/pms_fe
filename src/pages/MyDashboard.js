@@ -112,7 +112,7 @@ function MyDashboard() {
         try {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
-            await axios.post('http://4.193.94.82:5000/update/updateEndTime', {
+            await axios.post(`http://${process.env.REACT_APP_HOST_IP}/update/updateEndTime`, {
                 username: username,
                 type: machineClicked ? 'Machine' : 'Material',
                 endTime: downtimeEndTime.toISOString().slice(0, 19).replace('T', ' '),
@@ -141,7 +141,7 @@ function MyDashboard() {
                 downtimeStartTime.setTime(downtimeStartTime.getTime() + (5.5 * 60 * 60 * 1000));
                 const username = window.location.pathname.split('/').pop();
                 setUsername(username);
-                const response = await axios.post('http://4.193.94.82:5000/send/downTime', {
+                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/send/downTime`, {
                     username: username,
                     type: 'Material',
                     downTime: finalTimerValue,
@@ -162,7 +162,7 @@ function MyDashboard() {
             try {
                 const username = window.location.pathname.split('/').pop();
                 setUsername(username);
-                const response = await axios.post('http://4.193.94.82:5000/send/downTime', {
+                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/send/downTime`, {
                     username: username,
                     type: 'Machine',
                     downTime: finalTimerValue,
@@ -178,7 +178,7 @@ function MyDashboard() {
         }
     };
     const [pieceCountData, setPieceCountData] = useState({
-        labels: ["08.20", "08.40", "09.40", "10.40", "12.40", "13.00", "14.00", "15.00", "16.00", "17.00"],
+        labels: ["06.00", "06.20", "07.20", "08.20", "09.40", "10.40", "11.00", "12.00", "13.00", "14.00"],
         datasets: [
             {
                 label: 'Piece Count',
@@ -232,7 +232,7 @@ function MyDashboard() {
         setUsername(username);
 
         try {
-            const response = await axios.post('http://4.193.94.82:5000/set/getPieceCount', {
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/set/getPieceCount`, {
                 username: username,
             });
 
@@ -247,7 +247,7 @@ function MyDashboard() {
         try {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
-            const response = await axios.post('http://4.193.94.82:5000/get/getShift', {
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShift`, {
                 username: username,
             });
             console.log("shift",response)
@@ -264,19 +264,19 @@ function MyDashboard() {
         try {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
-            const response = await axios.post('http://4.193.94.82:5000/get/getDataForBarChart', {
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
                 operatorType: 'operator',
                 username: Username
             });
             console.log(username)
-            const response2 = await axios.post('http://4.193.94.82:5000/get/getDataForBarChart', {
+            const response2 = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
                 operatorType: 'LineEnd',
                 username: Username
             });
 
             let labels = [];
             if (shift === 'A') {
-                labels = ["08.20", "08.40", "09.40", "10.40", "12.40", "13.00", "14.00", "15.00", "16.00", "17.00"];
+                labels = ["06.00", "06.20", "07.20", "08.20", "09.40", "10.40", "11.00", "12.00", "13.00", "14.00"];
             } else if (shift === 'B') {
                 labels = ["14.00", "14.20", "15.20", "16.20", "18.20", "18.40", "19.40", "20.40", "21.40", "22.40"];
             }
@@ -365,7 +365,7 @@ function MyDashboard() {
         try {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
-            const response = await axios.post('http://4.193.94.82:5000/get/getsmv', {
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getsmv`, {
                 username: username,
             });
 

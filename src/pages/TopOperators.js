@@ -6,7 +6,7 @@ const TopOperatorsTable = () => {
     const [topUsers, setTopUsers] = useState([]);
 
     useEffect(() => {
-        axios.post('http://4.193.94.82:5000/get/getTopUsers')
+        axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getTopUsers`)
             .then(response => {
                 if (response.data && response.data.topUsers) {
                     setTopUsers(response.data.topUsers);

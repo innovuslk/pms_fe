@@ -16,6 +16,7 @@ function App() {
                 <Route path="/" element={<Login />} />
                 <Route path="/user-info/:username" element={<MyDashboard />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/admin/:username" element={<AdminHome />} />
                 <Route path="/topUsers" element={<TopOperatorsTable />} />
             </Routes>
         </Router>

@@ -75,7 +75,7 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     const getShiftHours = async () => {
         try {
 
-            const response = await axios.post('http://4.193.94.82:5000/get/getShiftHours', {
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShiftHours`, {
                 shiftID: "A",
             });
             setShiftHours(response.data.ShiftHours)
@@ -88,7 +88,7 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     const getDailyTarget = async () => {
         try {
             const username = window.location.pathname.split('/').pop();
-            const response = await axios.post('http://4.193.94.82:5000/get/getDailyTarget',{
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDailyTarget`,{
                 username:username
             });
             setDaillytarget(response.data.dailyTarget)

@@ -15,18 +15,23 @@ function Login() {
 
     function handleSubmit(event) {
         event.preventDefault();
-
-        axios.post('http://4.193.94.82:5000/login', {
+        axios.post(`http://${process.env.REACT_APP_HOST_IP}/login`, {
             username: Username,
             password: Password,
         })
             .then(res => {
                 console.log(res);
-                if (res.status === 200) {
+                if (res.status === 200 && (res.data.userLevel === 3)) {
                     const encodedUsername = btoa(Username);
 
                     // Redirect to another page with the extracted username
                     navigate(`/user-info/${encodedUsername}`);
+                }
+                else if(res.status === 200 && (res.data.userLevel === 1)){
+                    const encodedUsername = btoa(Username);
+
+                    // Redirect to another page with the extracted username
+                    navigate(`/admin/${encodedUsername}`);
                 }
                 else {
                     setErrorMessage("Invalid Username or Password");

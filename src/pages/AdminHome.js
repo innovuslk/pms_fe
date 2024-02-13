@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../assets/css/adminHome.css';
 import axios from 'axios';
+import Clock from 'react-live-clock';
 
 function AdminHome() {
 
@@ -18,18 +19,59 @@ function AdminHome() {
     const [userId, setUserID] = useState();
     const [shift, setShift] = useState('');
     const [operation, setOperation] = useState('');
-    const [svm, setSvm] = useState('');
+    const [Smv, setSmv] = useState('');
+    const [operatorInfo,setOperatorInfo] = useState(null);
+    const [username, setUsername] = useState();
+
+
+    useEffect(() => {
+        // Fetch data from your backend when the component mounts
+        const fetchData = async () => {
+            const username = window.location.pathname.split('/').pop();
+            setUsername(username);
+            try {
+                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/info/getInfo`, {
+                    username: username, 
+                });
+
+                setOperatorInfo(response.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+        
+    }, []);
 
 
     const handleSideBarClick = (type) => {
         console.log(type)
         setSideBarType(type)
     }
+    const handleReset = () => {
+        resetForm();
+    };
 
-    function handleSubmit(event) {
+    const resetForm = () => {
+        setDate('');
+        setID('');
+        setSbu('');
+        setLineItem('')
+        setLineNo('');
+        setPlantName('')
+
+        // Clear input field values
+        const inputFields = document.querySelectorAll('input');
+        inputFields.forEach(input => {
+            input.value = '';
+        });
+    };
+
+    async function handleSubmitDailyPlan(event) {
         event.preventDefault();
 
-        axios.post('http://4.193.94.82:5000/register', {
+        await axios.post(`http://${process.env.REACT_APP_HOST_IP}/insert/insertDailyPlan`, {
             ID: ID,
             Date: Date,
             Sbu: Sbu,
@@ -37,12 +79,12 @@ function AdminHome() {
             LineItem: LineItem,
             LineNo: LineNo,
             PlantName: PlantName,
-            Dailytarget: Dailytarget
+            DailyTarget: parseInt(Dailytarget),
         })
             .then(res => {
                 console.log(res);
                 if (res.status === 200) {
-                    setMessage("User Register Successful");
+                    setMessage("Daily Plan Added Successful");
                     setDate('');
                     setID('');
                     setSbu('');
@@ -68,10 +110,58 @@ function AdminHome() {
             });
     }
 
+    function handleSubmitOperator(event) {
+        event.preventDefault();
+
+        axios.post(`http://${process.env.REACT_APP_HOST_IP}/insert/insertOperator`, {
+            ID: ID,
+            Date: Date,
+            Sbu: Sbu,
+            LineNo: LineNo,
+            PlantName: PlantName,
+            userId:userId,
+            Shift:shift,
+            operation:operation,
+            Smv:Smv
+        })
+            .then(res => {
+                console.log(res);
+                if (res.status === 200) {
+                    setMessage("Operator Assigned Successful");
+                    setDate('');
+                    setID('');
+                    setSbu('');
+                    setLineItem('')
+                    setLineNo('');
+                    setPlantName('')
+
+                    const inputFields = document.querySelectorAll('input');
+                    inputFields.forEach(input => {
+                        input.value = '';
+                    });
+
+                }
+                else {
+                    setMessage("Error Occured");
+                    setTimeout(() => {
+                        setMessage('');
+                    }, 5000);
+                }
+
+            })
+            .catch(err => {
+                console.log(err);
+                setMessage('Error Occured(404)');
+                setTimeout(() => {
+                    setMessage('');
+                }, 5000);
+            });
+    }
+
     return (
         <div className="admin-home-container">
             <input type="checkbox" id="check" />
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark position-fixed w-100 top-0 end-0 z-2">
+            <nav className="navbar navbar-expand-lg navbar-dark bg-info position-fixed w-100 top-0 end-0 z-2">
                 <div className="container-fluid">
                     <a className="navbar-brand mx-2 bg-primary rounded" href="#">Softmatter</a>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent2" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,26 +170,24 @@ function AdminHome() {
                     <div className="collapse navbar-collapse" id="navbarSupportedContent2">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-2 align-items-center">
                             <li className="nav-item">
-                                <a className="nav-link">Dashboard</a>
+                                <a className="nav-link text-dark font-weight-bold">Dashboard</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link">Components</a>
+                                <a className="nav-link text-dark">Components</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link">Tables</a>
+                                <a className="nav-link text-dark">Tables</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" >Forms</a>
+                                <a className="nav-link text-dark" >Forms</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link">About</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" >Settings</a>
+                                <a className="nav-link text-dark" ><Clock format={'HH:mm:ss'} ticking={true} timezone={'Asia/Colombo'}/></a>
                             </li>
                         </ul>
-                        <form className="d-flex">
-                            <button className="btn btn-light radius-30 px-2" type="submit">
+                        <form className="d-flex justify-content-center align-items-center">
+                        <h6 className='p-1 mx-2 text-dark'>{operatorInfo && operatorInfo.decodedUsername || 'User'}</h6>
+                            <button className="btn btn-dark radius-30" type="submit">
                                 <span class="material-symbols-outlined">
                                     account_circle
                                 </span>
@@ -147,7 +235,7 @@ function AdminHome() {
                                 <div className="card-body p-4">
                                     <h5 className="mb-4">Daily Plan</h5>
 
-                                    <form className="row g-3" onSubmit={handleSubmit}>
+                                    <form className="row g-3" onSubmit={handleSubmitDailyPlan}>
                                         <div className="col-md-12">
                                             <label for="input25" className="form-label">ID</label>
                                             <div className="input-group">
@@ -201,7 +289,7 @@ function AdminHome() {
                                                 <span className="input-group-text"><span class="material-symbols-outlined">
                                                     key
                                                 </span></span>
-                                                <input type="number" className="form-control" id="input29" placeholder="Line No" validate={{ required: true }} onChange={e => setLineNo(e.target.value)} />
+                                                <input type="text" className="form-control" id="input29" placeholder="Line No" validate={{ required: true }} onChange={e => setLineNo(e.target.value)} />
                                             </div>
                                         </div>
                                         <div className="col-md-12">
@@ -210,7 +298,7 @@ function AdminHome() {
                                                 <span className="input-group-text"><span class="material-symbols-outlined">
                                                     recent_actors
                                                 </span></span>
-                                                <input type="number" className="form-control" id="input31" placeholder="Plant Name" validate={{ required: true }} onChange={e => setPlantName(e.target.value)} />
+                                                <input type="text" className="form-control" id="input31" placeholder="Plant Name" validate={{ required: true }} onChange={e => setPlantName(e.target.value)} />
                                             </div>
                                         </div>
                                         <div className="col-md-12">
@@ -231,7 +319,7 @@ function AdminHome() {
                                         <div className="col-md-12">
                                             <div className="d-md-flex d-grid align-items-center gap-3">
                                                 <button type="submit" className="btn btn-primary px-4 w-auto">Submit</button>
-                                                <button type="button" className="btn btn-light px-4 w-auto">Reset</button>
+                                                <button type="button" className="btn btn-secondary px-4 w-auto" onClick={handleReset}>Reset</button>
                                             </div>
                                         </div>
                                     </form>
@@ -250,7 +338,7 @@ function AdminHome() {
                                 <div className="card-body p-4">
                                     <h5 className="mb-4">Operator Daily Assignment</h5>
 
-                                    <form className="row g-3" onSubmit={handleSubmit}>
+                                    <form className="row g-3" onSubmit={handleSubmitOperator}>
                                         <div className="col-md-12">
                                             <label for="input25" className="form-label">ID</label>
                                             <div className="input-group">
@@ -284,7 +372,7 @@ function AdminHome() {
                                                 <span className="input-group-text"><span class="material-symbols-outlined">
                                                     key
                                                 </span></span>
-                                                <input type="number" className="form-control" id="input29" placeholder="Line No" validate={{ required: true }} onChange={e => setLineNo(e.target.value)} />
+                                                <input type="text" className="form-control" id="input29" placeholder="Line No" validate={{ required: true }} onChange={e => setLineNo(e.target.value)} />
                                             </div>
                                         </div>
                                         <div className="col-md-12">
@@ -293,7 +381,7 @@ function AdminHome() {
                                                 <span className="input-group-text"><span class="material-symbols-outlined">
                                                     recent_actors
                                                 </span></span>
-                                                <input type="number" className="form-control" id="input31" placeholder="Plant Name" validate={{ required: true }} onChange={e => setPlantName(e.target.value)} />
+                                                <input type="text" className="form-control" id="input31" placeholder="Plant Name" validate={{ required: true }} onChange={e => setPlantName(e.target.value)} />
                                             </div>
                                         </div>
                                         <div className="col-md-12">
@@ -323,17 +411,17 @@ function AdminHome() {
                                                 <select className="form-select" id="input32" onChange={e => setOperation(e.target.value)}>
                                                     <option value="">Select Operation</option>
                                                     <option value="LineEnd">LineEnd</option>
-                                                    <option value="Operator">Operator</option>
+                                                    <option value="Operator">operator</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div className="col-md-12">
-                                        <label for="input31" className="form-label">Svm</label>
+                                        <label for="input31" className="form-label">Smv</label>
                                         <div className="input-group">
                                             <span className="input-group-text"><span class="material-symbols-outlined">
                                             nest_clock_farsight_analog
                                             </span></span>
-                                            <input type="number" className="form-control" id="input31" placeholder="Svm(in minutes)" validate={{ required: true }} onChange={e => setSvm(e.target.value)} />
+                                            <input type="number" className="form-control" id="input31" placeholder="Smv(in minutes)" validate={{ required: true }} onChange={e => setSmv(e.target.value)} />
                                         </div>
                                     </div>
 
@@ -346,7 +434,7 @@ function AdminHome() {
                                         <div className="col-md-12">
                                             <div className="d-md-flex d-grid align-items-center gap-3">
                                                 <button type="submit" className="btn btn-primary px-4 w-auto">Submit</button>
-                                                <button type="button" className="btn btn-light px-4 w-auto">Reset</button>
+                                                <button type="button" className="btn btn-secondary px-4 w-auto">Reset</button>
                                             </div>
                                         </div>
                                     </form>

@@ -24,7 +24,7 @@ function Navbar() {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
             try {
-                const response = await axios.post('http://4.193.94.82:5000/info/getInfo', {
+                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/info/getInfo`, {
                     username: username, 
                 });
 

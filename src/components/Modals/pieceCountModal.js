@@ -20,7 +20,7 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
             try {
                 const username = window.location.pathname.split('/').pop();
                 setUsername(username);
-                const response = await axios.post('http://4.193.94.82:5000/get/getShift', {
+                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShift`, {
                     username: username,
                 });
 
@@ -54,7 +54,7 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
         setUsername(username);
 
         try {
-            const response = await axios.post('http://4.193.94.82:5000/set/setPieceCount', {
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/set/setPieceCount`, {
                 username: username,
                 pieceCount: pieceCount,
                 shift:shiftData,
