@@ -451,8 +451,6 @@ function MyDashboard() {
                                                     <div style={{ width: '13rem' }}>
                                                         <RadialBarChart Smv={Smv} pieceCount={pieceCountInfo} latestHour={latestHour} />
                                                     </div>
-                                                    <h3 className="mb-0 gap-1">20</h3>
-                                                    <p>Deviation</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -538,7 +536,7 @@ function MyDashboard() {
                                     </div>
                                 </div>
                             </div>
-                            <div className='row'>
+                            {/*<div className='row'>
                                 <div className="card border-primary border-bottom rounded-4 bg-success">
                                     <div className="card-body">
                                         <div className="d-flex align-items-center justify-content-between mt-3">
@@ -555,7 +553,7 @@ function MyDashboard() {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+    </div>*/}
                             <div className='row'>
                                 <div className="card">
                                     <div className="card-header py-3">
@@ -572,7 +570,14 @@ function MyDashboard() {
                                 </div>
                             </div>
                         </div>
+                        
                         <div className='col mx-1'>
+                        <div className="row">
+                                <button type="button" style={{ height: "3.5rem", fontWeight: "600", fontSize: "0.9rem" }} onClick={handleAddPieceCountClick}
+                                    className={downtimeClicked ? 'downtime-blur btn ripple btn-primary col mb-4' : 'btn ripple btn-primary col mb-4'}>
+                                    Add Piece Count
+                                </button>
+                            </div>
                             <div className="row">
                                 <h2
                                     className='d-flex align-content-center justify-content-center mb-4'
@@ -601,12 +606,7 @@ function MyDashboard() {
                             <div className="row">
                                 <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3rem", fontWeight: "600" }}>Machine</button>
                             </div>
-                            <div className="row">
-                                <button type="button" style={{ height: "3.5rem", fontWeight: "600", fontSize: "0.9rem" }} onClick={handleAddPieceCountClick}
-                                    className={downtimeClicked ? 'downtime-blur btn ripple btn-primary col mb-4' : 'btn ripple btn-primary col mb-4'}>
-                                    Add Piece Count
-                                </button>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>
