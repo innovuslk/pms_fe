@@ -35,6 +35,7 @@ function AdminHome() {
                 });
 
                 setOperatorInfo(response.data);
+                console.log("user info : ", operatorInfo)
             } catch (error) {
                 console.error('Error fetching data:', error);
             }

@@ -29,34 +29,49 @@ function Register() {
             userlevel: UserLevel,
             EPF: EPF
         })
-            .then(res => {
-                console.log(res);
-                if (res.status === 200) {
-                    setMessage("User Register Successful");
-                    setUserID('');
-                    setPN('');
-                    setUsername('');
-                    setLastname('')
-                    setPassword('');
-                    setUserLevel('')
-
-                }
-                else {
-                    setMessage("Error Occured");
-                    setTimeout(() => {
-                        setMessage('');
-                    }, 5000);
-                }
-
-            })
-            .catch(err => {
-                console.log(err);
-                setMessage('Error Occured(404)');
+        .then(res => {
+            console.log(res);
+            if (res.status === 200) {
+                setMessage("User Register Successful");
+                resetForm(); // Reset form fields
+                setTimeout(() => {
+                    setMessage(''); // Clear message after 5 seconds
+                }, 5000);
+            } else {
+                setMessage("Error Occurred");
                 setTimeout(() => {
                     setMessage('');
                 }, 5000);
-            });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            setMessage('Error Occurred (404)');
+            setTimeout(() => {
+                setMessage('');
+            }, 5000);
+        });
     }
+
+    const handleReset = () => {
+        resetForm();
+    };
+
+    const resetForm = () => {
+
+        setUserID('');
+        setPN('');
+        setUsername('');
+        setLastname('');
+        setPassword('');
+        setUserLevel('');
+        setEPF('');
+        // Clear input field values
+        const inputFields = document.querySelectorAll('input');
+        inputFields.forEach(input => {
+            input.value = '';
+        });
+    };
 
     return (
         <html lang="en" data-bs-theme="dark">
@@ -125,12 +140,14 @@ function Register() {
                                             </div>
                                         </div>
                                         <div className="col-md-12">
-                                            <label for="input31" className="form-label">User Level ID</label>
+                                            <label htmlFor="input31" className="form-label">User Level ID</label>
                                             <div className="input-group">
-                                                <span className="input-group-text"><span class="material-symbols-outlined">
-                                                    recent_actors
-                                                </span></span>
-                                                <input type="number" className="form-control" id="input31" placeholder="User Level" validate={{ required: true }} onChange={e => setUserLevel(e.target.value)} />
+                                                <span className="input-group-text"><span className="material-symbols-outlined">recent_actors</span></span>
+                                                <select className="form-control" id="input31" value={UserLevel} onChange={e => setUserLevel(e.target.value)}>
+                                                    <option value="">Select User Level</option>
+                                                    <option value="1">Admin</option>
+                                                    <option value="3">Operator</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div className="col-md-12">
@@ -151,7 +168,7 @@ function Register() {
                                         <div className="col-md-12">
                                             <div className="d-md-flex d-grid align-items-center gap-3">
                                                 <button type="submit" className="btn btn-primary px-4 w-auto">Submit</button>
-                                                <button type="button" className="btn btn-light px-4 w-auto">Reset</button>
+                                                <button type="button" className="btn btn-light px-4 w-auto" onClick={handleReset}>Reset</button>
                                             </div>
                                         </div>
                                     </form>
