@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import '../assets/css/adminHome.css';
 import axios from 'axios';
 import Clock from 'react-live-clock';
+import Register from './UserReg';
 
 function AdminHome() {
 
@@ -241,6 +242,10 @@ function AdminHome() {
                     person_pin_circle
                 </span>Operator Assign
                 </a>
+                <a className='d-flex align-items-center' onClick={() => handleSideBarClick('register')}><span class="material-symbols-outlined mx-1">
+                person_pin_circle
+            </span>User Register
+            </a>
                 <a className='d-flex align-items-center'><span class="material-symbols-outlined mx-1">
                     settings
                 </span>Settings
@@ -452,7 +457,6 @@ function AdminHome() {
                                                 <input type="number" className="form-control" id="input31" placeholder="Smv(in minutes)" validate={{ required: true }} onChange={e => setSmv(e.target.value)} />
                                             </div>
                                         </div>
-
                                         {message && (
                                             <div className="alert alert-success" role="alert">
                                                 {message}
@@ -472,6 +476,7 @@ function AdminHome() {
                     </div>
 
                 </div> : ''}
+                {sideBarType === 'register' ? <Register/> : ''}
         </div>
     );
 }

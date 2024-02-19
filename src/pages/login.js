@@ -27,7 +27,7 @@ function Login() {
                     // Redirect to another page with the extracted username
                     navigate(`/user-info/${encodedUsername}`);
                 }
-                else if(res.status === 200 && (res.data.userLevel === 1)){
+                else if (res.status === 200 && (res.data.userLevel === 1)) {
                     const encodedUsername = btoa(Username);
 
                     // Redirect to another page with the extracted username
@@ -50,7 +50,7 @@ function Login() {
             });
     }
 
-    function handleRegister(){
+    function handleRegister() {
         navigate(`/register`)
     }
 
@@ -105,9 +105,9 @@ function Login() {
                                                         <div className="mt-4 text-center">
                                                             <Button color="primary" className="w-md waves-effect waves-light" type="submit">Log In</Button>
                                                         </div>
-                                                        <div className="mt-4 text-center">
+                                                        {/*<div className="mt-4 text-center">
                                                             <h7 className = 'text-decoration-underline'><a onClick={handleRegister}>Register</a></h7>
-                                                        </div>
+                                                </div>*/}
                                                         <p></p>
                                                     </form>
                                                 </div>

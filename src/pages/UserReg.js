@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.css';
+import '../assets/css/adminHome.css';
 import axios from 'axios';
 
 function Register() {
@@ -76,9 +77,8 @@ function Register() {
     };
 
     return (
-        <html lang="en" data-bs-theme="dark">
-            <body>
-                <div className='container-fluid'>
+
+                <div className='content'>
                     <div>
                         <div className="col-6 col-xl-6 col-md-8 mx-auto my-3">
                             <div className="card">
@@ -175,7 +175,7 @@ function Register() {
                                         <div className="col-md-12">
                                             <div className="d-md-flex d-grid align-items-center gap-3">
                                                 <button type="submit" className="btn btn-primary px-4 w-auto">Submit</button>
-                                                <button type="button" className="btn btn-light px-4 w-auto" onClick={handleReset}>Reset</button>
+                                                <button type="button" className="btn btn-secondary px-4 w-auto" onClick={handleReset}>Reset</button>
                                             </div>
                                         </div>
                                     </form>
@@ -184,8 +184,6 @@ function Register() {
                         </div>
                     </div>
                 </div>
-            </body>
-        </html>
     )
 }
 
