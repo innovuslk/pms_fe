@@ -12,6 +12,7 @@ function Register() {
     const [Password, setPassword] = useState('');
     const [UserLevel, setUserLevel] = useState('');
     const [EPF, setEPF] = useState('');
+    const [plantName,setPlantName] = useState('');
     const [message, setMessage] = useState('');
 
     // const navigate = useNavigate();
@@ -21,13 +22,13 @@ function Register() {
 
         axios.post(`http://${process.env.REACT_APP_HOST_IP}/register`, {
             PN: PN,
-            userId: userId,
             username: Username,
             firstName: Firstname,
             lastName: Lastname,
             password: Password,
             userlevel: UserLevel,
-            EPF: EPF
+            EPF: EPF,
+            plantName:plantName
         })
         .then(res => {
             console.log(res);
@@ -66,6 +67,7 @@ function Register() {
         setPassword('');
         setUserLevel('');
         setEPF('');
+        setPlantName('');
         // Clear input field values
         const inputFields = document.querySelectorAll('input');
         inputFields.forEach(input => {
@@ -92,15 +94,6 @@ function Register() {
                                                     pin
                                                 </span></span>
                                                 <input type="number" className="form-control" id="input25" placeholder="PN" validate={{ required: true }} onChange={e => setPN(e.target.value)} />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-12">
-                                            <label for="input26" className="form-label">User ID</label>
-                                            <div className="input-group">
-                                                <span className="input-group-text"><span class="material-symbols-outlined">
-                                                    badge
-                                                </span></span>
-                                                <input type="text" className="form-control" id="input26" placeholder="User ID" validate={{ required: true }} onChange={e => setUserID(e.target.value)} />
                                             </div>
                                         </div>
                                         <div className="col-md-12">
@@ -159,6 +152,20 @@ function Register() {
                                                 <input type="text" className="form-control" id="input32" placeholder="EPF" validate={{ required: true }} onChange={e => setEPF(e.target.value)} />
                                             </div>
                                         </div>
+                                        <div className="col-md-12">
+                                        <label for="input31" className="form-label">Plant Name</label>
+                                        <div className="input-group">
+                                            <span className="input-group-text"><span class="material-symbols-outlined">
+                                                recent_actors
+                                            </span></span>
+                                            <select className="form-select" id="input32" onChange={e => setPlantName(e.target.value)}>
+                                                <option value="">Select Plant</option>
+                                                <option value="UPLP">UPLP</option>
+                                                <option value="LC">LC</option>
+                                                <option value="ExcelTech">ExcelTech</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                         {message && (
                                             <div className="alert alert-success" role="alert">
                                                 {message}

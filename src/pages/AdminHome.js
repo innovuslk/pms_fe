@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.css';
 import '../assets/css/adminHome.css';
 import axios from 'axios';
 import Clock from 'react-live-clock';
 
 function AdminHome() {
+
+    const navigate = useNavigate();
 
     const [sideBarType, setSideBarType] = useState('Dashboard');
     const [ID, setID] = useState();
@@ -20,9 +23,10 @@ function AdminHome() {
     const [shift, setShift] = useState('');
     const [operation, setOperation] = useState('');
     const [Smv, setSmv] = useState('');
-    const [operatorInfo,setOperatorInfo] = useState(null);
+    const [operatorInfo, setOperatorInfo] = useState(null);
     const [username, setUsername] = useState();
-
+    const [plantUsers, setPlantUsers] = useState();
+    const [iconClicked, setIconClicked] = useState(false);
 
     useEffect(() => {
         // Fetch data from your backend when the component mounts
@@ -31,7 +35,7 @@ function AdminHome() {
             setUsername(username);
             try {
                 const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/info/getInfo`, {
-                    username: username, 
+                    username: username,
                 });
 
                 setOperatorInfo(response.data);
@@ -42,12 +46,29 @@ function AdminHome() {
         };
 
         fetchData();
-        
+
     }, []);
 
+    useEffect(() => {
+        // Fetch data from your backend when the component mounts
+        const getUserNames = async () => {
+            try {
+                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getPlantUsers`, {
+                    plantName: PlantName,
+                });
+
+                setPlantUsers(response.data);
+                console.log("user info : ", plantUsers)
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        getUserNames();
+
+    }, [PlantName]);
 
     const handleSideBarClick = (type) => {
-        console.log(type)
         setSideBarType(type)
     }
     const handleReset = () => {
@@ -73,7 +94,6 @@ function AdminHome() {
         event.preventDefault();
 
         await axios.post(`http://${process.env.REACT_APP_HOST_IP}/insert/insertDailyPlan`, {
-            ID: ID,
             Date: Date,
             Sbu: Sbu,
             SalesOrder: SalesOrder,
@@ -115,18 +135,16 @@ function AdminHome() {
         event.preventDefault();
 
         axios.post(`http://${process.env.REACT_APP_HOST_IP}/insert/insertOperator`, {
-            ID: ID,
             Date: Date,
             Sbu: Sbu,
             LineNo: LineNo,
             PlantName: PlantName,
-            userId:userId,
-            Shift:shift,
-            operation:operation,
-            Smv:Smv
+            userId: userId,
+            Shift: shift,
+            operation: operation,
+            Smv: Smv
         })
             .then(res => {
-                console.log(res);
                 if (res.status === 200) {
                     setMessage("Operator Assigned Successful");
                     setDate('');
@@ -135,6 +153,10 @@ function AdminHome() {
                     setLineItem('')
                     setLineNo('');
                     setPlantName('')
+
+                    setTimeout(() => {
+                        setMessage('');
+                    }, 5000);
 
                     const inputFields = document.querySelectorAll('input');
                     inputFields.forEach(input => {
@@ -158,11 +180,18 @@ function AdminHome() {
                 }, 5000);
             });
     }
+    const handleLogout = () => {
+        navigate(`/`);
+    };
+
+    const handleClick = () => {
+        setIconClicked(prevState => !prevState);
+    }
 
     return (
         <div className="admin-home-container">
             <input type="checkbox" id="check" />
-            <nav className="navbar navbar-expand-lg navbar-dark bg-info position-fixed w-100 top-0 end-0 z-2">
+            <nav className="navbar navbar-expand-lg navbar-dark position-fixed w-100 top-0 end-0 z-2" style={{backgroundColor: "#195858"}}>
                 <div className="container-fluid">
                     <a className="navbar-brand mx-2 bg-primary rounded" href="#">Softmatter</a>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent2" aria-expanded="false" aria-label="Toggle navigation">
@@ -171,28 +200,29 @@ function AdminHome() {
                     <div className="collapse navbar-collapse" id="navbarSupportedContent2">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-2 align-items-center">
                             <li className="nav-item">
-                                <a className="nav-link text-dark font-weight-bold">Dashboard</a>
+                                <a className="nav-link font-weight-bold">Dashboard</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link text-dark">Components</a>
+                                <a className="nav-link">Components</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link text-dark">Tables</a>
+                                <a className="nav-link">Tables</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link text-dark" >Forms</a>
+                                <a className="nav-link" >Forms</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link text-dark" ><Clock format={'HH:mm:ss'} ticking={true} timezone={'Asia/Colombo'}/></a>
+                                <a className="nav-link" ><Clock format={'HH:mm:ss'} ticking={true} timezone={'Asia/Colombo'} /></a>
                             </li>
                         </ul>
                         <form className="d-flex justify-content-center align-items-center">
-                        <h6 className='p-1 mx-2 text-dark'>{operatorInfo && operatorInfo.decodedUsername || 'User'}</h6>
-                            <button className="btn btn-dark radius-30" type="submit">
+                            <h6 className='p-1 mx-2'>{operatorInfo && operatorInfo.decodedUsername || 'User'}</h6>
+                            <button className="btn btn-dark radius-30" type="button" onClick={handleClick}>
                                 <span class="material-symbols-outlined">
                                     account_circle
                                 </span>
                             </button>
+                            {iconClicked && <button className="btn btn-danger h-50 w-auto mx-2" onClick={handleLogout}>Log out</button>}
                         </form>
                     </div>
                 </div>
@@ -237,15 +267,6 @@ function AdminHome() {
                                     <h5 className="mb-4">Daily Plan</h5>
 
                                     <form className="row g-3" onSubmit={handleSubmitDailyPlan}>
-                                        <div className="col-md-12">
-                                            <label for="input25" className="form-label">ID</label>
-                                            <div className="input-group">
-                                                <span className="input-group-text"><span class="material-symbols-outlined">
-                                                    pin
-                                                </span></span>
-                                                <input type="number" className="form-control" id="input25" placeholder="ID" validate={{ required: true }} onChange={e => setID(e.target.value)} />
-                                            </div>
-                                        </div>
                                         <div className="col-md-12">
                                             <label for="input26" className="form-label">Date</label>
                                             <div className="input-group">
@@ -299,7 +320,12 @@ function AdminHome() {
                                                 <span className="input-group-text"><span class="material-symbols-outlined">
                                                     recent_actors
                                                 </span></span>
-                                                <input type="text" className="form-control" id="input31" placeholder="Plant Name" validate={{ required: true }} onChange={e => setPlantName(e.target.value)} />
+                                                <select className="form-select" id="input32" onChange={e => setPlantName(e.target.value)}>
+                                                    <option value="">Select Plant</option>
+                                                    <option value="UPLP">UPLP</option>
+                                                    <option value="LC">LC</option>
+                                                    <option value="ExcelTech">ExcelTech</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div className="col-md-12">
@@ -341,15 +367,6 @@ function AdminHome() {
 
                                     <form className="row g-3" onSubmit={handleSubmitOperator}>
                                         <div className="col-md-12">
-                                            <label for="input25" className="form-label">ID</label>
-                                            <div className="input-group">
-                                                <span className="input-group-text"><span class="material-symbols-outlined">
-                                                    pin
-                                                </span></span>
-                                                <input type="number" className="form-control" id="input25" placeholder="ID" validate={{ required: true }} onChange={e => setID(e.target.value)} />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-12">
                                             <label for="input26" className="form-label">Date</label>
                                             <div className="input-group">
                                                 <span className="input-group-text"><span class="material-symbols-outlined">
@@ -379,19 +396,29 @@ function AdminHome() {
                                         <div className="col-md-12">
                                             <label for="input31" className="form-label">Plant Name</label>
                                             <div className="input-group">
-                                                <span className="input-group-text"><span class="material-symbols-outlined">
-                                                    recent_actors
+                                                <span className="input-group-text"><span className="material-symbols-outlined">
+                                                    crisis_alert
                                                 </span></span>
-                                                <input type="text" className="form-control" id="input31" placeholder="Plant Name" validate={{ required: true }} onChange={e => setPlantName(e.target.value)} />
+                                                <select className="form-select" id="input32" onChange={e => setPlantName(e.target.value)}>
+                                                    <option value="">Select Plant</option>
+                                                    <option value="UPLP">UPLP</option>
+                                                    <option value="LC">LC</option>
+                                                    <option value="ExcelTech">ExcelTech</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div className="col-md-12">
-                                            <label for="input26" className="form-label">User ID</label>
+                                            <label for="input26" className="form-label">UserName</label>
                                             <div className="input-group">
-                                                <span className="input-group-text"><span class="material-symbols-outlined">
-                                                    badge
+                                                <span className="input-group-text"><span className="material-symbols-outlined">
+                                                    crisis_alert
                                                 </span></span>
-                                                <input type="number" className="form-control" id="input26" placeholder="User ID" validate={{ required: true }} onChange={e => setUserID(e.target.value)} />
+                                                <select className="form-select" id="input32" onChange={e => setUserID(e.target.value)}>
+                                                    <option value="">Select User</option>
+                                                    {plantUsers && plantUsers.map(user => (
+                                                        <option key={user.userid} value={user.userid}>{user.username}</option>
+                                                    ))}
+                                                </select>
                                             </div>
                                         </div>
                                         <div className="col-md-12">
@@ -417,14 +444,14 @@ function AdminHome() {
                                             </div>
                                         </div>
                                         <div className="col-md-12">
-                                        <label for="input31" className="form-label">Smv</label>
-                                        <div className="input-group">
-                                            <span className="input-group-text"><span class="material-symbols-outlined">
-                                            nest_clock_farsight_analog
-                                            </span></span>
-                                            <input type="number" className="form-control" id="input31" placeholder="Smv(in minutes)" validate={{ required: true }} onChange={e => setSmv(e.target.value)} />
+                                            <label for="input31" className="form-label">Smv</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text"><span class="material-symbols-outlined">
+                                                    nest_clock_farsight_analog
+                                                </span></span>
+                                                <input type="number" className="form-control" id="input31" placeholder="Smv(in minutes)" validate={{ required: true }} onChange={e => setSmv(e.target.value)} />
+                                            </div>
                                         </div>
-                                    </div>
 
                                         {message && (
                                             <div className="alert alert-success" role="alert">

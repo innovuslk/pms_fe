@@ -52,7 +52,7 @@ function MyDashboard() {
                 setTimerInterval(null);
             });
         }
-        console.log("finalTimerValue", finalTimerValue)
+
 
         return () => clearInterval(intervalId);
     }, [downtimeClicked, machineClicked]);
@@ -91,7 +91,7 @@ function MyDashboard() {
         const intervalId = setInterval(getBarChartData, 10000);
 
         return () => clearInterval(intervalId);
-    }, [requiredRate,shift]);
+    }, [requiredRate, shift, pieceCountInfo]);
 
     useEffect(() => {
         getSmv();
@@ -147,7 +147,7 @@ function MyDashboard() {
                     downTime: finalTimerValue,
                     startTime: downtimeStartTime.toISOString().slice(0, 19).replace('T', ' '),
                 });
-                console.log(response)
+
 
                 // Handle response if needed
             } catch (error) {
@@ -195,7 +195,7 @@ function MyDashboard() {
                 borderWidth: 0
             }
         ]
-    }, [requiredRate,shift]);
+    }, [requiredRate, shift]);
 
     const options = {
         scales: {
@@ -250,7 +250,7 @@ function MyDashboard() {
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShift`, {
                 username: username,
             });
-            console.log("shift",response)
+
             setShift(response.data.Shift)
 
         }
@@ -340,7 +340,6 @@ function MyDashboard() {
 
             Object.keys(totalPieceCountByHour).forEach(hour => {
                 const pieceCountForHour = totalPieceCountByHour[hour];
-                console.log(`${hour}: ${pieceCountForHour}`);
                 newData.datasets[0].data.push(pieceCountForHour);
             });
 
@@ -348,7 +347,6 @@ function MyDashboard() {
 
             Object.keys(totalLineEndPieceCountByHour).forEach(hour => {
                 const pieceCountForHour = totalLineEndPieceCountByHour[hour];
-                console.log(`${hour}: ${pieceCountForHour}`);
                 newData.datasets[1].data.push(pieceCountForHour);
             });
 
@@ -380,7 +378,8 @@ function MyDashboard() {
     const calculateGSDPieceRate = (smv) => {
 
         let GSDPieceRate = 60 / smv;
-        return Math.round(GSDPieceRate);
+        let answer = GSDPieceRate / 7.5
+        return Math.round(answer);
     }
 
 
@@ -481,13 +480,13 @@ function MyDashboard() {
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                     <h3 className="mb-0">{GSDPieceRate || '0'}</h3>
                                                     <p className="mb-0">GSD Piece</p>
-                                                    <p className="mb-0" style={{marginTop:"-10px"}}>Rate</p>
+                                                    <p className="mb-0" style={{ marginTop: "-10px" }}>Rate</p>
                                                 </div>
                                                 <div className="vr"></div>
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">{dailyTarget / 10 || '0'}</h3>
+                                                    <h3 className="mb-0">{Math.round((dailyTarget / 10)/ 7.5) || '0'}</h3>
                                                     <p className="mb-0">Target Piece</p>
-                                                    <p className="mb-0" style={{marginTop:"-10px"}}>Rate</p>
+                                                    <p className="mb-0" style={{ marginTop: "-10px" }}>Rate</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -536,7 +535,7 @@ function MyDashboard() {
                                     </div>
                                 </div>
                             </div>
-                            {/*<div className='row'>
+    {/*<div className='row'>
                                 <div className="card border-primary border-bottom rounded-4 bg-success">
                                     <div className="card-body">
                                         <div className="d-flex align-items-center justify-content-between mt-3">
@@ -570,9 +569,9 @@ function MyDashboard() {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className='col mx-1'>
-                        <div className="row">
+                            <div className="row">
                                 <button type="button" style={{ height: "3.5rem", fontWeight: "600", fontSize: "0.9rem" }} onClick={handleAddPieceCountClick}
                                     className={downtimeClicked ? 'downtime-blur btn ripple btn-primary col mb-4' : 'btn ripple btn-primary col mb-4'}>
                                     Add Piece Count
@@ -606,7 +605,7 @@ function MyDashboard() {
                             <div className="row">
                                 <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3rem", fontWeight: "600" }}>Machine</button>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>

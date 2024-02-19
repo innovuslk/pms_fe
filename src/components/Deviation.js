@@ -101,7 +101,6 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
 
     const calculateDeviation = ( shiftHours, dailyTarget , intHour , pieceCount) => {
 
-        console.log("data in deviation",shiftHours, dailyTarget , intHour , pieceCount)
             let hourlyTarget = parseInt(dailyTarget) / shiftHours
             let alreadyDone = parseInt(pieceCount)/ intHour
             let deviation = hourlyTarget - alreadyDone

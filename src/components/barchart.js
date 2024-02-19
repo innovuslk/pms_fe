@@ -29,6 +29,9 @@ function BarChart({ canvasId, data, shift }) {
                         beginAtZero: true,
                     },
                 },
+                animation: {
+                    duration: 0, // turn off the animation
+                },
                 },
             },
         );

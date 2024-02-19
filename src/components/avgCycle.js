@@ -52,8 +52,9 @@ function AvgCycle({ latestHour, pieceCount }) {
     const calculateAvgCycle = (intHour, pieceCount) => {
 
         let avgCycle = Math.round((pieceCount / intHour));
+        let answer =  Math.round(60 / avgCycle)
 
-        return avgCycle;
+        return answer;
     }
 
     return (

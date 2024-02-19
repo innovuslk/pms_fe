@@ -1,5 +1,5 @@
 // Modal.js
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import VirtualNumPad from './VirtualNumPad';
 import axios from 'axios';
 
@@ -8,9 +8,9 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
     const [username, setUsername] = useState();
     const [pieceCountInfo, setPieceCountInfo] = useState();
     const [shiftData, setShiftData] = useState({ shift: '' });
-    const [currentHour,setCurrentHour] = useState('');
-    const [nextHour,setNextHour] = useState('');
-    const [hour,setHour] = useState();
+    const [currentHour, setCurrentHour] = useState('');
+    const [nextHour, setNextHour] = useState('');
+    const [hour, setHour] = useState();
     const [selectedButton, setSelectedButton] = useState(null);
 
 
@@ -25,7 +25,6 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
                 });
 
                 setShiftData(response.data.Shift);
-                console.log(response);
             } catch (error) {
                 console.error("Failed to get the shift", error);
             }
@@ -52,31 +51,34 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
     const fetchLatestPieceCount = async () => {
         const username = window.location.pathname.split('/').pop();
         setUsername(username);
-
+    
         try {
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/set/setPieceCount`, {
                 username: username,
                 pieceCount: pieceCount,
-                shift:shiftData,
+                shift: shiftData,
                 hour: hour
-            }).then(
-                alert('Successfully updated number of pieces!')
-            );
-
-            setPieceCountInfo(response.data.latestPieceCount);
+            });
+    
+            // Store the response data in a variable
+            const latestPieceCount = response.data.latestPieceCount;
+            // Set the state of pieceCountInfo
+            setPieceCountInfo(latestPieceCount);
+            // Alert here
+            alert('Successfully updated number of pieces!');
         } catch (error) {
             console.error('Error fetching latest Piece count data:', error);
         }
     };
 
     useEffect(() => {
-        console.log(shiftData);
-    
+
+
         if (shiftData === 'A') {
             const currentTime = new Date();
             const currentHourValue = currentTime.getHours();
             const minutes = currentTime.getMinutes();
-    
+
             // Define time ranges with start and end minutes
             const timeRanges = [
                 { startHour: 6, startMinute: 20, endHour: 7, endMinute: 40, label: '1st Hour' },
@@ -88,20 +90,20 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
                 { startHour: 12, startMinute: 0, endHour: 13, endMinute: 0, label: '7th Hour' },
                 { startHour: 13, startMinute: 0, endHour: 14, endMinute: 0, label: '8th Hour' },
             ];
-    
+
             // Find the matching time range
             const matchingRange = timeRanges.find(range => {
                 const withinHourRange =
                     (currentHourValue === range.startHour && minutes >= range.startMinute) ||
                     (currentHourValue > range.startHour && currentHourValue < range.endHour) ||
                     (currentHourValue === range.endHour && minutes <= range.endMinute);
-    
+
                 return withinHourRange;
             });
-    
+
             if (matchingRange) {
                 setCurrentHour(matchingRange.label);
-    
+
                 // Find the next time range
                 const nextIndex = timeRanges.indexOf(matchingRange) + 1;
                 if (nextIndex < timeRanges.length) {
@@ -120,7 +122,7 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
             const currentTime = new Date();
             const currentHourValue = currentTime.getHours();
             const minutes = currentTime.getMinutes();
-    
+
             // Define time ranges with start and end minutes
             const timeRanges = [
                 { startHour: 14, startMinute: 0, endHour: 14, endMinute: 20, label: '1st Hour' },
@@ -132,20 +134,20 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
                 { startHour: 19, startMinute: 20, endHour: 19, endMinute: 40, label: '7th Hour' },
                 { startHour: 19, startMinute: 40, endHour: 20, endMinute: 0, label: '8th Hour' },
             ];
-    
+
             // Find the matching time range
             const matchingRange = timeRanges.find(range => {
                 const withinHourRange =
                     (currentHourValue === range.startHour && minutes >= range.startMinute) ||
                     (currentHourValue > range.startHour && currentHourValue < range.endHour) ||
                     (currentHourValue === range.endHour && minutes <= range.endMinute);
-    
+
                 return withinHourRange;
             });
-    
+
             if (matchingRange) {
                 setCurrentHour(matchingRange.label);
-    
+
                 // Find the next time range
                 const nextIndex = timeRanges.indexOf(matchingRange) + 1;
                 if (nextIndex < timeRanges.length) {
@@ -160,24 +162,28 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
         }
     }, [shiftData]);
 
-const handleButtonSelect = (hour) => {
-    setHour((prevCount) => (selectedButton === hour ? '' : hour));
-    setSelectedButton((prevButton) => (prevButton === hour ? null : hour));
-};
+    const handleButtonSelect = (hour) => {
+        setHour((prevCount) => (selectedButton === hour ? '' : hour));
+        setSelectedButton((prevButton) => (prevButton === hour ? null : hour));
+    };
 
 
     const handleOk = async () => {
         try {
             // Fetch the latest piece count
-            await fetchLatestPieceCount().then(() => {
-                onPieceCountUpdate(() => pieceCount);
-                setPieceCount('');
-                setSelectedButton(null);
-                handleCloseModal();
-            });
+            await fetchLatestPieceCount();
+            onPieceCountUpdate(pieceCount);
+            setPieceCount('');
+            setSelectedButton(null);
+            return true;
         } catch (error) {
             console.error('Error handling OK:', error);
+            return false;
         }
+    };
+
+    const handleOkWithClose = async () => {
+        let success = await handleOk().then( handleCloseModal());
     };
 
     return (
@@ -194,26 +200,26 @@ const handleButtonSelect = (hour) => {
                         <button type="button" className="btn-close" aria-label="Close" onClick={handleCloseModal}></button>
                     </div>
                     <div className="btn-group mt-3 mx-5">
-                    <button
-                        type="button"
-                        className={`btn btn-secondary mx-2 ${selectedButton === currentHour ? 'btn btn-warning' : ''}`}
-                        onClick={() => handleButtonSelect(currentHour)}
-                    >
-                        {currentHour}
-                    </button>
-                    <button
-                        type="button"
-                        className={`btn btn-secondary mx-2 ${selectedButton === nextHour ? 'active btn btn-warning' : ''}`}
-                        onClick={() => handleButtonSelect(nextHour)}
-                    >
-                        {nextHour}
-                    </button>
-                </div>
+                        <button
+                            type="button"
+                            className={`btn btn-secondary mx-2 ${selectedButton === currentHour ? 'btn btn-warning' : ''}`}
+                            onClick={() => handleButtonSelect(currentHour)}
+                        >
+                            {currentHour}
+                        </button>
+                        <button
+                            type="button"
+                            className={`btn btn-secondary mx-2 ${selectedButton === nextHour ? 'active btn btn-warning' : ''}`}
+                            onClick={() => handleButtonSelect(nextHour)}
+                        >
+                            {nextHour}
+                        </button>
+                    </div>
                     <div className="modal-body align-content-center justify-content-center mx-3">
                         <label htmlFor="pieceCount" className='mb-2'>Add Piece Count:</label>
                         <input name="pieceCount" type="number" className="form-control" id="pieceCount" validate={{ required: true }} placeholder="Enter Piece Count" value={pieceCount} />
                     </div>
-                    <VirtualNumPad onKeyPress={handleKeyPress} onDelete={handleDelete} onOk={handleOk} />
+                    <VirtualNumPad onKeyPress={handleKeyPress} onDelete={handleDelete} onOk={handleOkWithClose} />
                     <div className="modal-footer">
                     </div>
                 </div>
