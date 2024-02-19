@@ -5,6 +5,7 @@ import '../assets/css/adminHome.css';
 import axios from 'axios';
 import Clock from 'react-live-clock';
 import Register from './UserReg';
+import Downtime from './downTime';
 
 function AdminHome() {
 
@@ -35,7 +36,7 @@ function AdminHome() {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
             try {
-                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/info/getInfo`, {
+                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/info/getAdminInfo`, {
                     username: username,
                 });
 
@@ -192,7 +193,7 @@ function AdminHome() {
     return (
         <div className="admin-home-container">
             <input type="checkbox" id="check" />
-            <nav className="navbar navbar-expand-lg navbar-dark position-fixed w-100 top-0 end-0 z-2" style={{backgroundColor: "#195858"}}>
+            <nav className="navbar navbar-expand-lg navbar-dark position-fixed w-100 top-0 end-0 z-2" style={{ backgroundColor: "#195858" }}>
                 <div className="container-fluid">
                     <a className="navbar-brand mx-2 bg-primary rounded" href="#">Softmatter</a>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent2" aria-expanded="false" aria-label="Toggle navigation">
@@ -201,7 +202,7 @@ function AdminHome() {
                     <div className="collapse navbar-collapse" id="navbarSupportedContent2">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-2 align-items-center">
                             <li className="nav-item">
-                                <a className="nav-link font-weight-bold">Dashboard</a>
+                                <a className="nav-link font-weight-bold bg-info rounded-5 text-dark">Dashboard</a>
                             </li>
                             <li className="nav-item">
                                 <a className="nav-link">Components</a>
@@ -243,9 +244,14 @@ function AdminHome() {
                 </span>Operator Assign
                 </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('register')}><span class="material-symbols-outlined mx-1">
-                person_pin_circle
-            </span>User Register
-            </a>
+                    person_pin_circle
+                </span>User Register
+                </a>
+                <a className='d-flex align-items-center' onClick={() => handleSideBarClick('downtime')}><span class="material-symbols-outlined mx-1">
+                flex_direction
+                </span>
+                DownTime Info
+                </a>
                 <a className='d-flex align-items-center'><span class="material-symbols-outlined mx-1">
                     settings
                 </span>Settings
@@ -476,7 +482,8 @@ function AdminHome() {
                     </div>
 
                 </div> : ''}
-                {sideBarType === 'register' ? <Register/> : ''}
+            {sideBarType === 'register' ? <Register /> : ''}
+            {sideBarType === 'downtime' ? <Downtime /> : ''}
         </div>
     );
 }
