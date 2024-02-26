@@ -15,22 +15,27 @@ function Login() {
 
     function handleSubmit(event) {
         event.preventDefault();
+
+        if (!navigator.onLine) {
+            setErrorMessage("You have no internet connection");
+            return;
+        }
+
         axios.post(`http://${process.env.REACT_APP_HOST_IP}/login`, {
             username: Username,
             password: Password,
         })
             .then(res => {
                 console.log(res);
+                const token = res.data.token;
+                localStorage.setItem('token', token); // Store the token in local storage
+
                 if (res.status === 200 && (res.data.userLevel === 3)) {
                     const encodedUsername = btoa(Username);
-
-                    // Redirect to another page with the extracted username
                     navigate(`/user-info/${encodedUsername}`);
                 }
                 else if (res.status === 200 && (res.data.userLevel === 1)) {
                     const encodedUsername = btoa(Username);
-
-                    // Redirect to another page with the extracted username
                     navigate(`/admin/${encodedUsername}`);
                 }
                 else {
@@ -39,7 +44,6 @@ function Login() {
                         setErrorMessage('');
                     }, 5000);
                 }
-
             })
             .catch(err => {
                 console.log(err);

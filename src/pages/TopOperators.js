@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import '../assets/css/adminHome.css';
 
 const TopOperatorsTable = () => {
     const [topUsers, setTopUsers] = useState([]);
@@ -18,10 +19,10 @@ const TopOperatorsTable = () => {
     }, []);
 
     return (
-        <div className="container mt-5">
-            <h2 className="text-center mb-4">Top Operators</h2>
+        <div className="content">
+            <h2 className="text-center mb-4 text-warning">Top Operators</h2>
             <div className="table-responsive">
-                <table className="table table-striped table-bordered">
+                <table className="rounded col-6 col-xl-6 col-md-8 mx-auto z-index-1">
                     <thead className="thead-dark">
                         <tr>
                             <th scope="col" className="text-center text-warning">User ID</th>

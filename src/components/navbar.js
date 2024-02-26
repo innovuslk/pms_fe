@@ -19,6 +19,8 @@ function Navbar() {
     const [operatorInfo, setOperatorInfo] = useState(null);
     const [username, setUsername] = useState();
     const [iconClicked, setIconClicked] = useState(false);
+    const [style, setStyle] = useState()
+    const [connection , setConnection] = useState(); 
 
 
     useEffect(() => {
@@ -41,6 +43,43 @@ function Navbar() {
 
     }, []);
 
+    useEffect(() => {
+        // Fetch data from your backend when the component mounts
+        const checkConnection = () => {
+            if(!navigator.onLine){
+                setConnection('offline')
+            }
+            else{
+                setConnection('')
+            }
+        };
+
+        const intervalId = setInterval(checkConnection, 5000);
+
+        return () => clearInterval(intervalId);
+
+    }, [connection]);
+
+    useEffect(() => {
+        // Fetch data from your backend when the component mounts
+        const getStyle = async () => {
+            const username = window.location.pathname.split('/').pop();
+            setUsername(username);
+            try {
+                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDailyTarget`, {
+                    username: username,
+                });
+
+                setStyle(response.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        getStyle();
+
+    }, []);
+
     const handleLogout = () => {
         navigate(`/`);
     };
@@ -55,22 +94,22 @@ function Navbar() {
 
             <body>
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-                    <div className="container-fluid">	<a className="navbar-brand mx-2 bg-primary rounded" href="#">Softmatter</a>
+                    <div className="container-fluid">	<a className="navbar-brand mx-2 bg-primary rounded">Softmatter</a>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent2" aria-expanded="false" aria-label="Toggle navigation"> <span className="navbar-toggler-icon"></span>
                         </button>
                         <div className="collapse navbar-collapse" id="navbarSupportedContent2">
                             <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-2 align-items-center">
-                                <li className="nav-item"><a className="nav-link active d-flex align-items-center gap-1" aria-current="page" href="#"><span className="material-symbols-outlined">
+                                <li className="nav-item"><a className="nav-link active d-flex align-items-center gap-1" aria-current="page"><span className="material-symbols-outlined">
                                     factory
                                 </span>{operatorInfo && operatorInfo.plantName || 'Plant'}</a>
                                 </li>
-                                <li className="nav-item me-auto"><a className="nav-link d-flex align-items-center gap-1" href="javascript:;"><span className="material-symbols-outlined">
+                                <li className="nav-item me-auto"><a className="nav-link d-flex align-items-center gap-1"><span className="material-symbols-outlined">
                                     view_module
                                 </span>Line - {operatorInfo && operatorInfo.lineNo || 'Line'}</a>
                                 </li>
-                                <li className="nav-item me-auto"><a className="nav-link d-flex align-items-center gap-1" href="javascript:;"><span className="material-symbols-outlined">
+                                <li className="nav-item me-auto"><a className="nav-link d-flex align-items-center gap-1"><span className="material-symbols-outlined">
                                     styler
-                                </span>Style</a>
+                                </span>Style - {style && style.style || ' '}</a>
                                 </li>
                                 <li className="nav-item me-auto">
                                     <a className="nav-link d-flex align-items-center gap-1" href="javascript:;">
@@ -79,6 +118,10 @@ function Navbar() {
                                         <Clock format={'HH:mm:ss'} ticking={true} timezone={'Asia/Colombo'} />
                                     </a>
                                 </li>
+                                {connection === 'offline' ? <li className="nav-item me-auto"><a className="nav-link d-flex align-items-center gap-1 text-danger"><span class="material-symbols-outlined text-danger">
+                                wifi_off
+                                </span> You Have No Internet</a>
+                                </li>: ''}
                             </ul>
 
 

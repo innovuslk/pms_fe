@@ -44,6 +44,7 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     },[shift, shiftHours, dailyTarget, intHour, pieceCount])
 
     useEffect(() => {
+        console.log(latestHour)
         switch (latestHour) {
             case "1st Hour":
                 setIntHour(1);
@@ -100,6 +101,8 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     }
 
     const calculateDeviation = ( shiftHours, dailyTarget , intHour , pieceCount) => {
+
+        console.log("deviation values",shiftHours, dailyTarget ,intHour ,pieceCount )
 
             let hourlyTarget = parseInt(dailyTarget) / shiftHours
             let alreadyDone = parseInt(pieceCount)/ intHour

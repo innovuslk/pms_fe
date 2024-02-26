@@ -18,9 +18,10 @@ function LineEndPieceCount() {
 
     const getLineEndPieceCount = async () => {
         try {
-
+            const username = window.location.pathname.split('/').pop();
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getLineEndPieceCount`, {
                 operation: "LineEnd",
+                username : username
             });
             setPieceCount(response.data.totalLineEndPieceCount)
         }

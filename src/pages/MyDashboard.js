@@ -10,10 +10,12 @@ import LineEndPieceCount from '../components/LineEndPieceCount';
 import DailyTarget from '../components/DailyTarget';
 import '../assets/css/myDashboard.css';
 import AvgCycle from '../components/avgCycle';
+import { useNavigate } from 'react-router-dom'
 
 
 function MyDashboard() {
 
+    const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [Username, setUsername] = useState();
     const [shift, setShift] = useState();
@@ -29,8 +31,35 @@ function MyDashboard() {
     const [downtimeEndTime, setDowntimeEndTime] = useState(null);
     const [GSDPieceRate, setGSDPieceRate] = useState()
     const [dailyTarget, setDaillytarget] = useState()
+    // const [ connection , setConnection] = useState(navigator.onLine ? "online" : "offline"); 
 
     const [timer, setTimer] = useState(0);
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setTimeout(() => {
+                navigate(`/`);
+            });
+            return;
+        }
+
+        axios.get(`http://${process.env.REACT_APP_HOST_IP}/verifyToken`, {
+            headers: {
+                authorization: `Bearer ${token}`
+            }
+        })
+            .then(response => {
+                if (response.status == 200) {
+                    console.log("Verification Successful")
+                }
+            })
+            .catch(error => {
+                setTimeout(() => {
+                    navigate('/');
+                    console.log(error)
+                });
+            });
+    }, []);
 
     useEffect(() => {
         let intervalId;
@@ -484,7 +513,7 @@ function MyDashboard() {
                                                 </div>
                                                 <div className="vr"></div>
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">{Math.round((dailyTarget / 10)/ 7.5) || '0'}</h3>
+                                                    <h3 className="mb-0">{Math.round((dailyTarget / 10) / 7.5) || '0'}</h3>
                                                     <p className="mb-0">Target Piece</p>
                                                     <p className="mb-0" style={{ marginTop: "-10px" }}>Rate</p>
                                                 </div>
@@ -535,7 +564,7 @@ function MyDashboard() {
                                     </div>
                                 </div>
                             </div>
-    {/*<div className='row'>
+                            {/*<div className='row'>
                                 <div className="card border-primary border-bottom rounded-4 bg-success">
                                     <div className="card-body">
                                         <div className="d-flex align-items-center justify-content-between mt-3">
