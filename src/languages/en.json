@@ -1,0 +1,33 @@
+{
+    "translation": {
+        "DownTime Timer": "DownTime Timer",
+        "Machine DownTime Started": "Machine DownTime Started",
+        "Material DownTime Started": "Material DownTime Started",
+        "Pieces": "Pieces",
+        "Best Cycle": "Best Cycle",
+        "Avg Cycle": "Avg Cycle",
+        "GSD Piece": "GSD Piece",
+        "Rate": "Rate",
+        "Target Piece": "Target Piece",
+        "My Best": "My Best",
+        "MAS Best": "MAS Best",
+        "Required Rate": "Required Rate",
+        "Hourly Output": "Hourly Output",
+        "Add Piece Count": "Add Piece Count",
+        "DownTime": "DownTime",
+        "Call Supervisor": "Call Supervisor",
+        "Man": "Man",
+        "Machine": "Machine",
+        "Material": "Material",
+        "Plant": "Plant",
+        "Line": "Line",
+        "Style": "Style",
+        "You Have No Internet": "You Have No Internet",
+        "User": "User",
+        "Log out": "Log out",
+        "Deviation": "Deviation",
+        "Efficiency": "Efficiency",
+        "Line End Pieces": "Line End Pieces",
+        "Target": "Target"
+    }
+}

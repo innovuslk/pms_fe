@@ -9,6 +9,7 @@ import Downtime from './downTime';
 import TopOperatorsTable from './TopOperators';
 import bgImage from '../assets/images/megamenu-img.png';
 import WeekPlanUpload from '../components/WeekPlanUpload';
+import UserManagement from '../components/UserManagement';
 
 function AdminHome() {
 
@@ -314,9 +315,10 @@ function AdminHome() {
                 </span>
                 Top Users
                 </a>
-                <a className='d-flex align-items-center'><span class="material-symbols-outlined mx-1">
-                    settings
-                </span>Settings
+                <a className='d-flex align-items-center' onClick={() => handleSideBarClick('Users')}><span class="material-symbols-outlined mx-1">
+                person_search
+                </span>
+                User Management
                 </a>
 
             </div>
@@ -553,6 +555,7 @@ function AdminHome() {
             {sideBarType === 'downtime' ? <Downtime /> : ''}
             {sideBarType === 'topusers' ? <TopOperatorsTable/ >: ''}
             {sideBarType === 'WeekPlan' ? <WeekPlanUpload/> : '' }
+            {sideBarType === 'Users' ? <UserManagement/> : '' }
         </div>
     );
 }

@@ -6,6 +6,7 @@ import Register from './pages/UserReg';
 import AdminHome from './pages/AdminHome';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+
 import './assets/scss/theme.scss'
 import TopOperatorsTable from './pages/TopOperators';
 

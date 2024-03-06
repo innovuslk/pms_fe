@@ -1,8 +1,11 @@
 import React from 'react';
 import ApexCharts from 'react-apexcharts';
 import { useState, useEffect } from 'react';
+import { I18nextProvider, useTranslation } from "react-i18next";
 
 const RadialBarChart = ({ Smv, pieceCount, latestHour }) => {
+
+    const { t } = useTranslation();
 
     const [intHour, setIntHour] = useState();
     const [efficiency, setEfficiency] = useState();
@@ -117,7 +120,7 @@ const RadialBarChart = ({ Smv, pieceCount, latestHour }) => {
         stroke: {
             lineCap: 'round',
         },
-        labels: ['Efficiency'],
+        labels: [t("Efficiency")],
     };
 
     return (

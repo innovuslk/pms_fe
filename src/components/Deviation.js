@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios';
+import { I18nextProvider, useTranslation } from "react-i18next";
+import i18n from '../i18n';
 
 function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
+
+    const { t } = useTranslation();
+
     const [shiftHours, setShiftHours] = useState();
     const [shiftID, setShiftID] = useState('');
     const [dailyTarget, setDaillytarget] = useState();
@@ -117,7 +122,7 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     return (
         <div className="d-flex flex-column align-items-center justify-content-center gap-2 ">
             <h3 className="mb-0">{deviation || 'null'}</h3>
-            <p className="mb-0">Deviation</p>
+            <p className="mb-0">{t("Deviation")}</p>
         </div>
     )
 }

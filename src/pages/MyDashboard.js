@@ -11,9 +11,13 @@ import DailyTarget from '../components/DailyTarget';
 import '../assets/css/myDashboard.css';
 import AvgCycle from '../components/avgCycle';
 import { useNavigate } from 'react-router-dom'
+import { I18nextProvider, useTranslation } from "react-i18next";
+import i18n from '../i18n';
 
 
 function MyDashboard() {
+
+    const { t } = useTranslation();
 
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
@@ -30,7 +34,8 @@ function MyDashboard() {
     const [downtimeStartTime, setDowntimeStartTime] = useState(null);
     const [downtimeEndTime, setDowntimeEndTime] = useState(null);
     const [GSDPieceRate, setGSDPieceRate] = useState()
-    const [dailyTarget, setDaillytarget] = useState()
+    const [dailyTarget, setDaillytarget] = useState();
+    const [language,setLanguage] = useState();
     // const [ connection , setConnection] = useState(navigator.onLine ? "online" : "offline"); 
 
     const [timer, setTimer] = useState(0);
@@ -425,7 +430,13 @@ function MyDashboard() {
         return value < 10 ? `0${value}` : value;
     }
 
+    const getLanguage = (lng) =>{
+        setLanguage(lng)
+    }
 
+    useEffect(()=>{
+        i18n.changeLanguage(language);
+    } , [language])
 
 
 
@@ -433,8 +444,8 @@ function MyDashboard() {
     return (
         <html lang="en" data-bs-theme="dark">
             <body>
-                <Navbar />
-
+                <Navbar sendLanguage={getLanguage}/>
+                <I18nextProvider i18n={i18n}>
                 <div className='container-fluid'>
                     {(downtimeClicked || machineClicked) && <div className="d-flex flex-column align-items-center justify-content-center position-fixed top-50 start-50 translate-middle">
                         <h1 className="mb-0">{formatTime(timer)}</h1>
@@ -452,16 +463,16 @@ function MyDashboard() {
                             </div>
                         </button>
                     </div>}
-                    <div className='row mx-2 mt-3'>
+                    <div className='row mx-1 mt-3'>
                         <div style={{ height: '100dvh' }} className={downtimeClicked || machineClicked ? 'downtime-blur col-3 col-md-4' : 'col-3 col-md-4 '}>
-                            <div className='row mx-0'>
-                                <div className="col">
+                            <div className='row' >
+                                <div className="col" style={{marginBottom:'-0.7rem'}}>
                                     <div className="card rounded-4">
                                         <div className="card-body align-items-center justify-content-center">
-                                            <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 p-1">
+                                            <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 ">
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                     <h3 className="mb-0">{(pieceCountInfo) || '0'}</h3>
-                                                    <p className="mb-0">Pieces</p>
+                                                    <p className="mb-0">{t("Pieces")}</p>
                                                 </div>
                                                 <div className="vr"></div>
                                                 <Deviation shift={shift} latestHour={latestHour} pieceCount={pieceCountInfo} sendDataToParent={receiveDataFromChild} />
@@ -470,8 +481,8 @@ function MyDashboard() {
                                     </div>
                                 </div>
                             </div>
-                            <div className='row mx-0'>
-                                <div className="col">
+                            <div className='row'>
+                                <div className="col" style={{marginBottom:'-0.7rem'}}>
                                     <div className="card rounded-4 h-80">
                                         <div className="card-body">
                                             <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
@@ -485,14 +496,14 @@ function MyDashboard() {
                                     </div>
                                 </div>
                             </div>
-                            <div className='row mx-0'>
-                                <div className="col">
+                            <div className='row'>
+                                <div className="col" style={{marginBottom:'-0.7rem'}}>
                                     <div className="card rounded-4">
                                         <div className="card-body">
-                                            <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 p-1">
+                                            <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                     <h3 className="mb-0">10</h3>
-                                                    <p className="mb-0">Best Cycle</p>
+                                                    <p className="mb-0">{t("Best Cycle")}</p>
                                                 </div>
                                                 <div className="vr"></div>
                                                 <AvgCycle latestHour={latestHour} pieceCount={pieceCountInfo} />
@@ -501,40 +512,40 @@ function MyDashboard() {
                                     </div>
                                 </div>
                             </div>
-                            <div className='row mx-0'>
-                                <div className="col">
+                            <div className='row'>
+                                <div className="col" style={{marginBottom:'-0.7rem'}}>
                                     <div className="card rounded-4">
                                         <div className="card-body">
-                                            <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 p-1">
+                                            <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                     <h3 className="mb-0">{GSDPieceRate || '0'}</h3>
-                                                    <p className="mb-0">GSD Piece</p>
-                                                    <p className="mb-0" style={{ marginTop: "-10px" }}>Rate</p>
+                                                    <p className="mb-0">{t("GSD Piece")}</p>
+                                                    <p className="mb-0" style={{ marginTop: "-10px" }}>{t("Rate")}</p>
                                                 </div>
                                                 <div className="vr"></div>
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                     <h3 className="mb-0">{Math.round((dailyTarget / 10) / 7.5) || '0'}</h3>
-                                                    <p className="mb-0">Target Piece</p>
-                                                    <p className="mb-0" style={{ marginTop: "-10px" }}>Rate</p>
+                                                    <p className="mb-0">{t("Target Piece")}</p>
+                                                    <p className="mb-0" style={{ marginTop: "-10px" }}>{t("Rate")}</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className='row mx-0'>
-                                <div className="col">
+                            <div className='row'>
+                                <div className="col" style={{marginBottom:'-0.7rem'}}>
                                     <div className="card rounded-4">
                                         <div className="card-body">
-                                            <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 p-1">
+                                            <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                     <h3 className="mb-0">10</h3>
-                                                    <p className="mb-0">My Best</p>
+                                                    <p className="mb-0">{t("My Best")}</p>
                                                 </div>
                                                 <div className="vr"></div>
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                     <h3 className="mb-0">10</h3>
-                                                    <p className="mb-0">MAS Best</p>
+                                                    <p className="mb-0">{t("MAS Best")}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -542,18 +553,18 @@ function MyDashboard() {
                                 </div>
                             </div>
                         </div>
-                        <div className={downtimeClicked || machineClicked ? 'downtime-blur col-6 mx-4' : 'col-6 mx-3'}>
-                            <div className='row'>
+                        <div className={downtimeClicked || machineClicked ? 'downtime-blur col-6 mx-4' : 'col-6 mx-2'}>
+                            <div className='row' style={{marginBottom:'-0.7rem'}}>
                                 <div className="card border-primary border-bottom rounded-4">
                                     <div className="card-body">
-                                        <div className="d-flex align-items-center justify-content-around mt-2">
+                                        <div className="d-flex align-items-center justify-content-around ">
                                             <div className="d-flex flex-column align-items-center justify-content-center">
                                                 <h4 className="mb-0 fw-bold">{requiredRate || '0'}</h4>
                                                 <div className="d-flex align-items-center justify-content-center gap-1 text-success mt-1">
                                                     <span className="material-symbols-outlined">
                                                         trending_up
                                                     </span>
-                                                    <p className="mb-0 fs-6">Required Rate</p>
+                                                    <p className="mb-0 fs-6">{t("Required Rate")}</p>
                                                 </div>
                                             </div>
                                             <div className="vr"></div>
@@ -584,9 +595,9 @@ function MyDashboard() {
     </div>*/}
                             <div className='row'>
                                 <div className="card">
-                                    <div className="card-header py-3">
+                                    <div className="card-header py-1">
                                         <div className="d-flex align-items-center justify-content-between">
-                                            <h5 className="mb-0">Hourly Output</h5>
+                                            <h5 className="mb-0">{t("Hourly Output")}</h5>
 
                                         </div>
                                     </div>
@@ -599,11 +610,11 @@ function MyDashboard() {
                             </div>
                         </div>
 
-                        <div className='col mx-1'>
+                        <div className='col mx-2'>
                             <div className="row">
                                 <button type="button" style={{ height: "3.5rem", fontWeight: "600", fontSize: "0.9rem" }} onClick={handleAddPieceCountClick}
                                     className={downtimeClicked ? 'downtime-blur btn ripple btn-primary col mb-4' : 'btn ripple btn-primary col mb-4'}>
-                                    Add Piece Count
+                                    {t("Add Piece Count")}
                                 </button>
                             </div>
                             <div className="row">
@@ -611,28 +622,28 @@ function MyDashboard() {
                                     className='d-flex align-content-center justify-content-center mb-4'
                                     style={{ color: 'white', fontWeight: "500", fontSize: "1rem" }}
                                 >
-                                    DownTime
+                                    {t("DownTime")}
                                 </h2>
                             </div>
                             <div className="row">
                                 <button type="button" className={`btn btn-warning col mb-4 ${machineClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }} onClick={() => handleDowntimeClick('Machine')}>
-                                    Machine
+                                    {t("Machine")}
                                 </button>
                             </div>
                             <div className="row">
                                 <button type="button" className={`btn btn-warning col mb-4 ${downtimeClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }}
                                     onClick={() => handleDowntimeClick('Material')}>
-                                    Material
+                                    {t("Material")}
                                 </button>
                             </div>
                             <div className="row">
-                                <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3.5rem", fontWeight: "600" }}>Call Supervisor</button>
+                                <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3.5rem", fontWeight: "600" }}>{t("Call Supervisor")}</button>
                             </div>
                             <div className="row">
-                                <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3rem", fontWeight: "600" }}>Man</button>
+                                <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3rem", fontWeight: "600" }}>{t("Man")}</button>
                             </div>
                             <div className="row">
-                                <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3rem", fontWeight: "600" }}>Machine</button>
+                                <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3rem", fontWeight: "600" }}>{t("Machine")}</button>
                             </div>
 
                         </div>
@@ -640,6 +651,7 @@ function MyDashboard() {
                 </div>
                 {showModal && <div className="modal-backdrop show"></div>}
                 <Modal showModal={showModal} handleCloseModal={handleCloseModal} />
+                </I18nextProvider>
             </body>
         </html>
     )

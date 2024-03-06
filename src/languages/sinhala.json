@@ -1,0 +1,33 @@
+{
+    "translation": {
+        "DownTime Timer": "අක්රිය කාලය ටයිමරය",
+        "Deviation": "අපගමනය",
+        "Machine DownTime Started": "යන්ත්‍ර අක්රිය කාලය ආරම්භ කරන ලදි",
+        "Material DownTime Started": "ද්රව්ය අක්රිය කාලය ආරම්භ කරන ලදි",
+        "Pieces": "කොටස්",
+        "Best Cycle": "හොඳම චක්රය",
+        "GSD Piece": "GSD කොටස්",
+        "Rate": "අනුපාතය",
+        "Target Piece": "ඉලක්ක කොටස් ගණන",
+        "My Best": "මගේ හොදම",
+        "MAS Best": "MAS හොදම",
+        "Required Rate": "අවශ්‍ය අනුපාතය",
+        "Hourly Output": "පැයක ප්රතිදානය",
+        "Add Piece Count": "කොටස් ගණන එකතු කරන්න",
+        "DownTime": "අක්රිය කාලය",
+        "Call Supervisor": "අධීක්ෂක අමතන්න",
+        "Man": "මිනිස",
+        "Machine": "යන්ත්‍ර",
+        "Plant": "කර්මාන්ත ශාලාව",
+        "Line": "පේළිය",
+        "Style": "විලාසය",
+        "You Have No Internet": "ඔබට අන්තර්ජාලය නොමැත",
+        "User": "පරිශීලක",
+        "Log out": "ඉවත්වෙනවා",
+        "Efficiency": "කාර්යක්ෂමතාව",
+        "Avg Cycle": "සාමාන්‍ය චක්රය",
+        "Line End Pieces": "පේල අවසාන කොටස්",
+        "Target": "ඉලක්කය",
+        "Material": "ද්රව්ය"
+    }
+}

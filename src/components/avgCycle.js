@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
-import axios from 'axios';
+import { I18nextProvider, useTranslation } from "react-i18next";
 
 function AvgCycle({ latestHour, pieceCount }) {
+
+    const { t } = useTranslation();
 
     const [avgCycle, setAvgCycle] = useState()
     const [intHour, setIntHour] = useState();
@@ -60,7 +62,7 @@ function AvgCycle({ latestHour, pieceCount }) {
     return (
         <div className="d-flex flex-column align-items-center justify-content-center gap-2">
             <h3 className="mb-0">{avgCycle || '0'}</h3>
-            <p className="mb-0">Avg Cycle</p>
+            <p className="mb-0">{t("Avg Cycle")}</p>
         </div>
     )
 }
