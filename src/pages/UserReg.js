@@ -139,6 +139,7 @@ function Register() {
                                                 <select className="form-control" id="input31" value={UserLevel} onChange={e => setUserLevel(e.target.value)}>
                                                     <option value="">Select User Level</option>
                                                     <option value="1">Admin</option>
+                                                    <option value="2">Supervisor</option>
                                                     <option value="3">Operator</option>
                                                 </select>
                                             </div>

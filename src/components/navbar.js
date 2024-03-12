@@ -43,7 +43,6 @@ function Navbar({sendLanguage}) {
                 const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/info/getInfo`, {
                     username: username,
                 });
-
                 setOperatorInfo(response.data);
             } catch (error) {
                 console.error('Error fetching data:', error);

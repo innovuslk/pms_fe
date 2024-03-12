@@ -28,12 +28,15 @@ function AdminHome() {
     const [userId, setUserID] = useState();
     const [shift, setShift] = useState('');
     const [operation, setOperation] = useState('');
+    const [style, setStyle] = useState('');
     const [Smv, setSmv] = useState('');
     const [operatorInfo, setOperatorInfo] = useState(null);
     const [username, setUsername] = useState();
     const [plantUsers, setPlantUsers] = useState();
     const [iconClicked, setIconClicked] = useState(false);
     const [connection , setConnection] = useState(); 
+    const[supervisor,setSupervisor]= useState();
+    const[supervisors,setSupervisors]= useState();
 
     useEffect(() => {
         // Fetch data from your backend when the component mounts
@@ -107,15 +110,31 @@ function AdminHome() {
                 const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getPlantUsers`, {
                     plantName: PlantName,
                 });
-
                 setPlantUsers(response.data);
-                console.log("user info : ", plantUsers)
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
 
         getUserNames();
+
+    }, [PlantName]);
+
+    useEffect(() => {
+        // Fetch data from your backend when the component mounts
+        const getSupervisors = async () => {
+            try {
+                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getSupervisors`, {
+                });
+
+                setSupervisors(response.data);
+                console.log("user info : ", supervisors)
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        getSupervisors();
 
     }, [PlantName]);
 
@@ -152,6 +171,7 @@ function AdminHome() {
             LineItem: LineItem,
             LineNo: LineNo,
             PlantName: PlantName,
+            style: style,
             DailyTarget: parseInt(Dailytarget),
         })
             .then(res => {
@@ -163,6 +183,7 @@ function AdminHome() {
                     setSbu('');
                     setLineItem('')
                     setLineNo('');
+                    setStyle('');
                     setPlantName('')
 
                 }
@@ -194,6 +215,7 @@ function AdminHome() {
             userId: userId,
             Shift: shift,
             operation: operation,
+            supervisor:supervisor,
             Smv: Smv
         })
             .then(res => {
@@ -395,6 +417,15 @@ function AdminHome() {
                                             </div>
                                         </div>
                                         <div className="col-md-12">
+                                            <label for="input29" className="form-label">Style</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text"><span class="material-symbols-outlined">
+                                                    key
+                                                </span></span>
+                                                <input type="text" className="form-control" id="input29" placeholder="Style" validate={{ required: true }} onChange={e => setStyle(e.target.value)} />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-12">
                                             <label for="input31" className="form-label">Plant Name</label>
                                             <div className="input-group">
                                                 <span className="input-group-text"><span class="material-symbols-outlined">
@@ -501,6 +532,20 @@ function AdminHome() {
                                                 </select>
                                             </div>
                                         </div>
+                                        <div className="col-md-12">
+                                        <label for="input26" className="form-label">Supervisor</label>
+                                        <div className="input-group">
+                                            <span className="input-group-text"><span className="material-symbols-outlined">
+                                                crisis_alert
+                                            </span></span>
+                                            <select className="form-select" id="input32" onChange={e => setSupervisor(e.target.value)}>
+                                                <option value="">Select Supervisor</option>
+                                                {supervisors && supervisors.map(user => (
+                                                    <option key={user.userid} value={user.userid}>{user.username}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
                                         <div className="col-md-12">
                                             <label for="input31" className="form-label">Shift</label>
                                             <div className="input-group">
