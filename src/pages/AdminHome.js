@@ -267,23 +267,14 @@ function AdminHome() {
             <input type="checkbox" id="check" />
             <nav className="navbar navbar-expand-lg navbar-dark position-fixed w-100 top-0 end-0 z-2" style={{ backgroundColor: "#011e29" }}>
                 <div className="container-fluid">
-                    <a className="navbar-brand mx-2 bg-primary rounded" href="#">Softmatter</a>
+                    <a className="navbar-brand mx-2 rounded" href="#">PMS</a>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent2" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
                     <div className="collapse navbar-collapse" id="navbarSupportedContent2">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-2 align-items-center">
                             <li className="nav-item">
-                                <a className="nav-link font-weight-bold bg-info rounded-5 text-dark  mx-2">Dashboard</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link">Components</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link">Tables</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" >Forms</a>
+                                <a className="nav-link font-weight-bold rounded-5 text-dark  mx-2">Dashboard</a>
                             </li>
                             <li className="nav-item">
                                 <a className="nav-link" ><Clock format={'HH:mm:ss'} ticking={true} timezone={'Asia/Colombo'} /></a>
@@ -348,11 +339,7 @@ function AdminHome() {
             {sideBarType === 'Dashboard' ?
                 <div className="content">
                     <div className="welcome-message">
-                        <h1>Welcome to Softmatter PMS</h1>
-                        <p>Thank you for using our application!. Here.</p>
-                        <p>Feel free to explore the different sections of the application, including the Dashboard, Components, Tables, Forms, and more.</p>
-                        <p>Have a great day!</p>
-
+                        <h1>Welcome to PMS</h1>
                         <div className='col-6 col-xl-6 col-md-8 mx-auto z-index-1'>
                         <img src={bgImage} alt="" style={{width: "25rem", marginTop:"5%",height: "25rem"}}/>
                         </div>

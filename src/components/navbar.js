@@ -104,7 +104,7 @@ function Navbar({sendLanguage}) {
 
             <body>
                 <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
-                    <div className="container-fluid">	<a className="navbar-brand mx-2 bg-primary rounded">Softmatter</a>
+                    <div className="container-fluid">	<a className="navbar-brand mx-2 rounded">PMS</a>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent2" aria-expanded="false" aria-label="Toggle navigation"> <span className="navbar-toggler-icon"></span>
                         </button>
                         <div className="collapse navbar-collapse" id="navbarSupportedContent2">
