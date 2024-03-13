@@ -255,6 +255,9 @@ function AdminHome() {
             });
     }
     const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userLevel');
         navigate(`/`);
     };
 
@@ -274,7 +277,7 @@ function AdminHome() {
                     <div className="collapse navbar-collapse" id="navbarSupportedContent2">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-2 align-items-center">
                             <li className="nav-item">
-                                <a className="nav-link font-weight-bold rounded-5 text-dark  mx-2">Dashboard</a>
+                                <a className="nav-link font-weight-bold rounded-5 mx-2">Dashboard</a>
                             </li>
                             <li className="nav-item">
                                 <a className="nav-link" ><Clock format={'HH:mm:ss'} ticking={true} timezone={'Asia/Colombo'} /></a>
@@ -520,7 +523,7 @@ function AdminHome() {
                                             </div>
                                         </div>
                                         <div className="col-md-12">
-                                        <label for="input26" className="form-label">Supervisor</label>
+                                        <label for="input26" className="form-label">Supervisor(only for operators)</label>
                                         <div className="input-group">
                                             <span className="input-group-text"><span className="material-symbols-outlined">
                                                 crisis_alert

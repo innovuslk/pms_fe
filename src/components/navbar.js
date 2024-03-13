@@ -91,6 +91,9 @@ function Navbar({sendLanguage}) {
     }, []);
 
     const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userLevel');
         navigate(`/`);
     };
 
@@ -140,7 +143,7 @@ function Navbar({sendLanguage}) {
                                 <button className="btn btn-light radius-30 px-2" type="button" onClick={handleClick}><span className="material-symbols-outlined" style={{ fontSize: 30 }}>
                                     account_circle
                                 </span></button>
-                                {iconClicked && <button className="btn btn-danger h-50 w-auto" onClick={handleLogout}>{t('Log out')}</button>}
+                                {iconClicked && <button className="btn btn-danger h-50 w-auto mx-2" onClick={handleLogout}>{t('Log out')}</button>}
                             </form>
 
                             <div className="dropdown w-auto">
