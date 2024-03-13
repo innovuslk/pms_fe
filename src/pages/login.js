@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios';
@@ -12,6 +12,25 @@ function Login() {
     const [Password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const storedUsername = localStorage.getItem('username');
+        const userLevel = parseInt(localStorage.getItem('userLevel'));
+        if (token && userLevel === 3) {
+            const encodedUsername = btoa(storedUsername);
+            navigate(`/user-info/${encodedUsername}`);
+            console.log(token,userLevel)
+        }
+        else if(token && userLevel === 1) {
+            const encodedUsername = btoa(storedUsername);
+            navigate(`/admin/${encodedUsername}`);
+        }
+        else {
+            console.log('errrrrrrrrr')
+            console.log(token,userLevel,storedUsername)
+        }
+    }, []);
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -28,7 +47,9 @@ function Login() {
             .then(res => {
                 console.log(res);
                 const token = res.data.token;
-                localStorage.setItem('token', token); // Store the token in local storage
+                localStorage.setItem('token', token);
+                localStorage.setItem('username', Username);
+                localStorage.setItem('userLevel', res.data.userLevel) ;// Store the token in local storage
 
                 if (res.status === 200 && (res.data.userLevel === 3)) {
                     const encodedUsername = btoa(Username);

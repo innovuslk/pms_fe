@@ -165,45 +165,32 @@ function MyDashboard() {
 
 
     const handleDowntimeClick = async (type) => {
-
-
-        if (type === 'Material') {
-            setDowntimeClicked(true);
-            setDowntimeStartTime(new Date());
-
+        switch (type) {
+            case 'Material':
+                setDowntimeClicked(true);
+                setDowntimeStartTime(new Date());
+                break;
+            case 'Machine':
+                setMachineClicked(true);
+                setDowntimeStartTime(new Date());
+                break;
+            default:
+                break;
+        }
+    
+        if (type === 'Material' || type === 'Machine') {
             try {
                 downtimeStartTime.setTime(downtimeStartTime.getTime() + (5.5 * 60 * 60 * 1000));
                 const username = window.location.pathname.split('/').pop();
                 setUsername(username);
                 const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/send/downTime`, {
                     username: username,
-                    type: 'Material',
-                    downTime: finalTimerValue,
+                    type: type,
+                    downTime: timer,
                     startTime: downtimeStartTime.toISOString().slice(0, 19).replace('T', ' '),
                 });
-
-
-                // Handle response if needed
-            } catch (error) {
-                console.error("Failed to send downTime", error);
-                // Handle error (e.g., display an error message)
-            }
-        }
-
-        if (type === 'Machine') {
-            setMachineClicked(true);
-            setDowntimeStartTime(new Date());
-            try {
-                const username = window.location.pathname.split('/').pop();
-                setUsername(username);
-                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/send/downTime`, {
-                    username: username,
-                    type: 'Machine',
-                    downTime: finalTimerValue,
-                    startTime: downtimeStartTime.toISOString().slice(0, 19).replace('T', ' '),
-                });
-                console.log(response)
-
+                console.log(response);
+    
                 // Handle response if needed
             } catch (error) {
                 console.error("Failed to send downTime", error);
@@ -211,6 +198,8 @@ function MyDashboard() {
             }
         }
     };
+
+    
     const [pieceCountData, setPieceCountData] = useState({
         labels: ["06.00", "06.20", "07.20", "08.20", "09.40", "10.40", "11.00", "12.00", "13.00", "14.00"],
         datasets: [
@@ -439,7 +428,13 @@ function MyDashboard() {
     } , [language])
 
 
-
+    const handleClickMaterial = async () => {
+        await handleDowntimeClick('Material');
+    };
+    
+    const handleClickMachine = async () => {
+        await handleDowntimeClick('Machine');
+    };
 
     return (
         <html lang="en" data-bs-theme="dark">
@@ -626,13 +621,14 @@ function MyDashboard() {
                                 </h2>
                             </div>
                             <div className="row">
-                                <button type="button" className={`btn btn-warning col mb-4 ${machineClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }} onClick={() => handleDowntimeClick('Machine')}>
-                                    {t("Machine")}
+                                <button type="button" className={`btn btn-warning col mb-4 ${machineClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }} 
+                                onClick={handleClickMachine}>
+                                    {t('Machine')}
                                 </button>
                             </div>
                             <div className="row">
                                 <button type="button" className={`btn btn-warning col mb-4 ${downtimeClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }}
-                                    onClick={() => handleDowntimeClick('Material')}>
+                                    onClick={handleClickMaterial}>
                                     {t("Material")}
                                 </button>
                             </div>
