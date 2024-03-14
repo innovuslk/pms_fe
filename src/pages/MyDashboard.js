@@ -13,6 +13,7 @@ import AvgCycle from '../components/avgCycle';
 import { useNavigate } from 'react-router-dom'
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from '../i18n';
+import CallSupervisor from '../components/callSupervisor';
 
 
 function MyDashboard() {
@@ -632,9 +633,7 @@ function MyDashboard() {
                                     {t("Material")}
                                 </button>
                             </div>
-                            <div className="row">
-                                <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3.5rem", fontWeight: "600" }}>{t("Call Supervisor")}</button>
-                            </div>
+                            <CallSupervisor/>
                             <div className="row">
                                 <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3rem", fontWeight: "600" }}>{t("Man")}</button>
                             </div>
