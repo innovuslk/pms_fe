@@ -10,6 +10,7 @@ import TopOperatorsTable from './TopOperators';
 import bgImage from '../assets/images/megamenu-img.png';
 import WeekPlanUpload from '../components/WeekPlanUpload';
 import UserManagement from '../components/UserManagement';
+import SupervisorDashboard from './supervisorDashboard';
 
 function AdminHome() {
 
@@ -340,15 +341,7 @@ function AdminHome() {
             </div>
 
             {sideBarType === 'Dashboard' ?
-                <div className="content">
-                    <div className="welcome-message">
-                        <h1>Welcome to PMS</h1>
-                        <div className='col-6 col-xl-6 col-md-8 mx-auto z-index-1'>
-                        <img src={bgImage} alt="" style={{width: "25rem", marginTop:"5%",height: "25rem"}}/>
-                        </div>
-                    </div>
-
-                </div> : ''}
+                <SupervisorDashboard/> : ''}
 
             {sideBarType === 'DailyPlan' ?
                 <div className="content">

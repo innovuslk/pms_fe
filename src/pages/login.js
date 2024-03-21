@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios';
-import { Row, Col, Input, Button, Container, Label, FormGroup } from "reactstrap";
+import { Row, Col, Button, Container, Label, FormGroup } from "reactstrap";
 import { Link } from 'react-router-dom';
 
 import logodark from "../assets/images/logo-dark.png";
@@ -11,18 +11,38 @@ function Login() {
     const [Username, setUsername] = useState('');
     const [Password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [verifiedToken, setVerifiedToken] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
+
+        axios.get(`http://${process.env.REACT_APP_HOST_IP}/verifyToken`, {
+            headers: {
+                authorization: `Bearer ${token}`
+            }
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    console.log("Verification Successful")
+                    setVerifiedToken(token)
+                }
+            })
+            .catch(error => {
+                setTimeout(() => {
+                    console.log(error)
+                });
+            });
+
         const storedUsername = localStorage.getItem('username');
         const userLevel = parseInt(localStorage.getItem('userLevel'));
-        if (token && userLevel === 3) {
+        if (verifiedToken && userLevel === 3) {
             const encodedUsername = btoa(storedUsername);
             navigate(`/user-info/${encodedUsername}`);
             console.log(token,userLevel)
         }
-        else if(token && userLevel === 1) {
+        else if(verifiedToken && (userLevel === 1 || userLevel === 2)) {
+            console.log(userLevel)
             const encodedUsername = btoa(storedUsername);
             navigate(`/admin/${encodedUsername}`);
         }
@@ -75,9 +95,6 @@ function Login() {
             });
     }
 
-    function handleRegister() {
-        navigate(`/register`)
-    }
 
     return (
         <React.Fragment>
