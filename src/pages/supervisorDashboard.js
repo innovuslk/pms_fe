@@ -6,32 +6,35 @@ import RadialBarChart from '../components/efficiency_guage';
 function SupervisorDashboard() {
 
     const [linesData, setLinesData] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         getLinesOfSupervisors();
-        const intervalId = setInterval(getLinesOfSupervisors, 100000);
+        const intervalId = setInterval(getLinesOfSupervisors, 10000);
         return () => clearInterval(intervalId);
     }, []);
 
     useEffect(() => {
-        linesData.forEach((line) => {
-            if (line.lineNo) {
-                getSmv(line.lineNo);
-                fetchLatestPieceCount(line.lineNo);
-            }
-        });
-
-        const intervalId = setInterval(() => {
+        if (!loading) {
             linesData.forEach((line) => {
                 if (line.lineNo) {
                     getSmv(line.lineNo);
                     fetchLatestPieceCount(line.lineNo);
                 }
             });
-        }, 10000);
 
-        return () => clearInterval(intervalId);
-    }, [linesData]);
+            const intervalId = setInterval(() => {
+                linesData.forEach((line) => {
+                    if (line.lineNo) {
+                        getSmv(line.lineNo);
+                        fetchLatestPieceCount(line.lineNo);
+                    }
+                });
+            }, 10000);
+
+            return () => clearInterval(intervalId);
+        }
+    }, [loading, linesData]);
 
     const getSmv = async (lineNo) => {
         try {
@@ -43,6 +46,7 @@ function SupervisorDashboard() {
                 line.lineNo === lineNo ? { ...line, smv: response.data.smv } : line
             );
             setLinesData(updatedLinesData);
+            console.log(linesData)
         } catch (error) {
             console.error("Failed to shift pieces");
         }
@@ -63,6 +67,7 @@ function SupervisorDashboard() {
                     : line
             );
             setLinesData(updatedLinesData);
+            console.log(updatedLinesData)
         } catch (error) {
             console.error('Error fetching latest Piece count data:', error);
         }
@@ -83,6 +88,7 @@ function SupervisorDashboard() {
                 latestHour: null
             }));
             setLinesData(newLinesData);
+            setLoading(false); // Set loading to false when data is fetched
         } catch (error) {
             console.error('Error fetching latest Piece count data:', error);
         }
@@ -90,49 +96,53 @@ function SupervisorDashboard() {
 
     return (
         <div className="content">
-            {linesData.map((line, index) => (
-                index % 2 === 0 && 
-                <div key={index} className="row">
-                    {linesData[index] && 
-                        <div className="col">
-                            <div className="card rounded-4">
-                                <div className="card-body">
-                                    <div className="d-flex align-items-center justify-content-between flex-wrap">
-                                        <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
-                                            <div style={{ width: '13rem' }}>
-                                                <RadialBarChart Smv={linesData[index].smv} pieceCount={linesData[index].totalPieceCount} latestHour={linesData[index].latestHour} />
+            {loading ? (
+                <p>Loading...</p>
+            ) : (
+                linesData.map((line, index) => (
+                    index % 2 === 0 && 
+                    <div key={index} className="row">
+                        {linesData[index] && 
+                            <div className="col">
+                                <div className="card rounded-4">
+                                    <div className="card-body">
+                                        <div className="d-flex align-items-center justify-content-between flex-wrap">
+                                            <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
+                                                <div style={{ width: '13rem' }}>
+                                                    <RadialBarChart Smv={linesData[index].smv} pieceCount={linesData[index].totalPieceCount} latestHour={linesData[index].latestHour} />
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="align-items-center justify-content-center gap-2">
-                                            <p className="mb-0 w-auto text-bg-dark">LineNo - {linesData[index].lineNo}</p>
-                                            <p className="mb-0 w-auto text-bg-dark">PieceCount - {linesData[index].totalPieceCount}</p>
+                                            <div className="align-items-center justify-content-center gap-2">
+                                                <p className="mb-0 w-auto text-bg-dark">LineNo - {linesData[index].lineNo}</p>
+                                                <p className="mb-0 w-auto text-bg-dark">PieceCount - {linesData[index].totalPieceCount}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    }
-                    {linesData[index + 1] && 
-                        <div className="col">
-                            <div className="card rounded-4">
-                                <div className="card-body">
-                                    <div className="d-flex align-items-center justify-content-between flex-wrap">
-                                        <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
-                                            <div style={{ width: '13rem' }}>
-                                                <RadialBarChart Smv={linesData[index + 1].smv} pieceCount={linesData[index + 1].totalPieceCount} latestHour={linesData[index + 1].latestHour} />
+                        }
+                        {linesData[index + 1] && 
+                            <div className="col">
+                                <div className="card rounded-4">
+                                    <div className="card-body">
+                                        <div className="d-flex align-items-center justify-content-between flex-wrap">
+                                            <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
+                                                <div style={{ width: '13rem' }}>
+                                                    <RadialBarChart Smv={linesData[index + 1].smv} pieceCount={linesData[index + 1].totalPieceCount} latestHour={linesData[index + 1].latestHour} />
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="align-items-center justify-content-center gap-2">
-                                            <p className="mb-0 w-auto text-bg-dark">LineNo - {linesData[index + 1].lineNo}</p>
-                                            <p className="mb-0 w-auto text-bg-dark">PieceCount - {linesData[index + 1].totalPieceCount}</p>
+                                            <div className="align-items-center justify-content-center gap-2">
+                                                <p className="mb-0 w-auto text-bg-dark">LineNo - {linesData[index + 1].lineNo}</p>
+                                                <p className="mb-0 w-auto text-bg-dark">PieceCount - {linesData[index + 1].totalPieceCount}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    }
-                </div>
-            ))}
+                        }
+                    </div>
+                ))
+            )}
         </div>
     )
 }
