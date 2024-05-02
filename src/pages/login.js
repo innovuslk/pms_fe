@@ -75,9 +75,14 @@ function Login() {
                     const encodedUsername = btoa(Username);
                     navigate(`/user-info/${encodedUsername}`);
                 }
-                else if (res.status === 200 && (res.data.userLevel === 1)) {
+                else if (res.status === 200 && (res.data.userLevel === 1 || res.data.userLevel === 2)) {
                     const encodedUsername = btoa(Username);
                     navigate(`/admin/${encodedUsername}`);
+                }
+                else if (res.status === 200 && (res.data.userLevel === 4)) {
+                    const encodedUsername = btoa(Username);
+                    navigate(`/operator/${encodedUsername}`);
+                    console.log(res.data.userLevel)
                 }
                 else {
                     setErrorMessage("Invalid Username or Password");

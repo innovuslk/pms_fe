@@ -53,7 +53,7 @@ const RadialBarChart = ({ Smv, pieceCount, latestHour }) => {
 
     const calculateEfficiency = (Smv, pieceCount, intHour) => {
 
-        let targetRatePerHour = 60 / Smv;
+        let targetRatePerHour = 60 * Smv;
         let pieceCountRate = pieceCount / intHour;
 
         let difference = targetRatePerHour - pieceCountRate;

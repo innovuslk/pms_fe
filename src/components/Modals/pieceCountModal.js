@@ -219,7 +219,7 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
                         <label htmlFor="pieceCount" className='mb-2'>Add Piece Count:</label>
                         <input name="pieceCount" type="number" className="form-control" id="pieceCount" validate={{ required: true }} placeholder="Enter Piece Count" value={pieceCount} />
                     </div>
-                    <VirtualNumPad onKeyPress={handleKeyPress} onDelete={handleDelete} onOk={handleOkWithClose} />
+                    {selectedButton && <VirtualNumPad onKeyPress={handleKeyPress} onDelete={handleDelete} onOk={handleOkWithClose} />}
                     <div className="modal-footer">
                     </div>
                 </div>

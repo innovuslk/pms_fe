@@ -139,7 +139,7 @@ function Navbar({sendLanguage}) {
 
 
                             <form className="d-flex align-items-center justify-content-center">
-                                <button className="btn btn-light mx-2 w-auto" type="submit"><i className='bx bx-cart'></i> {operatorInfo && operatorInfo.decodedUsername || t('User')}</button>
+                                <h6 className="mx-2 w-auto" type="submit"><i className='bx bx-cart'></i> {operatorInfo && operatorInfo.decodedUsername || t('User')}</h6>
                                 <button className="btn btn-light radius-30 px-2" type="button" onClick={handleClick}><span className="material-symbols-outlined" style={{ fontSize: 30 }}>
                                     account_circle
                                 </span></button>

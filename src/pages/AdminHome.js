@@ -11,6 +11,8 @@ import bgImage from '../assets/images/megamenu-img.png';
 import WeekPlanUpload from '../components/WeekPlanUpload';
 import UserManagement from '../components/UserManagement';
 import SupervisorDashboard from './supervisorDashboard';
+import OperatorInfo from './operatorInfo';
+import SupervisorJoin from './supervisorChatRoom';
 
 function AdminHome() {
 
@@ -306,6 +308,10 @@ function AdminHome() {
                     home
                 </span>Dashboard
                 </a>
+                <a className='d-flex align-items-center' onClick={() => handleSideBarClick('OperatorInfo')}><span class="material-symbols-outlined mx-1">
+                groups_2
+            </span>Operator Info
+            </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('DailyPlan')}><span class="material-symbols-outlined mx-1" >
                     assignment
                 </span>Daily Plan Form
@@ -337,11 +343,20 @@ function AdminHome() {
                 </span>
                 User Management
                 </a>
+                <a className='d-flex align-items-center' onClick={() => handleSideBarClick('Chat')}><span class="material-symbols-outlined mx-1">
+                message
+                </span>
+                Chat
+                </a>
 
             </div>
 
             {sideBarType === 'Dashboard' ?
                 <SupervisorDashboard/> : ''}
+            
+            {sideBarType === 'Chat' ? 
+            <SupervisorJoin/> : ''
+        }
 
             {sideBarType === 'DailyPlan' ?
                 <div className="content">
@@ -584,6 +599,7 @@ function AdminHome() {
             {sideBarType === 'topusers' ? <TopOperatorsTable/ >: ''}
             {sideBarType === 'WeekPlan' ? <WeekPlanUpload/> : '' }
             {sideBarType === 'Users' ? <UserManagement/> : '' }
+            {sideBarType === 'OperatorInfo' ? <OperatorInfo/>: ''}
         </div>
     );
 }
