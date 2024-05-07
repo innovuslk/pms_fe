@@ -14,14 +14,17 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     const [intHour, setIntHour] = useState()
     const [deviation,setDeviation] = useState();
     const [requiredRate, setRequiredRate] = useState(0);
+    const [actualRequiredRate, setActualRequiredRate] = useState();
+    const[pieceCountForHour, setPieceCountForHour] = useState()
+    const[nextHourTarget, setNextHourTarget] = useState()
 
     useEffect(() => {
         setShiftID(shift);
     }, [shift]);
 
     useEffect(() => {
-        sendDataToParent(requiredRate,dailyTarget)
-    },[requiredRate])
+        sendDataToParent(requiredRate,dailyTarget,actualRequiredRate,nextHourTarget)
+    },[requiredRate,actualRequiredRate])
 
     useEffect(() => {
         getShiftHours();
@@ -37,6 +40,16 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
         getDailyTarget();
 
         const intervalId = setInterval(getDailyTarget, 10000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [dailyTarget]);
+
+    useEffect(() => {
+        getBarChartData();
+
+        const intervalId = setInterval(getBarChartData, 10000);
 
         return () => {
             clearInterval(intervalId);
@@ -105,17 +118,34 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
         }
     }
 
+    const getBarChartData = async () => {
+
+        try {
+            const username = window.location.pathname.split('/').pop();
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
+                operatorType: 'operator',
+                username: username
+            });
+            setPieceCountForHour(response)
+
+        } catch (error) {
+            console.error("Failed to get barchart data", error);
+        }
+        }
+
     const calculateDeviation = ( shiftHours, dailyTarget , intHour , pieceCount) => {
 
         console.log("deviation values",shiftHours, dailyTarget ,intHour ,pieceCount )
 
             let hourlyTarget = parseInt(dailyTarget) / shiftHours
-            let alreadyDone = parseInt(pieceCount)/ intHour
-            let deviation = hourlyTarget - alreadyDone
-            setDeviation(parseInt(deviation));
+            let alreadyDone = pieceCountForHour && pieceCountForHour.data.totalPieceCountByHour[latestHour]
+            let deviation = alreadyDone - hourlyTarget;
+            let nextHourTarget = (dailyTarget - pieceCount) / (shiftHours - intHour);
+            setNextHourTarget(parseInt(nextHourTarget))
+            setDeviation(deviation);
             setRequiredRate(hourlyTarget)
-
-            
+            setActualRequiredRate(alreadyDone + deviation)
+            console.log("requsdifjdisajf",nextHourTarget)
 
     }
 

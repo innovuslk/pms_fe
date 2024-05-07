@@ -27,6 +27,7 @@ function MyDashboard() {
     const [pieceCountInfo, setPieceCountInfo] = useState();
     const [latestHour, setLatestHour] = useState('');
     const [requiredRate, setRequiredRate] = useState(0);
+    const [ActualRequiredRate, setActualRequiredRate] = useState(0);
     const [Smv, setSmv] = useState(0);
     const [downtimeClicked, setDowntimeClicked] = useState(false);
     const [machineClicked, setMachineClicked] = useState(false);
@@ -36,7 +37,8 @@ function MyDashboard() {
     const [downtimeEndTime, setDowntimeEndTime] = useState(null);
     const [GSDPieceRate, setGSDPieceRate] = useState()
     const [dailyTarget, setDaillytarget] = useState();
-    const [language,setLanguage] = useState();
+    const [language, setLanguage] = useState();
+    const[nextHourTarget, setNextHourTarget] = useState()
     // const [ connection , setConnection] = useState(navigator.onLine ? "online" : "offline"); 
 
     const [timer, setTimer] = useState(0);
@@ -129,6 +131,14 @@ function MyDashboard() {
     }, [requiredRate, shift, pieceCountInfo]);
 
     useEffect(() => {
+        getBarChartData();
+
+        const intervalId = setInterval(getBarChartData, 10000);
+
+        return () => clearInterval(intervalId);
+    }, [requiredRate, shift, pieceCountInfo]);
+
+    useEffect(() => {
         getSmv();
 
         const intervalId = setInterval(getSmv, 20000);
@@ -178,7 +188,7 @@ function MyDashboard() {
             default:
                 break;
         }
-    
+
         if (type === 'Material' || type === 'Machine') {
             try {
                 downtimeStartTime.setTime(downtimeStartTime.getTime() + (5.5 * 60 * 60 * 1000));
@@ -191,7 +201,7 @@ function MyDashboard() {
                     startTime: downtimeStartTime.toISOString().slice(0, 19).replace('T', ' '),
                 });
                 console.log(response);
-    
+
                 // Handle response if needed
             } catch (error) {
                 console.error("Failed to send downTime", error);
@@ -200,7 +210,7 @@ function MyDashboard() {
         }
     };
 
-    
+
     const [pieceCountData, setPieceCountData] = useState({
         labels: ["06.00", "06.20", "07.20", "08.20", "09.40", "10.40", "11.00", "12.00", "13.00", "14.00"],
         datasets: [
@@ -237,9 +247,12 @@ function MyDashboard() {
         }
     };
 
-    const receiveDataFromChild = (requiredRate, dailyTarget) => {
+    const receiveDataFromChild = (requiredRate, dailyTarget, actualRequiredRate, nextHourTarget) => {
         setRequiredRate(requiredRate);
         setDaillytarget(dailyTarget)
+        setActualRequiredRate(actualRequiredRate);
+        setNextHourTarget(nextHourTarget);
+        console.log("actual", actualRequiredRate)
     };
 
 
@@ -420,19 +433,19 @@ function MyDashboard() {
         return value < 10 ? `0${value}` : value;
     }
 
-    const getLanguage = (lng) =>{
+    const getLanguage = (lng) => {
         setLanguage(lng)
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         i18n.changeLanguage(language);
-    } , [language])
+    }, [language])
 
 
     const handleClickMaterial = async () => {
         await handleDowntimeClick('Material');
     };
-    
+
     const handleClickMachine = async () => {
         await handleDowntimeClick('Machine');
     };
@@ -440,51 +453,108 @@ function MyDashboard() {
     return (
         <html lang="en" data-bs-theme="dark">
             <body>
-                <Navbar sendLanguage={getLanguage}/>
+                <Navbar sendLanguage={getLanguage} />
                 <I18nextProvider i18n={i18n}>
-                <div className='container-fluid'>
-                    {(downtimeClicked || machineClicked) && <div className="d-flex flex-column align-items-center justify-content-center position-fixed top-50 start-50 translate-middle">
-                        <h1 className="mb-0">{formatTime(timer)}</h1>
-                        <p className="mb-0 f-20" style={{ fontWeight: '600', color: 'white' }}>DownTime Timer</p>
-                        {machineClicked ? <p className="mb-0 f-18 mt-2">Machine DownTime Started</p> : ''}
-                        {downtimeClicked ? <p className="mb-0 f-18 mt-2">Material DownTime Started</p> : ''}
-                        <button
-                            type="button"
-                            className="btn btn-danger w-auto mt-4 align-items-center justify-content-center"
-                            style={{ height: "3rem", fontWeight: "600" }}
-                            onClick={handleStopTimerClick}
-                        >
-                            <div className='d-flex'>
-                                <span className="material-symbols-outlined">close</span> Stop
-                            </div>
-                        </button>
-                    </div>}
-                    <div className='row mx-1 mt-3'>
-                        <div style={{ height: '100dvh' }} className={downtimeClicked || machineClicked ? 'downtime-blur col-3 col-md-4' : 'col-3 col-md-4 '}>
-                            <div className='row' >
-                                <div className="col" style={{marginBottom:'-0.7rem'}}>
-                                    <div className="card rounded-4">
-                                        <div className="card-body align-items-center justify-content-center">
-                                            <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 ">
-                                                <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">{(pieceCountInfo) || '0'}</h3>
-                                                    <p className="mb-0">{t("Pieces")}</p>
+                    <div className='container-fluid'>
+                        {(downtimeClicked || machineClicked) && <div className="d-flex flex-column align-items-center justify-content-center position-fixed top-50 start-50 translate-middle">
+                            <h1 className="mb-0">{formatTime(timer)}</h1>
+                            <p className="mb-0 f-20" style={{ fontWeight: '600', color: 'white' }}>DownTime Timer</p>
+                            {machineClicked ? <p className="mb-0 f-18 mt-2">Machine DownTime Started</p> : ''}
+                            {downtimeClicked ? <p className="mb-0 f-18 mt-2">Material DownTime Started</p> : ''}
+                            <button
+                                type="button"
+                                className="btn btn-danger w-auto mt-4 align-items-center justify-content-center"
+                                style={{ height: "3rem", fontWeight: "600" }}
+                                onClick={handleStopTimerClick}
+                            >
+                                <div className='d-flex'>
+                                    <span className="material-symbols-outlined">close</span> Stop
+                                </div>
+                            </button>
+                        </div>}
+                        <div className='row mx-1 mt-3'>
+                            <div style={{ height: '100dvh' }} className={downtimeClicked || machineClicked ? 'downtime-blur col-3 col-md-4' : 'col-3 col-md-4 '}>
+                                <div className='row' >
+                                    <div className="col" style={{ marginBottom: '-0.7rem' }}>
+                                        <div className="card rounded-4">
+                                            <div className="card-body align-items-center justify-content-center">
+                                                <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 ">
+                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                                        <h3 className="mb-0">{(pieceCountInfo) || '0'}</h3>
+                                                        <p className="mb-0">{t("Pieces")}</p>
+                                                    </div>
+                                                    <div className="vr"></div>
+                                                    <Deviation shift={shift} latestHour={latestHour} pieceCount={pieceCountInfo} sendDataToParent={receiveDataFromChild} />
                                                 </div>
-                                                <div className="vr"></div>
-                                                <Deviation shift={shift} latestHour={latestHour} pieceCount={pieceCountInfo} sendDataToParent={receiveDataFromChild} />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className='row'>
-                                <div className="col" style={{marginBottom:'-0.7rem'}}>
-                                    <div className="card rounded-4 h-80">
-                                        <div className="card-body">
-                                            <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                                                <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
-                                                    <div style={{ width: '13rem' }}>
-                                                        <RadialBarChart Smv={Smv} pieceCount={pieceCountInfo} latestHour={latestHour} />
+                                <div className='row'>
+                                    <div className="col" style={{ marginBottom: '-0.7rem' }}>
+                                        <div className="card rounded-4 h-80">
+                                            <div className="card-body">
+                                                <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
+                                                        <div style={{ width: '13rem' }}>
+                                                            <RadialBarChart Smv={Smv} pieceCount={pieceCountInfo} latestHour={latestHour} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='row'>
+                                    <div className="col" style={{ marginBottom: '-0.7rem' }}>
+                                        <div className="card rounded-4">
+                                            <div className="card-body">
+                                                <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
+                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                                        <h3 className="mb-0">10</h3>
+                                                        <p className="mb-0">{t("Best Cycle")}</p>
+                                                    </div>
+                                                    <div className="vr"></div>
+                                                    <AvgCycle latestHour={latestHour} pieceCount={pieceCountInfo} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='row'>
+                                    <div className="col" style={{ marginBottom: '-0.7rem' }}>
+                                        <div className="card rounded-4">
+                                            <div className="card-body">
+                                                <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
+                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                                        <h3 className="mb-0">{GSDPieceRate || '0'}</h3>
+                                                        <p className="mb-0">{t("GSD Piece")}</p>
+                                                        <p className="mb-0" style={{ marginTop: "-10px" }}>{t("Rate")}</p>
+                                                    </div>
+                                                    <div className="vr"></div>
+                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                                        <h3 className="mb-0">{Math.round((dailyTarget / 10) / 7.5) || '0'}</h3>
+                                                        <p className="mb-0">{t("Target Piece")}</p>
+                                                        <p className="mb-0" style={{ marginTop: "-10px" }}>{t("Rate")}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='row'>
+                                    <div className="col" style={{ marginBottom: '-0.7rem' }}>
+                                        <div className="card rounded-4">
+                                            <div className="card-body">
+                                                <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
+                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                                        <h3 className="mb-0">10</h3>
+                                                        <p className="mb-0">{t("My Best")}</p>
+                                                    </div>
+                                                    <div className="vr"></div>
+                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                                        <h3 className="mb-0">10</h3>
+                                                        <p className="mb-0">{t("MAS Best")}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -492,160 +562,106 @@ function MyDashboard() {
                                     </div>
                                 </div>
                             </div>
-                            <div className='row'>
-                                <div className="col" style={{marginBottom:'-0.7rem'}}>
-                                    <div className="card rounded-4">
+                            <div className={downtimeClicked || machineClicked ? 'downtime-blur col-6 mx-4' : 'col-6 mx-2'}>
+                                <div className='row' style={{ marginBottom: '-0.7rem' }}>
+                                    <div className="card border-primary border-bottom rounded-4">
                                         <div className="card-body">
-                                            <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
-                                                <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">10</h3>
-                                                    <p className="mb-0">{t("Best Cycle")}</p>
+                                            <div className="d-flex align-items-center justify-content-around ">
+                                                <div className="d-flex flex-column align-items-center justify-content-center">
+                                                    <h4 className="mb-0 fw-bold">{requiredRate || '0'}</h4>
+                                                    <div className="d-flex align-items-center justify-content-center gap-1 text-success mt-1">
+                                                        <span className="material-symbols-outlined">
+                                                            trending_up
+                                                        </span>
+                                                        <p className="mb-0 fs-6">{t("Required Rate")}</p>
+                                                    </div>
                                                 </div>
                                                 <div className="vr"></div>
-                                                <AvgCycle latestHour={latestHour} pieceCount={pieceCountInfo} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='row'>
-                                <div className="col" style={{marginBottom:'-0.7rem'}}>
-                                    <div className="card rounded-4">
-                                        <div className="card-body">
-                                            <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
-                                                <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">{GSDPieceRate || '0'}</h3>
-                                                    <p className="mb-0">{t("GSD Piece")}</p>
-                                                    <p className="mb-0" style={{ marginTop: "-10px" }}>{t("Rate")}</p>
-                                                </div>
+                                                <LineEndPieceCount />
                                                 <div className="vr"></div>
-                                                <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">{Math.round((dailyTarget / 10) / 7.5) || '0'}</h3>
-                                                    <p className="mb-0">{t("Target Piece")}</p>
-                                                    <p className="mb-0" style={{ marginTop: "-10px" }}>{t("Rate")}</p>
-                                                </div>
+                                                <DailyTarget />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className='row'>
-                                <div className="col" style={{marginBottom:'-0.7rem'}}>
-                                    <div className="card rounded-4">
+                                <div className='row'>
+                                    <div className={`card border-primary border-bottom rounded-4 ${ActualRequiredRate < requiredRate ? 'bg-danger' : 'bg-success'}`}>
                                         <div className="card-body">
-                                            <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
-                                                <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">10</h3>
-                                                    <p className="mb-0">{t("My Best")}</p>
+                                            <div className="d-flex align-items-center justify-content-between mt-3">
+                                                <div className="">
+                                                    <h4 className="mb-0 fw-bold">Status</h4>
+                                                    <div className="d-flex align-items-center justify-content-start gap-1 text-dark mt-0">
+                                                        <span className="material-symbols-outlined">
+                                                            thumb_up
+                                                        </span>
+                                                        <p className="mb-0 fs-6">{ActualRequiredRate < requiredRate ? 'Behind' : 'OK'}</p>
+                                                    </div>
                                                 </div>
-                                                <div className="vr"></div>
-                                                <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">10</h3>
-                                                    <p className="mb-0">{t("MAS Best")}</p>
+                                                <div id="chart1">
+                                                    <h5>Next Hour Target</h5>
+                                                    <h4 className='text-dark'>{nextHourTarget || '0'}</h4>
                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='row'>
+                                    <div className="card">
+                                        <div className="card-header py-1">
+                                            <div className="d-flex align-items-center justify-content-between">
+                                                <h5 className="mb-0">{t("Hourly Output")}</h5>
+
+                                            </div>
+                                        </div>
+                                        <div className="card-body">
+                                            <div className="chart-container1">
+                                                <BarChart canvasId="chart2-facebook" data={pieceCountData} shift={shift} options={options} />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className={downtimeClicked || machineClicked ? 'downtime-blur col-6 mx-4' : 'col-6 mx-2'}>
-                            <div className='row' style={{marginBottom:'-0.7rem'}}>
-                                <div className="card border-primary border-bottom rounded-4">
-                                    <div className="card-body">
-                                        <div className="d-flex align-items-center justify-content-around ">
-                                            <div className="d-flex flex-column align-items-center justify-content-center">
-                                                <h4 className="mb-0 fw-bold">{requiredRate || '0'}</h4>
-                                                <div className="d-flex align-items-center justify-content-center gap-1 text-success mt-1">
-                                                    <span className="material-symbols-outlined">
-                                                        trending_up
-                                                    </span>
-                                                    <p className="mb-0 fs-6">{t("Required Rate")}</p>
-                                                </div>
-                                            </div>
-                                            <div className="vr"></div>
-                                            <LineEndPieceCount />
-                                            <div className="vr"></div>
-                                            <DailyTarget />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {/*<div className='row'>
-                                <div className="card border-primary border-bottom rounded-4 bg-success">
-                                    <div className="card-body">
-                                        <div className="d-flex align-items-center justify-content-between mt-3">
-                                            <div className="">
-                                                <h4 className="mb-0 fw-bold">Status</h4>
-                                                <div className="d-flex align-items-center justify-content-start gap-1 text-dark mt-3">
-                                                    <span className="material-symbols-outlined">
-                                                        thumb_up
-                                                    </span>
-                                                    <p className="mb-0 fs-6">OK</p>
-                                                </div>
-                                            </div>
-                                            <div id="chart1"></div>
-                                        </div>
-                                    </div>
-                                </div>
-    </div>*/}
-                            <div className='row'>
-                                <div className="card">
-                                    <div className="card-header py-1">
-                                        <div className="d-flex align-items-center justify-content-between">
-                                            <h5 className="mb-0">{t("Hourly Output")}</h5>
 
-                                        </div>
-                                    </div>
-                                    <div className="card-body">
-                                        <div className="chart-container1">
-                                            <BarChart canvasId="chart2-facebook" data={pieceCountData} shift={shift} options={options} />
-                                        </div>
-                                    </div>
+                            <div className='col mx-2'>
+                                <div className="row">
+                                    <button type="button" style={{ height: "3.5rem", fontWeight: "600", fontSize: "0.9rem" }} onClick={handleAddPieceCountClick}
+                                        className={downtimeClicked ? 'downtime-blur btn ripple btn-primary col mb-4' : 'btn ripple btn-primary col mb-4'}>
+                                        {t("Add Piece Count")}
+                                    </button>
                                 </div>
-                            </div>
-                        </div>
+                                <div className="row">
+                                    <h2
+                                        className='d-flex align-content-center justify-content-center mb-4'
+                                        style={{ color: 'white', fontWeight: "500", fontSize: "1rem" }}
+                                    >
+                                        {t("DownTime")}
+                                    </h2>
+                                </div>
+                                <div className="row">
+                                    <button type="button" className={`btn btn-warning col mb-4 ${machineClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }}
+                                        onClick={handleClickMachine}>
+                                        {t('Machine')}
+                                    </button>
+                                </div>
+                                <div className="row">
+                                    <button type="button" className={`btn btn-warning col mb-4 ${downtimeClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }}
+                                        onClick={handleClickMaterial}>
+                                        {t("Material")}
+                                    </button>
+                                </div>
+                                <CallSupervisor />
+                                <div className="row">
+                                    <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3rem", fontWeight: "600" }}>{t("Man")}</button>
+                                </div>
+                                <div className="row">
+                                    <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3rem", fontWeight: "600" }}>{t("Machine")}</button>
+                                </div>
 
-                        <div className='col mx-2'>
-                            <div className="row">
-                                <button type="button" style={{ height: "3.5rem", fontWeight: "600", fontSize: "0.9rem" }} onClick={handleAddPieceCountClick}
-                                    className={downtimeClicked ? 'downtime-blur btn ripple btn-primary col mb-4' : 'btn ripple btn-primary col mb-4'}>
-                                    {t("Add Piece Count")}
-                                </button>
                             </div>
-                            <div className="row">
-                                <h2
-                                    className='d-flex align-content-center justify-content-center mb-4'
-                                    style={{ color: 'white', fontWeight: "500", fontSize: "1rem" }}
-                                >
-                                    {t("DownTime")}
-                                </h2>
-                            </div>
-                            <div className="row">
-                                <button type="button" className={`btn btn-warning col mb-4 ${machineClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }} 
-                                onClick={handleClickMachine}>
-                                    {t('Machine')}
-                                </button>
-                            </div>
-                            <div className="row">
-                                <button type="button" className={`btn btn-warning col mb-4 ${downtimeClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }}
-                                    onClick={handleClickMaterial}>
-                                    {t("Material")}
-                                </button>
-                            </div>
-                            <CallSupervisor/>
-                            <div className="row">
-                                <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3rem", fontWeight: "600" }}>{t("Man")}</button>
-                            </div>
-                            <div className="row">
-                                <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3rem", fontWeight: "600" }}>{t("Machine")}</button>
-                            </div>
-
                         </div>
                     </div>
-                </div>
-                {showModal && <div className="modal-backdrop show"></div>}
-                <Modal showModal={showModal} handleCloseModal={handleCloseModal} />
+                    {showModal && <div className="modal-backdrop show"></div>}
+                    <Modal showModal={showModal} handleCloseModal={handleCloseModal} />
                 </I18nextProvider>
             </body>
         </html>
