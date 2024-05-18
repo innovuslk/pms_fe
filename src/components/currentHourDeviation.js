@@ -4,7 +4,7 @@ import axios from 'axios';
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from '../i18n';
 
-function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
+function CurrentDeviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
 
     const { t } = useTranslation();
 
@@ -18,14 +18,15 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     const[pieceCountForHour, setPieceCountForHour] = useState()
     const[nextHourTarget, setNextHourTarget] = useState()
     const [currentHourlyRate, setcurrentHourlyRate] = useState();
+    const [HourlyTarget, setHourlyTarget] = useState();
 
     useEffect(() => {
         setShiftID(shift);
     }, [shift]);
 
     useEffect(() => {
-        sendDataToParent(requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate)
-    },[requiredRate,actualRequiredRate ,currentHourlyRate])
+        sendDataToParent(requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, HourlyTarget)
+    },[requiredRate, actualRequiredRate, HourlyTarget])
 
     useEffect(() => {
         getShiftHours();
@@ -143,8 +144,9 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
             let deviation = alreadyDone - hourlyTarget;
             let nextHourTarget = (dailyTarget - pieceCount) / (shiftHours - intHour);
             let currentHourlyRate = pieceCount / intHour;
-            let newDeviation = dailyTarget - pieceCount
-            setcurrentHourlyRate(currentHourlyRate)
+            let newDeviation = hourlyTarget - currentHourlyRate
+            setcurrentHourlyRate(parseInt(currentHourlyRate))
+            setHourlyTarget(hourlyTarget)
             setNextHourTarget(parseInt(nextHourTarget))
             setDeviation(newDeviation);
             setRequiredRate(hourlyTarget)
@@ -155,10 +157,10 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
 
     return (
         <div className="d-flex flex-column align-items-center justify-content-center gap-2 ">
-            <h3 className="mb-0">{deviation || 'null'}</h3>
+            <h3 className="mb-0">{parseInt(deviation) || 'null'}</h3>
             <p className="mb-0">{t("Deviation")}</p>
         </div>
     )
 }
 
-export default Deviation;
+export default CurrentDeviation;

@@ -11,7 +11,7 @@ function OperatorInfo() {
     useEffect(() => {
         const intervalId = setInterval(() => {
             getAllUsers();
-        }, 20000);
+        }, 5000);
 
         return () => clearInterval(intervalId);
     }, []);
@@ -83,7 +83,7 @@ function OperatorInfo() {
     };
 
     const filteredUsers = users.filter(user => {
-        if (selectedPlant === 'All') {
+        if (selectedPlant === 'All' || '') {
             return true;
         }
         return user.plantName === selectedPlant;

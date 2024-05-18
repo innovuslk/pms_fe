@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router-dom'
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from '../i18n';
 import CallSupervisor from '../components/callSupervisor';
+import CurrentDeviation from '../components/currentHourDeviation';
+import PlannedRadialBarChart from '../components/PlannedChart';
 
 
 function MyDashboard() {
@@ -38,7 +40,11 @@ function MyDashboard() {
     const [GSDPieceRate, setGSDPieceRate] = useState()
     const [dailyTarget, setDaillytarget] = useState();
     const [language, setLanguage] = useState();
-    const[nextHourTarget, setNextHourTarget] = useState()
+    const [nextHourTarget, setNextHourTarget] = useState()
+    const [currentHourlyRate, setcurrentHourlyRate] = useState();
+    const [HourlyTarget, setHourlyTarget] = useState();
+    const [currentHourOutput, setCurrentHourOutput] = useState();
+
     // const [ connection , setConnection] = useState(navigator.onLine ? "online" : "offline"); 
 
     const [timer, setTimer] = useState(0);
@@ -247,11 +253,13 @@ function MyDashboard() {
         }
     };
 
-    const receiveDataFromChild = (requiredRate, dailyTarget, actualRequiredRate, nextHourTarget) => {
+    const receiveDataFromChild = (requiredRate, dailyTarget, actualRequiredRate, nextHourTarget, currentHourlyRate, HourlyTarget) => {
         setRequiredRate(requiredRate);
         setDaillytarget(dailyTarget)
         setActualRequiredRate(actualRequiredRate);
         setNextHourTarget(nextHourTarget);
+        setcurrentHourlyRate(currentHourlyRate)
+        setHourlyTarget(HourlyTarget);
         console.log("actual", actualRequiredRate)
     };
 
@@ -289,6 +297,7 @@ function MyDashboard() {
             });
 
             setShift(response.data.Shift)
+            console.log("shift",shift)
 
         }
         catch (error) {
@@ -378,6 +387,7 @@ function MyDashboard() {
             Object.keys(totalPieceCountByHour).forEach(hour => {
                 const pieceCountForHour = totalPieceCountByHour[hour];
                 newData.datasets[0].data.push(pieceCountForHour);
+                setCurrentHourOutput(totalPieceCountByHour[latestHour])
             });
 
             const totalLineEndPieceCountByHour = response2.data.totalPieceCountByHour;
@@ -473,7 +483,7 @@ function MyDashboard() {
                             </button>
                         </div>}
                         <div className='row mx-1 mt-3'>
-                            <div style={{ height: '100dvh' }} className={downtimeClicked || machineClicked ? 'downtime-blur col-3 col-md-4' : 'col-3 col-md-4 '}>
+                            <div style={{ height: '100dvh' }} className={downtimeClicked || machineClicked ? 'downtime-blur col-3 col-md-4' : 'col-3 col-md-5 '}>
                                 <div className='row' >
                                     <div className="col" style={{ marginBottom: '-0.7rem' }}>
                                         <div className="card rounded-4">
@@ -481,10 +491,33 @@ function MyDashboard() {
                                                 <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 ">
                                                     <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                         <h3 className="mb-0">{(pieceCountInfo) || '0'}</h3>
-                                                        <p className="mb-0">{t("Pieces")}</p>
+                                                        <p className="mb-0">{t("Total Pieces")}</p>
                                                     </div>
                                                     <div className="vr"></div>
-                                                    <Deviation shift={shift} latestHour={latestHour} pieceCount={pieceCountInfo} sendDataToParent={receiveDataFromChild} />
+                                                    <DailyTarget />
+                                                    <div className="vr"></div>
+                                                    <Deviation pieceCount={pieceCountInfo} sendDataToParent={receiveDataFromChild}/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='row' >
+                                    <div className="col" style={{ marginBottom: '-0.7rem' }}>
+                                        <div className="card rounded-4">
+                                            <div className="card-body align-items-center justify-content-center">
+                                                <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 ">
+                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                                        <h3 className="mb-0">{(HourlyTarget) || '250'}</h3>
+                                                        <p className="mb-0">{t("Hourly Target")}</p>
+                                                    </div>
+                                                    <div className="vr"></div>
+                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                                        <h3 className="mb-0">{(currentHourOutput) || '0'}</h3>
+                                                        <p className="mb-0">{t("Current Hour Output")}</p>
+                                                    </div>
+                                                    <div className="vr"></div>
+                                                    <CurrentDeviation shift={shift} latestHour={latestHour} pieceCount={pieceCountInfo} sendDataToParent={receiveDataFromChild} />
                                                 </div>
                                             </div>
                                         </div>
@@ -494,10 +527,15 @@ function MyDashboard() {
                                     <div className="col" style={{ marginBottom: '-0.7rem' }}>
                                         <div className="card rounded-4 h-80">
                                             <div className="card-body">
-                                                <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
-                                                        <div style={{ width: '13rem' }}>
+                                                <div className="d-flex align-items-center justify-content-center flex-wrap gap-2">
+                                                    <div className="d-flex align-items-center justify-content-between gap-4 ">
+                                                        <div style={{ width: '11.5rem' }}>
+                                                            <PlannedRadialBarChart Smv={Smv} pieceCount={dailyTarget} latestHour={latestHour} shift={shift}/>
+                                                            <p className="mb-0">{t("Planned Efficiency")}</p>
+                                                        </div>
+                                                        <div style={{ width: '11.5rem' }}>
                                                             <RadialBarChart Smv={Smv} pieceCount={pieceCountInfo} latestHour={latestHour} />
+                                                            <p className="mb-0">{t("Actual Efficiency")}</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -562,49 +600,49 @@ function MyDashboard() {
                                     </div>
                                 </div>
                             </div>
-                            <div className={downtimeClicked || machineClicked ? 'downtime-blur col-6 mx-4' : 'col-6 mx-2'}>
-                                <div className='row' style={{ marginBottom: '-0.7rem' }}>
-                                    <div className="card border-primary border-bottom rounded-4">
-                                        <div className="card-body">
-                                            <div className="d-flex align-items-center justify-content-around ">
-                                                <div className="d-flex flex-column align-items-center justify-content-center">
-                                                    <h4 className="mb-0 fw-bold">{requiredRate || '0'}</h4>
-                                                    <div className="d-flex align-items-center justify-content-center gap-1 text-success mt-1">
-                                                        <span className="material-symbols-outlined">
-                                                            trending_up
-                                                        </span>
-                                                        <p className="mb-0 fs-6">{t("Required Rate")}</p>
+                            <div className={downtimeClicked || machineClicked ? 'downtime-blur col-6 mx-4' : 'col-5 mx-2'}>
+                                <div className='row d-flex' style={{ marginBottom: '-0.7rem' }}>
+                                    <div className='col-md-8 col-sm-6 d-flex align-items-center justify-content-center'>
+                                        <div className="card border-primary border-bottom rounded-4">
+                                            <div className="card-body">
+                                                <div className="d-flex align-items-center justify-content-around">
+                                                    <div className="d-flex flex-column align-items-center justify-content-center">
+                                                        <h4 className="mb-0 fw-bold">{requiredRate || '0'}</h4>
+                                                        <div className="d-flex align-items-center justify-content-center gap-1 text-success mt-1">
+                                                            <p className="mb-0 fs-6">{t("Required Rate")}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="vr"></div>
+                                                    <div className="d-flex flex-column align-items-center justify-content-center">
+                                                        <h3 className="mb-0">{currentHourlyRate || '0'}</h3>
+                                                        <p className="mb-0">{t("Current Hourly Rate")}</p>
+                                                    </div>
+                                                    {/*<LineEndPieceCount />*/}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='col col-sm-3 d-flex align-items-center justify-content-around w-auto'>
+                                        <div className={`card border-primary border-bottom rounded-4 ${ActualRequiredRate < requiredRate ? 'bg-danger' : 'bg-success'}`}>
+                                            <div className="card-body">
+                                                <div className="d-flex align-items-center justify-content-between">
+                                                    <div className="">
+                                                        <h4 className="mb-0 fw-bold">Status</h4>
+                                                        <div className="d-flex align-items-center justify-content-start gap-1 text-dark mt-0">
+                                                            <span className="material-symbols-outlined">
+                                                                thumb_up
+                                                            </span>
+                                                            <p className="mb-0 fs-6">{ActualRequiredRate < requiredRate ? 'Behind' : 'OK'}</p>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div className="vr"></div>
-                                                <LineEndPieceCount />
-                                                <div className="vr"></div>
-                                                <DailyTarget />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div className='row'>
-                                    <div className={`card border-primary border-bottom rounded-4 ${ActualRequiredRate < requiredRate ? 'bg-danger' : 'bg-success'}`}>
-                                        <div className="card-body">
-                                            <div className="d-flex align-items-center justify-content-between mt-3">
-                                                <div className="">
-                                                    <h4 className="mb-0 fw-bold">Status</h4>
-                                                    <div className="d-flex align-items-center justify-content-start gap-1 text-dark mt-0">
-                                                        <span className="material-symbols-outlined">
-                                                            thumb_up
-                                                        </span>
-                                                        <p className="mb-0 fs-6">{ActualRequiredRate < requiredRate ? 'Behind' : 'OK'}</p>
-                                                    </div>
-                                                </div>
-                                                <div id="chart1">
-                                                    <h5>Next Hour Target</h5>
-                                                    <h4 className='text-dark'>{nextHourTarget || '0'}</h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
+
                                 <div className='row'>
                                     <div className="card">
                                         <div className="card-header py-1">
