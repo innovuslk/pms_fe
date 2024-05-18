@@ -517,7 +517,7 @@ function MyDashboard() {
                                                         <p className="mb-0">{t("Current Hour Output")}</p>
                                                     </div>
                                                     <div className="vr"></div>
-                                                    <CurrentDeviation shift={shift} latestHour={latestHour} pieceCount={pieceCountInfo} sendDataToParent={receiveDataFromChild} />
+                                                    <CurrentDeviation shift={shift} latestHour={latestHour} pieceCount={pieceCountInfo} currentOutput={currentHourOutput} sendDataToParent={receiveDataFromChild} />
                                                 </div>
                                             </div>
                                         </div>

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from '../i18n';
 
-function CurrentDeviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
+function CurrentDeviation({ shift, latestHour , pieceCount, currentOutput, sendDataToParent  }) {
 
     const { t } = useTranslation();
 
@@ -144,7 +144,7 @@ function CurrentDeviation({ shift, latestHour , pieceCount, sendDataToParent  })
             let deviation = alreadyDone - hourlyTarget;
             let nextHourTarget = (dailyTarget - pieceCount) / (shiftHours - intHour);
             let currentHourlyRate = pieceCount / intHour;
-            let newDeviation = hourlyTarget - currentHourlyRate
+            let newDeviation = hourlyTarget - currentOutput
             setcurrentHourlyRate(parseInt(currentHourlyRate))
             setHourlyTarget(hourlyTarget)
             setNextHourTarget(parseInt(nextHourTarget))
