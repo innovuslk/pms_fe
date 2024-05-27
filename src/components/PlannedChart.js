@@ -26,7 +26,7 @@ const PlannedRadialBarChart = ({ Smv, pieceCount, latestHour, shift }) => {
                     efficiency = 100 - Math.round((difference / targetRatePerHour) * 100);
                 }
 
-                console.log(efficiency);
+                // console.log(efficiency);
                 setEfficiency(efficiency);
             }
         };

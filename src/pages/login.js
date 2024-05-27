@@ -39,16 +39,16 @@ function Login() {
         if (verifiedToken && userLevel === 3) {
             const encodedUsername = btoa(storedUsername);
             navigate(`/user-info/${encodedUsername}`);
-            console.log(token,userLevel)
+            // console.log(token,userLevel)
         }
         else if(verifiedToken && (userLevel === 1 || userLevel === 2)) {
-            console.log(userLevel)
+            // console.log(userLevel)
             const encodedUsername = btoa(storedUsername);
             navigate(`/admin/${encodedUsername}`);
         }
         else {
             console.log('errrrrrrrrr')
-            console.log(token,userLevel,storedUsername)
+            // console.log(token,userLevel,storedUsername)
         }
     }, []);
 
@@ -65,7 +65,7 @@ function Login() {
             password: Password,
         })
             .then(res => {
-                console.log(res);
+                // console.log(res);
                 const token = res.data.token;
                 localStorage.setItem('token', token);
                 localStorage.setItem('username', Username);
@@ -82,7 +82,7 @@ function Login() {
                 else if (res.status === 200 && (res.data.userLevel === 4)) {
                     const encodedUsername = btoa(Username);
                     navigate(`/operator/${encodedUsername}`);
-                    console.log(res.data.userLevel)
+                    // console.log(res.data.userLevel)
                 }
                 else {
                     setErrorMessage("Invalid Username or Password");

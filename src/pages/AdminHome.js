@@ -96,7 +96,7 @@ function AdminHome() {
                 });
 
                 setOperatorInfo(response.data);
-                console.log("user info : ", operatorInfo)
+                // console.log("user info : ", operatorInfo)
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -131,7 +131,7 @@ function AdminHome() {
                 });
 
                 setSupervisors(response.data);
-                console.log("user info : ", supervisors)
+                // console.log("user info : ", supervisors)
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -178,7 +178,7 @@ function AdminHome() {
             DailyTarget: parseInt(Dailytarget),
         })
             .then(res => {
-                console.log(res);
+                // console.log(res);
                 if (res.status === 200) {
                     setMessage("Daily Plan Added Successful");
                     setDate('');

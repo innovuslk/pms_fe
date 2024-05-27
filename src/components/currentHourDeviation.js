@@ -26,7 +26,7 @@ function CurrentDeviation({ shift, latestHour , pieceCount, currentOutput, sendD
 
     useEffect(() => {
         sendDataToParent(requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, HourlyTarget)
-    },[requiredRate, actualRequiredRate, HourlyTarget])
+    },[requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, HourlyTarget])
 
     useEffect(() => {
         getShiftHours();
@@ -64,7 +64,6 @@ function CurrentDeviation({ shift, latestHour , pieceCount, currentOutput, sendD
     },[shift, shiftHours, dailyTarget, intHour, pieceCount])
 
     useEffect(() => {
-        console.log(latestHour)
         switch (latestHour) {
             case "1st Hour":
                 setIntHour(1);
@@ -157,7 +156,7 @@ function CurrentDeviation({ shift, latestHour , pieceCount, currentOutput, sendD
 
     return (
         <div className="d-flex flex-column align-items-center justify-content-center gap-2 ">
-            <h3 className="mb-0">{parseInt(deviation) || 'null'}</h3>
+            <h3 className="mb-0">{deviation < 0 ? '0' : parseInt(deviation)}</h3>
             <p className="mb-0">{t("Deviation")}</p>
         </div>
     )

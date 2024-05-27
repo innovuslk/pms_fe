@@ -96,7 +96,7 @@ function OperatorDashboard() {
         // Fetch latest piece count on component mount
         fetchLatestPieceCount();
 
-        const intervalId = setInterval(fetchLatestPieceCount, 600000);
+        const intervalId = setInterval(fetchLatestPieceCount, 1000);
 
         return () => clearInterval(intervalId);
     }, []);
@@ -304,18 +304,19 @@ function OperatorDashboard() {
     
         try {
             const response = await axios.post(`https://utech-iiot.lk/enmonqa/public/api/MachineData_mas/bulk`, {
-                start: startFormatted,
-                end: endFormatted
+                start: "2024-05-20 10:20:47",
+                end: "2024-05-20 10:21:47"
             });
+            console.log(response)
     
             const hour = currentSlot ? currentSlot.label : "1st Hour";
-            const newPieceCounts = { ...pieceCounts, [hour]: response.data['first pullout'].data_set.Int_Count };
+            const newPieceCounts = { ...pieceCounts, [hour]: response.data['first pullout'][0].data_set.shooter_Count };
             setPieceCounts(newPieceCounts);
     
             // Send request to update pieceCount in the database
             await axios.post(`http://${process.env.REACT_APP_HOST_IP}/set/setPieceCount`, {
                 username: username,
-                pieceCount: response.data['first pullout'].data_set.Int_Count,
+                pieceCount: response.data['first pullout'][0].data_set.shooter_Count,
                 shift: shift,
                 hour: hour
             });

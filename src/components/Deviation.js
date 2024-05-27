@@ -63,7 +63,7 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     },[shift, shiftHours, dailyTarget, intHour, pieceCount])
 
     useEffect(() => {
-        console.log(latestHour)
+        // console.log(latestHour)
         switch (latestHour) {
             case "1st Hour":
                 setIntHour(1);

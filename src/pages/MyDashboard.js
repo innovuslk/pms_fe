@@ -44,6 +44,8 @@ function MyDashboard() {
     const [currentHourlyRate, setcurrentHourlyRate] = useState();
     const [HourlyTarget, setHourlyTarget] = useState();
     const [currentHourOutput, setCurrentHourOutput] = useState();
+    const [MyBest, setMyBest] = useState();
+    const [MASBest, setMASBest] = useState();
 
     // const [ connection , setConnection] = useState(navigator.onLine ? "online" : "offline"); 
 
@@ -129,6 +131,22 @@ function MyDashboard() {
     }, [shift]);
 
     useEffect(() => {
+        getMyBest();
+
+        const intervalId = setInterval(getMyBest, 5000);
+
+        return () => clearInterval(intervalId);
+    }, [pieceCountInfo]);
+
+    useEffect(() => {
+        getMASBest();
+
+        const intervalId = setInterval(getMASBest, 5000);
+
+        return () => clearInterval(intervalId);
+    }, [pieceCountInfo]);
+
+    useEffect(() => {
         getBarChartData();
 
         const intervalId = setInterval(getBarChartData, 10000);
@@ -206,7 +224,7 @@ function MyDashboard() {
                     downTime: timer,
                     startTime: downtimeStartTime.toISOString().slice(0, 19).replace('T', ' '),
                 });
-                console.log(response);
+                // console.log(response);
 
                 // Handle response if needed
             } catch (error) {
@@ -260,7 +278,7 @@ function MyDashboard() {
         setNextHourTarget(nextHourTarget);
         setcurrentHourlyRate(currentHourlyRate)
         setHourlyTarget(HourlyTarget);
-        console.log("actual", actualRequiredRate)
+        // console.log("actual", actualRequiredRate)
     };
 
 
@@ -297,11 +315,40 @@ function MyDashboard() {
             });
 
             setShift(response.data.Shift)
-            console.log("shift",shift)
+            // console.log("shift",shift)
 
         }
         catch (error) {
             console.error("Failed to shift pieces");
+        }
+    }
+
+    const getMyBest = async () => {
+        try {
+            const username = window.location.pathname.split('/').pop();
+            setUsername(username);
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getMyBest`, {
+                username: username,
+            });
+
+            setMyBest(response.data.mybest)
+
+        }
+        catch (error) {
+            console.error("Failed to shift pieces");
+        }
+    }
+
+    const getMASBest = async () => {
+        try {
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getMASBest`, {
+            });
+            setMASBest(response.data.masbest)
+            console.log("masbest",response)
+
+        }
+        catch (error) {
+            console.error("Failed to get MASBEST pieces");
         }
     }
 
@@ -314,7 +361,7 @@ function MyDashboard() {
                 operatorType: 'operator',
                 username: Username
             });
-            console.log(username)
+            // console.log(username)
             const response2 = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
                 operatorType: 'LineEnd',
                 username: Username
@@ -586,12 +633,12 @@ function MyDashboard() {
                                             <div className="card-body">
                                                 <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
                                                     <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                        <h3 className="mb-0">10</h3>
+                                                        <h3 className="mb-0">{MyBest || '0'}</h3>
                                                         <p className="mb-0">{t("My Best")}</p>
                                                     </div>
                                                     <div className="vr"></div>
                                                     <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                        <h3 className="mb-0">10</h3>
+                                                        <h3 className="mb-0">{MASBest || '0'}</h3>
                                                         <p className="mb-0">{t("MAS Best")}</p>
                                                     </div>
                                                 </div>

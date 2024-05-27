@@ -34,7 +34,7 @@ function Register() {
             mobile:mobile
         })
             .then(res => {
-                console.log(res);
+                // console.log(res);
                 if (res.status === 200) {
                     setMessage("User Register Successful");
                     resetForm(); // Reset form fields

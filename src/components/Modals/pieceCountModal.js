@@ -141,7 +141,6 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
                     (currentHourValue === range.startHour && minutes >= range.startMinute) ||
                     (currentHourValue > range.startHour && currentHourValue < range.endHour) ||
                     (currentHourValue === range.endHour && minutes <= range.endMinute);
-
                 return withinHourRange;
             });
 

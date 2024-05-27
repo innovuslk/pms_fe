@@ -48,10 +48,8 @@ const CallSupervisor = () => {
     };
 
     const sendSMS = async (phoneNumber,roomId) => {
-        console.log('function reached')
         try{
             const response = await axios.post(`https://app.notify.lk/api/v1/send?user_id=26971&api_key=PnNPpRVZy30MjraI7z13&sender_id=NotifyDEMO&to=${phoneNumber}&message=${username} need assistance and use this link to chat with the operator - http://${process.env.REACT_APP_HOST_IP2}/chat-room/${roomId}`);
-            console.log(response)
         }
 
         catch (error){
