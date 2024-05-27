@@ -16,6 +16,7 @@ import i18n from '../i18n';
 import CallSupervisor from '../components/callSupervisor';
 import CurrentDeviation from '../components/currentHourDeviation';
 import PlannedRadialBarChart from '../components/PlannedChart';
+import ApiLineEndData from '../components/apiLineEnd';
 
 
 function MyDashboard() {
@@ -705,6 +706,9 @@ function MyDashboard() {
                                         </div>
                                     </div>
                                 </div>
+                                <div className='row'>
+                                <ApiLineEndData/>
+                            </div>
                             </div>
 
                             <div className='col mx-2'>
