@@ -345,7 +345,7 @@ function MyDashboard() {
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getMASBest`, {
             });
             setMASBest(response.data.masbest)
-            console.log("masbest",response)
+            console.log("masbest", response)
 
         }
         catch (error) {
@@ -544,7 +544,7 @@ function MyDashboard() {
                                                     <div className="vr"></div>
                                                     <DailyTarget />
                                                     <div className="vr"></div>
-                                                    <Deviation pieceCount={pieceCountInfo} sendDataToParent={receiveDataFromChild}/>
+                                                    <Deviation pieceCount={pieceCountInfo} sendDataToParent={receiveDataFromChild} />
                                                 </div>
                                             </div>
                                         </div>
@@ -556,7 +556,7 @@ function MyDashboard() {
                                             <div className="card-body align-items-center justify-content-center">
                                                 <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 ">
                                                     <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                        <h3 className="mb-0">{(HourlyTarget) || '250'}</h3>
+                                                        <h3 className="mb-0">{(HourlyTarget ? HourlyTarget.toFixed(2) : 0) || '0'}</h3>
                                                         <p className="mb-0">{t("Hourly Target")}</p>
                                                     </div>
                                                     <div className="vr"></div>
@@ -578,7 +578,7 @@ function MyDashboard() {
                                                 <div className="d-flex align-items-center justify-content-center flex-wrap gap-2">
                                                     <div className="d-flex align-items-center justify-content-between gap-4 ">
                                                         <div style={{ width: '11.5rem' }}>
-                                                            <PlannedRadialBarChart Smv={Smv} pieceCount={dailyTarget} latestHour={latestHour} shift={shift}/>
+                                                            <PlannedRadialBarChart Smv={Smv} pieceCount={dailyTarget} latestHour={latestHour} shift={shift} />
                                                             <p className="mb-0">{t("Planned Efficiency")}</p>
                                                         </div>
                                                         <div style={{ width: '11.5rem' }}>
@@ -655,7 +655,7 @@ function MyDashboard() {
                                             <div className="card-body">
                                                 <div className="d-flex align-items-center justify-content-around">
                                                     <div className="d-flex flex-column align-items-center justify-content-center">
-                                                        <h4 className="mb-0 fw-bold">{requiredRate || '0'}</h4>
+                                                        <h4 className="mb-0 fw-bold">{(requiredRate ? requiredRate.toFixed(2) : '0')}</h4>
                                                         <div className="d-flex align-items-center justify-content-center gap-1 text-success mt-1">
                                                             <p className="mb-0 fs-6">{t("Required Rate")}</p>
                                                         </div>
@@ -678,7 +678,7 @@ function MyDashboard() {
                                                         <h4 className="mb-0 fw-bold">Status</h4>
                                                         <div className="d-flex align-items-center justify-content-start gap-1 text-dark mt-0">
                                                             <span className="material-symbols-outlined">
-                                                                thumb_up
+                                                                {ActualRequiredRate < requiredRate ? 'thumb_down' : 'thumb_up'}
                                                             </span>
                                                             <p className="mb-0 fs-6">{ActualRequiredRate < requiredRate ? 'Behind' : 'OK'}</p>
                                                         </div>
@@ -707,8 +707,8 @@ function MyDashboard() {
                                     </div>
                                 </div>
                                 <div className='row'>
-                                <ApiLineEndData/>
-                            </div>
+                                    <ApiLineEndData />
+                                </div>
                             </div>
 
                             <div className='col mx-2'>
