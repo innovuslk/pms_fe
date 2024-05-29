@@ -62,7 +62,7 @@ function AvgCycle({ latestHour, pieceCount }) {
     return (
         <div className="d-flex flex-column align-items-center justify-content-center gap-2">
             <h3 className="mb-0">{avgCycle || '0'}</h3>
-            <p className="mb-0">{t("Avg Cycle")}</p>
+            <p className="mb-0">{t("Avg Cycle Time")}</p>
         </div>
     )
 }

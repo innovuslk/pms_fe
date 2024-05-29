@@ -600,7 +600,7 @@ function MyDashboard() {
                                                 <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
                                                     <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                         <h3 className="mb-0">10</h3>
-                                                        <p className="mb-0">{t("Best Cycle")}</p>
+                                                        <p className="mb-0">{t("Best Cycle Time")}</p>
                                                     </div>
                                                     <div className="vr"></div>
                                                     <AvgCycle latestHour={latestHour} pieceCount={pieceCountInfo} />
