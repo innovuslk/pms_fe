@@ -665,7 +665,6 @@ function MyDashboard() {
                                                         <h3 className="mb-0">{currentHourlyRate || '0'}</h3>
                                                         <p className="mb-0">{t("Current Hourly Rate")}</p>
                                                     </div>
-                                                    {/*<LineEndPieceCount />*/}
                                                 </div>
                                             </div>
                                         </div>
@@ -708,7 +707,8 @@ function MyDashboard() {
                                 </div>
                                 {/*<div className='row'>
                                     <ApiLineEndData />
-    </div>*/}
+                                </div>*/}
+                                <LineEndPieceCount />
                             </div>
 
                             <div className='col mx-2'>
