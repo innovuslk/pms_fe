@@ -4,7 +4,7 @@ import axios from 'axios';
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from '../i18n';
 
-function CurrentDeviation({ shift, latestHour , pieceCount, currentOutput, sendDataToParent  }) {
+function CurrentDeviation({ shift, latestHour , pieceCount, currentHourOutput, sendDataToParent  }) {
 
     const { t } = useTranslation();
 
@@ -26,7 +26,7 @@ function CurrentDeviation({ shift, latestHour , pieceCount, currentOutput, sendD
 
     useEffect(() => {
         sendDataToParent(requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, HourlyTarget)
-    },[requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, HourlyTarget])
+    },[requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, HourlyTarget, deviation])
 
     useEffect(() => {
         getShiftHours();
@@ -143,15 +143,13 @@ function CurrentDeviation({ shift, latestHour , pieceCount, currentOutput, sendD
             let deviation = alreadyDone - hourlyTarget;
             let nextHourTarget = (dailyTarget - pieceCount) / (shiftHours - intHour);
             let currentHourlyRate = pieceCount / intHour;
-            let newDeviation = hourlyTarget - currentOutput
+            let newDeviation = hourlyTarget - currentHourOutput
             setcurrentHourlyRate(parseInt(currentHourlyRate))
             setHourlyTarget(hourlyTarget)
             setNextHourTarget(parseInt(nextHourTarget))
             setDeviation(newDeviation);
             setRequiredRate(hourlyTarget)
             setActualRequiredRate(alreadyDone + deviation)
-            // console.log("requsdifjdisajf",nextHourTarget)
-
     }
 
     return (

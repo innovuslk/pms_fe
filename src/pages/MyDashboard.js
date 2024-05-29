@@ -47,6 +47,7 @@ function MyDashboard() {
     const [currentHourOutput, setCurrentHourOutput] = useState();
     const [MyBest, setMyBest] = useState();
     const [MASBest, setMASBest] = useState();
+    const [bestCycle, setBestCycle] = useState(Infinity);
 
     // const [ connection , setConnection] = useState(navigator.onLine ? "online" : "offline"); 
 
@@ -280,6 +281,10 @@ function MyDashboard() {
         setcurrentHourlyRate(currentHourlyRate)
         setHourlyTarget(HourlyTarget);
         // console.log("actual", actualRequiredRate)
+    };
+
+    const updateBestCycle = (newBestCycle) => {
+        setBestCycle(newBestCycle);
     };
 
 
@@ -567,7 +572,7 @@ function MyDashboard() {
                                                         <p className="mb-0">{t("Current Hour Output")}</p>
                                                     </div>
                                                     <div className="vr"></div>
-                                                    <CurrentDeviation shift={shift} latestHour={latestHour} pieceCount={pieceCountInfo} currentOutput={currentHourOutput} sendDataToParent={receiveDataFromChild} />
+                                                    <CurrentDeviation shift={shift} latestHour={latestHour} pieceCount={pieceCountInfo} currentHourOutput={currentHourOutput} sendDataToParent={receiveDataFromChild} />
                                                 </div>
                                             </div>
                                         </div>
@@ -599,11 +604,11 @@ function MyDashboard() {
                                             <div className="card-body">
                                                 <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
                                                     <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                        <h3 className="mb-0">10</h3>
+                                                        <h3 className="mb-0">{bestCycle || '0'}</h3>
                                                         <p className="mb-0">{t("Best Cycle Time")}</p>
                                                     </div>
                                                     <div className="vr"></div>
-                                                    <AvgCycle latestHour={latestHour} pieceCount={pieceCountInfo} />
+                                                    <AvgCycle latestHour={latestHour} currentHourOutput={currentHourOutput} onUpdateBestCycle={updateBestCycle}/>
                                                 </div>
                                             </div>
                                         </div>
