@@ -28,6 +28,9 @@ const TopOperatorsTable = () => {
                             <th scope="col" className="text-center text-warning">User ID</th>
                             <th scope="col" className="text-center text-warning">Username</th>
                             <th scope="col" className="text-center text-warning">Piece Count</th>
+                            <th scope="col" className="text-center text-warning">PlantName</th>
+                            <th scope="col" className="text-center text-warning">LineNo</th>
+                            <th scope="col" className="text-center text-warning">Shift</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,6 +39,9 @@ const TopOperatorsTable = () => {
                                 <td>{user.userid}</td>
                                 <td>{user.username}</td>
                                 <td>{user.totalPieceCount}</td>
+                                <td>{user.plantName}</td>
+                                <td>{user.line}</td>
+                                <td>{user.shift}</td>
                             </tr>
                         ))}
                     </tbody>

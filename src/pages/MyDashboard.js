@@ -539,7 +539,7 @@ function MyDashboard() {
                                                 <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 ">
                                                     <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                         <h3 className="mb-0">{(pieceCountInfo) || '0'}</h3>
-                                                        <p className="mb-0">{t("Total Pieces")}</p>
+                                                        <p className="mb-0">{t("Total Pieces Out")}</p>
                                                     </div>
                                                     <div className="vr"></div>
                                                     <DailyTarget />
@@ -657,7 +657,7 @@ function MyDashboard() {
                                                     <div className="d-flex flex-column align-items-center justify-content-center">
                                                         <h4 className="mb-0 fw-bold">{(requiredRate ? requiredRate.toFixed(2) : '0')}</h4>
                                                         <div className="d-flex align-items-center justify-content-center gap-1 text-success mt-1">
-                                                            <p className="mb-0 fs-6">{t("Required Rate")}</p>
+                                                            <p className="mb-0 fs-6">{t("Required Hourly Rate")}</p>
                                                         </div>
                                                     </div>
                                                     <div className="vr"></div>
@@ -706,9 +706,9 @@ function MyDashboard() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className='row'>
+                                {/*<div className='row'>
                                     <ApiLineEndData />
-                                </div>
+    </div>*/}
                             </div>
 
                             <div className='col mx-2'>

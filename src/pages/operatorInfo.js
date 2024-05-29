@@ -2,16 +2,18 @@ import React, { useState, useEffect } from 'react';
 import '../assets/css/adminHome.css';
 import axios from 'axios';
 import RadialBarChart from '../components/efficiency_guage';
+import { ClipLoader } from 'react-spinners';
 
 function OperatorInfo() {
     const [users, setUsers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedPlant, setSelectedPlant] = useState('All');
+    const [loading, setLoading] = useState(true); // Loading state
 
     useEffect(() => {
         const intervalId = setInterval(() => {
             getAllUsers();
-        }, 5000);
+        }, 20000);
 
         return () => clearInterval(intervalId);
     }, []);
@@ -25,11 +27,13 @@ function OperatorInfo() {
                 return user;
             })).then(updatedUsers => {
                 setUsers(updatedUsers);
+                setLoading(false); // Data loaded
             });
         }
     }, [users]);
 
     const getAllUsers = async () => {
+        setLoading(true); // Start loading
         try {
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/getAllOperators`, {});
             const usersData = response.data.Users; // Extract the Users array from the response
@@ -117,28 +121,35 @@ function OperatorInfo() {
                     <option value="PLC">PLC</option>
                 </select>
             </div>
-            {filteredUsers.map((user, index) => (
-                index % 3 === 0 && // Start a new row for every third user
-                <div key={index} className="row">
-                    {filteredUsers.slice(index, index + 3).map((user, subIndex) => (
-                        <div key={subIndex} className="col">
-                            <div className="card rounded-4">
-                                <div className="card-body d-flex flex-column align-items-center">
-                                    <div className="mb-0">
-                                        <RadialBarChart Smv={user.smv} pieceCount={user.pieceCount} latestHour={user.latestHour} />
-                                    </div>
-                                    <div className="text-center">
-                                        <p className="mb-1 text-bg-dark">UserName - {user.username}</p>
-                                        <p className="mb-1 text-bg-dark">Plant - {user.plantName}</p>
-                                        <p className="mb-1 text-bg-dark">PieceCount - {user.pieceCount}</p>
-                                        <p className="mb-1 text-bg-dark">Shift - {user.shift}</p>
+            {loading ? (
+                <div className="d-flex justify-content-center align-items-center">
+                    <ClipLoader size={50} color={"white"} loading={loading} />
+                    <h6> loading please wait .. </h6>
+                </div>
+            ) : (
+                filteredUsers.map((user, index) => (
+                    index % 3 === 0 && // Start a new row for every third user
+                    <div key={index} className="row">
+                        {filteredUsers.slice(index, index + 3).map((user, subIndex) => (
+                            <div key={subIndex} className="col">
+                                <div className="card rounded-4">
+                                    <div className="card-body d-flex flex-column align-items-center">
+                                        <div className="mb-0">
+                                            <RadialBarChart Smv={user.smv} pieceCount={user.pieceCount} latestHour={user.latestHour} />
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="mb-1 text-bg-dark">UserName - {user.username}</p>
+                                            <p className="mb-1 text-bg-dark">Plant - {user.plantName}</p>
+                                            <p className="mb-1 text-bg-dark">PieceCount - {user.pieceCount}</p>
+                                            <p className="mb-1 text-bg-dark">Shift - {user.shift}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
-            ))}
+                        ))}
+                    </div>
+                ))
+            )}
         </div>
     );
 }

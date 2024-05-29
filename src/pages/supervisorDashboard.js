@@ -38,13 +38,15 @@ function SupervisorDashboard() {
                 username: username,
                 plantName: plantName
             });
-            const lineNos = response.data.lineNos;
-            const newLinesData = lineNos.map((lineNo) => ({
+            const lineNos = response.data.linePieceCounts;
+            console.log(lineNos)
+            const newLinesData = lineNos.map(({ lineNo, pieceCount }) => ({
                 lineNo: lineNo,
                 smv: null,
-                totalPieceCount: null,
+                totalPieceCount: pieceCount,
                 latestHour: null
             }));
+            
             setLinesData(newLinesData);
         } catch (error) {
             console.error('Error fetching line numbers:', error);
@@ -61,7 +63,7 @@ function SupervisorDashboard() {
                 username: username,
                 lineNo: lineNo
             });
-            const usernames = response.data.usernames;
+            const usernames = response.data;
             setUsers(usernames);
         } catch (error) {
             console.error('Error fetching users:', error);
@@ -164,9 +166,10 @@ function SupervisorDashboard() {
                             <button className='btn btn-close' onClick={() => setSelectedLine(null)}></button>
                                 <div className="card rounded-4">
                                     <div className="card-body">
-                                        <h5>Users of Line {selectedLine}</h5>
+                                        <h5>Operators of Line {selectedLine}</h5>
+                                        <hr></hr>
                                         {users.map((user, index) => (
-                                            <div key={index}>{user}</div>
+                                            <div classname key={index}>{user.username} -: PieceCount - {user.totalPieceCount}</div>
                                         ))}
                                     </div>
                                 </div>

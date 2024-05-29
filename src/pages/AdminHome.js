@@ -343,20 +343,20 @@ function AdminHome() {
                 </span>
                 User Management
                 </a>
-                <a className='d-flex align-items-center' onClick={() => handleSideBarClick('Chat')}><span class="material-symbols-outlined mx-1">
+                {/*<a className='d-flex align-items-center' onClick={() => handleSideBarClick('Chat')}><span class="material-symbols-outlined mx-1">
                 message
                 </span>
                 Chat
-                </a>
+    </a>*/}
 
             </div>
 
             {sideBarType === 'Dashboard' ?
                 <SupervisorDashboard/> : ''}
             
-            {sideBarType === 'Chat' ? 
+            {/*sideBarType === 'Chat' ? 
             <SupervisorJoin/> : ''
-        }
+    */}
 
             {sideBarType === 'DailyPlan' ?
                 <div className="content">
