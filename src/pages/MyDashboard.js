@@ -360,12 +360,14 @@ function MyDashboard() {
             setUsername(username);
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
                 operatorType: 'operator',
-                username: Username
+                username: Username,
+                shift: shift
             });
             // console.log(username)
             const response2 = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
                 operatorType: 'LineEnd',
-                username: Username
+                username: Username,
+                shift: shift
             });
 
             let labels = [];
@@ -708,7 +710,7 @@ function MyDashboard() {
                                 {/*<div className='row'>
                                     <ApiLineEndData />
                                 </div>*/}
-                                <LineEndPieceCount />
+                                <LineEndPieceCount shift={shift}/>
                             </div>
 
                             <div className='col mx-2'>

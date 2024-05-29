@@ -4,7 +4,7 @@ import axios from 'axios';
 import { I18nextProvider, useTranslation } from "react-i18next";
 
 
-function LineEndPieceCount() {
+function LineEndPieceCount({shift}) {
     const { t } = useTranslation();
 
     const [pieceCount, setPieceCount] = useState();
@@ -25,7 +25,8 @@ function LineEndPieceCount() {
             const username = window.location.pathname.split('/').pop();
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getLineEndPieceCount`, {
                 operation: "LineEnd",
-                username: username
+                username: username,
+                shift:shift
             });
             setPieceCount(response.data.totalLineEndPieceCount)
         }
