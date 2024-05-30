@@ -71,8 +71,8 @@ function AvgCycle({ latestHour, currentHourOutput, onUpdateBestCycle }) {
     }, [latestHour]);
 
     const calculateAvgCycle = (intHour, currentHourOutput) => {
-        let avgCycle = Math.round((currentHourOutput / intHour));
-        return avgCycle;
+        let avgCycle = (currentHourOutput / intHour);
+        return avgCycle.toFixed(2);
     };
 
     return (

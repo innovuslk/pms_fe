@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Clock from 'react-live-clock';
 import axios from 'axios';
 
-function Navbar({sendLanguage}) {
+function Navbar({ sendLanguage }) {
     const navigate = useNavigate();
     const { t, i18n } = useTranslation();
 
@@ -123,6 +123,10 @@ function Navbar({sendLanguage}) {
                                 <li className="nav-item me-auto"><a className="nav-link d-flex align-items-center gap-1"><span className="material-symbols-outlined">
                                     styler
                                 </span>{t('Style')} - {style && style.style || t('Style')}</a>
+                                </li>
+                                <li className="nav-item me-auto"><a className="nav-link d-flex align-items-center gap-1"><span className="material-symbols-outlined">
+                                    engineering
+                                </span>{t('Operation')} - {operatorInfo && operatorInfo.operation || t('Operation')}</a>
                                 </li>
                                 <li className="nav-item me-auto">
                                     <a className="nav-link d-flex align-items-center gap-1" href="javascript:;">

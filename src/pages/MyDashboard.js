@@ -284,7 +284,7 @@ function MyDashboard() {
     };
 
     const updateBestCycle = (newBestCycle) => {
-        setBestCycle(newBestCycle);
+        setBestCycle(newBestCycle.toFixed(2));
     };
 
 
@@ -377,9 +377,9 @@ function MyDashboard() {
 
             let labels = [];
             if (shift === 'A') {
-                labels = ["06.00", "06.20", "07.20", "08.20", "09.40", "10.40", "11.00", "12.00", "13.00", "14.00"];
+                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th","10th"];
             } else if (shift === 'B') {
-                labels = ["14.00", "14.20", "15.20", "16.20", "18.20", "18.40", "19.40", "20.40", "21.40", "22.40"];
+                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th","10th"];
             }
 
             const getGradientFillStyle = () => {
