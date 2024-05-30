@@ -329,7 +329,6 @@ function MyDashboard() {
         let deviationValue = Number(deviation);
         let intHourValue = Number(intHour);
     
-        console.log("asds",deviation,intHour)
         // Calculate the hourly required rate
         let hourlyRequiredRate = deviationValue / intHourValue;
     
