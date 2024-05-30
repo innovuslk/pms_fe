@@ -48,6 +48,8 @@ function MyDashboard() {
     const [MyBest, setMyBest] = useState();
     const [MASBest, setMASBest] = useState();
     const [bestCycle, setBestCycle] = useState(Infinity);
+    const [intHour, setIntHour] = useState();
+    const [deviation, setDeviation] = useState();
 
     // const [ connection , setConnection] = useState(navigator.onLine ? "online" : "offline"); 
 
@@ -172,6 +174,46 @@ function MyDashboard() {
         return () => clearInterval(intervalId);
     }, []);
 
+    useEffect(() => {
+        calculateHourlyRequiredRate(deviation, intHour);
+
+        const intervalId = setInterval(calculateHourlyRequiredRate, 20000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    useEffect(() => {
+        switch (latestHour) {
+            case "1st Hour":
+                setIntHour(20);
+                break;
+            case "2nd Hour":
+                setIntHour(60);
+                break;
+            case "3rd Hour":
+                setIntHour(60);
+                break;
+            case "4th Hour":
+                setIntHour(60);
+                break;
+            case "5th Hour":
+                setIntHour(60);
+                break;
+            case "6th Hour":
+                setIntHour(60);
+                break;
+            case "7th Hour":
+                setIntHour(60);
+                break;
+            case "8th Hour":
+                setIntHour(60);
+                break;
+            default:
+                setIntHour(60);
+                break;
+        }
+    }, [latestHour]);
+
     const handleStopTimerClick = async () => {
         setDowntimeClicked(false);
         setMachineClicked(false);
@@ -273,18 +315,33 @@ function MyDashboard() {
         }
     };
 
-    const receiveDataFromChild = (requiredRate, dailyTarget, actualRequiredRate, nextHourTarget, currentHourlyRate, HourlyTarget) => {
-        setRequiredRate(requiredRate);
+    const receiveDataFromChild = ( dailyTarget, actualRequiredRate, nextHourTarget, currentHourlyRate, HourlyTarget, deviation) => {
         setDaillytarget(dailyTarget)
         setActualRequiredRate(actualRequiredRate);
         setNextHourTarget(nextHourTarget);
         setcurrentHourlyRate(currentHourlyRate)
         setHourlyTarget(HourlyTarget);
+        setDeviation(deviation)
         // console.log("actual", actualRequiredRate)
     };
 
+    const calculateHourlyRequiredRate = (deviation, intHour) =>{
+        let deviationValue = Number(deviation);
+        let intHourValue = Number(intHour);
+    
+        console.log("asds",deviation,intHour)
+        // Calculate the hourly required rate
+        let hourlyRequiredRate = deviationValue / intHourValue;
+    
+        // Fix to 2 decimal places and convert back to a number
+        let answer = parseFloat(hourlyRequiredRate.toFixed(2));
+    
+        // Set the required rate
+        setRequiredRate(answer);
+    }
+
     const updateBestCycle = (newBestCycle) => {
-        setBestCycle(newBestCycle.toFixed(2));
+        setBestCycle(newBestCycle);
     };
 
 

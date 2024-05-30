@@ -24,8 +24,8 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     }, [shift]);
 
     useEffect(() => {
-        sendDataToParent(requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate)
-    },[requiredRate,actualRequiredRate ,currentHourlyRate])
+        sendDataToParent(requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, deviation)
+    },[requiredRate,actualRequiredRate ,currentHourlyRate, deviation])
 
     useEffect(() => {
         getShiftHours();
