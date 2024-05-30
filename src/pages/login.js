@@ -115,7 +115,7 @@ function Login() {
                                                 <div className="text-center">
                                                     <div>
                                                         <Link to="/" className="logo">
-                                                            <img src={logodark} alt="" height="40" className=" mx-auto" />
+                                                            <img src={logodark} alt=""  style={{ height: "50px", width: "140px" }} className=" mx-auto" />
                                                         </Link>
                                                     </div>
 
