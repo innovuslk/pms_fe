@@ -50,6 +50,7 @@ function MyDashboard() {
     const [bestCycle, setBestCycle] = useState(Infinity);
     const [intHour, setIntHour] = useState();
     const [deviation, setDeviation] = useState();
+    const[requiredHourlyRate, setRequiredHourlyRate] = useState();
 
     // const [ connection , setConnection] = useState(navigator.onLine ? "online" : "offline"); 
 
@@ -315,13 +316,14 @@ function MyDashboard() {
         }
     };
 
-    const receiveDataFromChild = ( dailyTarget, actualRequiredRate, nextHourTarget, currentHourlyRate, HourlyTarget, deviation) => {
+    const receiveDataFromChild = ( requiredRate, dailyTarget, actualRequiredRate, nextHourTarget, currentHourlyRate, HourlyTarget, deviation) => {
         setDaillytarget(dailyTarget)
         setActualRequiredRate(actualRequiredRate);
         setNextHourTarget(nextHourTarget);
         setcurrentHourlyRate(currentHourlyRate)
         setHourlyTarget(HourlyTarget);
         setDeviation(deviation)
+        setRequiredRate(requiredRate)
         // console.log("actual", actualRequiredRate)
     };
 
@@ -334,9 +336,9 @@ function MyDashboard() {
     
         // Fix to 2 decimal places and convert back to a number
         let answer = parseFloat(hourlyRequiredRate.toFixed(2));
-    
+        
+        setRequiredHourlyRate(answer)
         // Set the required rate
-        setRequiredRate(answer);
     }
 
     const updateBestCycle = (newBestCycle) => {
@@ -718,7 +720,7 @@ function MyDashboard() {
                                             <div className="card-body">
                                                 <div className="d-flex align-items-center justify-content-around">
                                                     <div className="d-flex flex-column align-items-center justify-content-center">
-                                                        <h4 className="mb-0 fw-bold">{(requiredRate ? requiredRate.toFixed(2) : '0')}</h4>
+                                                        <h4 className="mb-0 fw-bold">{(requiredHourlyRate ? requiredHourlyRate : '0')}</h4>
                                                         <div className="d-flex align-items-center justify-content-center gap-1 text-success mt-1">
                                                             <p className="mb-0 fs-6">{t("Required Hourly Rate")}</p>
                                                         </div>
