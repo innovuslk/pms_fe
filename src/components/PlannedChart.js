@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
 import axios from 'axios';
 
-const PlannedRadialBarChart = ({ Smv, pieceCount, latestHour, shift }) => {
+const PlannedRadialBarChart = ({ Smv, dailyTarget, latestHour, shift }) => {
     const { t } = useTranslation();
 
     const [intHour, setIntHour] = useState();
@@ -15,9 +15,9 @@ const PlannedRadialBarChart = ({ Smv, pieceCount, latestHour, shift }) => {
         const calculateEfficiency = () => {
             if (shiftHours > 0) {
                 let targetRatePerHour = 60 * Smv;
-                let pieceCountRate = pieceCount / shiftHours;
+                let dailyTargetRate = dailyTarget / shiftHours;
 
-                let difference = targetRatePerHour - parseInt(pieceCountRate);
+                let difference = targetRatePerHour - parseInt(dailyTargetRate);
 
                 let efficiency;
                 if (Math.round(difference) <= 0) {
@@ -51,7 +51,7 @@ const PlannedRadialBarChart = ({ Smv, pieceCount, latestHour, shift }) => {
         }, 10000);
 
         return () => clearInterval(intervalId);
-    }, [Smv, pieceCount, shift, shiftHours]);
+    }, [Smv, dailyTarget, shift, shiftHours]);
 
     useEffect(() => {
         const hourMapping = {
@@ -67,64 +67,65 @@ const PlannedRadialBarChart = ({ Smv, pieceCount, latestHour, shift }) => {
         setIntHour(hourMapping[latestHour] || 0);
     }, [latestHour]);
 
-    const options = {
-        chart: {
-            type: 'radialBar',
-        },
-        series: [efficiency],
-        colors: ['#20E647'],
-        plotOptions: {
-            radialBar: {
-                hollow: {
-                    margin: 0,
-                    size: '70%',
-                    background: '#293450',
-                },
-                track: {
-                    dropShadow: {
-                        enabled: true,
-                        top: 2,
-                        left: 0,
-                        blur: 4,
-                        opacity: 0.15,
-                    },
-                },
-                dataLabels: {
-                    name: {
-                        offsetY: -10,
-                        color: '#fff',
-                        fontSize: '13px',
-                    },
-                    value: {
-                        color: '#fff',
-                        fontSize: '30px',
-                        show: true,
-                    },
-                },
-            },
-        },
-        fill: {
-            type: 'gradient',
-            gradient: {
-                shade: 'dark',
-                type: 'vertical',
-                gradientToColors: ['#87D4F9'],
-                stops: [0, 100],
-            },
-        },
-        stroke: {
-            lineCap: 'round',
-        },
-        labels: [t("Efficiency")],
-    };
+    // const options = {
+    //     chart: {
+    //         type: 'radialBar',
+    //     },
+    //     series: [efficiency],
+    //     colors: ['#20E647'],
+    //     plotOptions: {
+    //         radialBar: {
+    //             hollow: {
+    //                 margin: 0,
+    //                 size: '70%',
+    //                 background: '#293450',
+    //             },
+    //             track: {
+    //                 dropShadow: {
+    //                     enabled: true,
+    //                     top: 2,
+    //                     left: 0,
+    //                     blur: 4,
+    //                     opacity: 0.15,
+    //                 },
+    //             },
+    //             dataLabels: {
+    //                 name: {
+    //                     offsetY: -10,
+    //                     color: '#fff',
+    //                     fontSize: '13px',
+    //                 },
+    //                 value: {
+    //                     color: '#fff',
+    //                     fontSize: '30px',
+    //                     show: true,
+    //                 },
+    //             },
+    //         },
+    //     },
+    //     fill: {
+    //         type: 'gradient',
+    //         gradient: {
+    //             shade: 'dark',
+    //             type: 'vertical',
+    //             gradientToColors: ['#87D4F9'],
+    //             stops: [0, 100],
+    //         },
+    //     },
+    //     stroke: {
+    //         lineCap: 'round',
+    //     },
+    //     labels: [t("Efficiency")],
+    // };
 
     return (
-        <ApexCharts
-            options={options}
-            series={[efficiency || 0]}
-            type="radialBar"
-        />
-    );
+        <div className='d-flex align-content-center justify-content-center'>
+            <h1 className='text-warning'>135</h1>
+        </div>
+
+
+
+    )
 };
 
 export default PlannedRadialBarChart;

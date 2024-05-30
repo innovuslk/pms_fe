@@ -585,11 +585,11 @@ function MyDashboard() {
                                                 <div className="d-flex align-items-center justify-content-center flex-wrap gap-2">
                                                     <div className="d-flex align-items-center justify-content-between gap-4 ">
                                                         <div style={{ width: '11.5rem' }}>
-                                                            <PlannedRadialBarChart Smv={Smv} pieceCount={dailyTarget} latestHour={latestHour} shift={shift} />
+                                                            <PlannedRadialBarChart Smv={Smv} dailyTarget={dailyTarget} latestHour={latestHour} shift={shift}/>
                                                             <p className="mb-0">{t("Planned Efficiency")}</p>
                                                         </div>
                                                         <div style={{ width: '11.5rem' }}>
-                                                            <RadialBarChart Smv={Smv} pieceCount={pieceCountInfo} latestHour={latestHour} />
+                                                            <RadialBarChart Smv={Smv} pieceCount={pieceCountInfo} latestHour={latestHour} dailyTarget={dailyTarget}/>
                                                             <p className="mb-0">{t("Actual Efficiency")}</p>
                                                         </div>
                                                     </div>
