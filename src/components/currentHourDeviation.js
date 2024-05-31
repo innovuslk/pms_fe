@@ -12,7 +12,7 @@ function CurrentDeviation({ shift, latestHour , pieceCount, currentHourOutput, s
     const [shiftID, setShiftID] = useState('');
     const [dailyTarget, setDaillytarget] = useState();
     const [intHour, setIntHour] = useState()
-    const [deviation,setDeviation] = useState();
+    const [Deviation,setDeviation] = useState();
     const [requiredRate, setRequiredRate] = useState(0);
     const [actualRequiredRate, setActualRequiredRate] = useState();
     const[pieceCountForHour, setPieceCountForHour] = useState()
@@ -25,8 +25,12 @@ function CurrentDeviation({ shift, latestHour , pieceCount, currentHourOutput, s
     }, [shift]);
 
     useEffect(() => {
-        sendDataToParent(requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, HourlyTarget)
-    },[requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, HourlyTarget, deviation])
+        const intervalId = setInterval(sendDataToParent(requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, HourlyTarget), 10000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    },[requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, HourlyTarget, Deviation, pieceCount, currentHourOutput])
 
     useEffect(() => {
         getShiftHours();
@@ -154,7 +158,7 @@ function CurrentDeviation({ shift, latestHour , pieceCount, currentHourOutput, s
 
     return (
         <div className="d-flex flex-column align-items-center justify-content-center gap-2 ">
-            <h3 className="mb-0">{deviation < 0 ? '0' : parseInt(deviation)}</h3>
+            <h3 className="mb-0">{Deviation < 0 || Deviation == null ? '0' : parseInt(Deviation)}</h3>
             <p className="mb-0">{t("Deviation")}</p>
         </div>
     )

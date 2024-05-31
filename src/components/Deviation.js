@@ -24,6 +24,14 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     }, [shift]);
 
     useEffect(() => {
+            console.log("Sending to parent:", {
+        requiredRate,
+        dailyTarget,
+        actualRequiredRate,
+        nextHourTarget,
+        currentHourlyRate,
+        deviation
+    });
         sendDataToParent(requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, deviation)
     },[requiredRate,actualRequiredRate ,currentHourlyRate, deviation])
 
@@ -149,7 +157,6 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
             setDeviation(newDeviation);
             setRequiredRate(hourlyTarget)
             setActualRequiredRate(alreadyDone + deviation)
-            // console.log("requsdifjdisajf",nextHourTarget)
 
     }
 

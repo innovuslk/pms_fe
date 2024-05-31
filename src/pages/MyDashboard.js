@@ -51,6 +51,8 @@ function MyDashboard() {
     const [intHour, setIntHour] = useState();
     const [deviation, setDeviation] = useState();
     const[requiredHourlyRate, setRequiredHourlyRate] = useState();
+    const [operatorInfo, setOperatorInfo] = useState(null);
+    const [shiftHours, setShiftHours] = useState();
 
     // const [ connection , setConnection] = useState(navigator.onLine ? "online" : "offline"); 
 
@@ -176,44 +178,87 @@ function MyDashboard() {
     }, []);
 
     useEffect(() => {
-        calculateHourlyRequiredRate(deviation, intHour);
+        calculateHourlyRequiredRate();
 
         const intervalId = setInterval(calculateHourlyRequiredRate, 20000);
 
         return () => clearInterval(intervalId);
-    }, []);
+    }, [deviation,pieceCountInfo]);
 
     useEffect(() => {
         switch (latestHour) {
             case "1st Hour":
-                setIntHour(20);
+                setIntHour(0.5);
                 break;
             case "2nd Hour":
-                setIntHour(60);
+                setIntHour(1.5);
                 break;
             case "3rd Hour":
-                setIntHour(60);
+                setIntHour(2.5);
                 break;
             case "4th Hour":
-                setIntHour(60);
+                setIntHour(3.5);
                 break;
             case "5th Hour":
-                setIntHour(60);
+                setIntHour(4.5);
                 break;
             case "6th Hour":
-                setIntHour(60);
+                setIntHour(5.5);
                 break;
             case "7th Hour":
-                setIntHour(60);
+                setIntHour(6.5);
                 break;
             case "8th Hour":
-                setIntHour(60);
+                setIntHour(7);
                 break;
             default:
-                setIntHour(60);
+                setIntHour(7.3);
                 break;
         }
     }, [latestHour]);
+
+    
+    useEffect(() => {
+        // Fetch data from your backend when the component mounts
+        const fetchData = async () => {
+            const username = window.location.pathname.split('/').pop();
+            setUsername(username);
+            try {
+                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/info/getInfo`, {
+                    username: username,
+                });
+                setOperatorInfo(response.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+
+    }, []);
+    useEffect(() => {
+        getShiftHours();
+
+        const intervalId = setInterval(getShiftHours, 10000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [shiftHours]);
+
+    
+    const getShiftHours = async () => {
+        try {
+
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShiftHours`, {
+                shiftID: "A",
+            });
+            setShiftHours(response.data.ShiftHours)
+        }
+        catch (error) {
+            console.error("Failed to shift pieces");
+        }
+    }
 
     const handleStopTimerClick = async () => {
         setDowntimeClicked(false);
@@ -324,21 +369,20 @@ function MyDashboard() {
         setHourlyTarget(HourlyTarget);
         setDeviation(deviation)
         setRequiredRate(requiredRate)
-        // console.log("actual", actualRequiredRate)
     };
 
-    const calculateHourlyRequiredRate = (deviation, intHour) =>{
-        let deviationValue = Number(deviation);
-        let intHourValue = Number(intHour);
+
+
+    const calculateHourlyRequiredRate = () =>{
+        let deviation = parseInt(dailyTarget - pieceCountInfo);
+        let intHourValue = shiftHours - intHour;
     
         // Calculate the hourly required rate
-        let hourlyRequiredRate = deviationValue / intHourValue;
-    
+        let hourlyRequiredRate = deviation / intHourValue;
         // Fix to 2 decimal places and convert back to a number
         let answer = parseFloat(hourlyRequiredRate.toFixed(2));
         
         setRequiredHourlyRate(answer)
-        // Set the required rate
     }
 
     const updateBestCycle = (newBestCycle) => {
@@ -408,7 +452,6 @@ function MyDashboard() {
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getMASBest`, {
             });
             setMASBest(response.data.masbest)
-            console.log("masbest", response)
 
         }
         catch (error) {
@@ -416,13 +459,14 @@ function MyDashboard() {
         }
     }
 
+
     const getBarChartData = async () => {
 
         try {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
-                operatorType: 'operator',
+                operatorType: operatorInfo.operation,
                 username: Username,
                 shift: shift
             });
