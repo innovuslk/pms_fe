@@ -11,6 +11,7 @@ function SupervisorDashboard() {
     const [users, setUsers] = useState([]);
     const [selectedPlant, setSelectedPlant] = useState(null);
     const [selectedLine, setSelectedLine] = useState(null);
+    const [dailyTarget, setDaillytarget] = useState();
 
     useEffect(() => {
         getPlantsOfSupervisor();
@@ -29,6 +30,16 @@ function SupervisorDashboard() {
             getUsersOfLine(selectedLine);
         }
     }, [selectedLine]);
+
+    useEffect(() => {
+        getDailyTarget();
+
+        const intervalId = setInterval(getDailyTarget, 10000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [dailyTarget]);
 
     const getLinesOfSupervisors = async (plantName) => {
         const username = window.location.pathname.split('/').pop();
@@ -88,6 +99,20 @@ function SupervisorDashboard() {
         }
     };
 
+    const getDailyTarget = async () => {
+        try {
+            const username = window.location.pathname.split('/').pop();
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getSupervisorDailyTarget`,{
+                username:username
+            });
+            setDaillytarget(parseInt(response.data.dailyTarget))
+
+        }
+        catch (error) {
+            console.error("Failed to dailyTarget");
+        }
+    }
+
     return (
         <div className="content">
             {loading ? (
@@ -108,7 +133,7 @@ function SupervisorDashboard() {
                                                         <div className="d-flex align-items-center justify-content-between flex-wrap">
                                                             <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
                                                                 <div style={{ width: '13rem' }}>
-                                                                    <RadialBarChart Smv={linesData[index].smv} pieceCount={linesData[index].totalPieceCount} latestHour={linesData[index].latestHour} />
+                                                                    <RadialBarChart Smv={linesData[index].smv} pieceCount={linesData[index].totalPieceCount} latestHour={linesData[index].latestHour} dailyTarget={dailyTarget}/>
                                                                 </div>
                                                             </div>
                                                             <div className="align-items-center justify-content-center gap-2">
@@ -127,7 +152,7 @@ function SupervisorDashboard() {
                                                         <div className="d-flex align-items-center justify-content-between flex-wrap">
                                                             <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
                                                                 <div style={{ width: '13rem' }}>
-                                                                    <RadialBarChart Smv={linesData[index + 1].smv} pieceCount={linesData[index + 1].totalPieceCount} latestHour={linesData[index + 1].latestHour} />
+                                                                    <RadialBarChart Smv={linesData[index + 1].smv} pieceCount={linesData[index + 1].totalPieceCount} latestHour={linesData[index + 1].latestHour} dailyTarget={dailyTarget}/>
                                                                 </div>
                                                             </div>
                                                             <div className="align-items-center justify-content-center gap-2">

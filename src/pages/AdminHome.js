@@ -40,6 +40,8 @@ function AdminHome() {
     const [connection , setConnection] = useState(); 
     const[supervisor,setSupervisor]= useState();
     const[supervisors,setSupervisors]= useState();
+    const [dailyTarget, setDaillytarget] = useState();
+    const [shiftHours, setShiftHours] = useState();
 
     useEffect(() => {
         // Fetch data from your backend when the component mounts
@@ -124,6 +126,26 @@ function AdminHome() {
     }, [PlantName]);
 
     useEffect(() => {
+        getShiftHours();
+
+        const intervalId = setInterval(getShiftHours, 10000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [shiftHours]);
+
+    useEffect(() => {
+        getDailyTarget();
+
+        const intervalId = setInterval(getDailyTarget, 10000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [dailyTarget]);
+
+    useEffect(() => {
         // Fetch data from your backend when the component mounts
         const getSupervisors = async () => {
             try {
@@ -141,6 +163,33 @@ function AdminHome() {
 
     }, [PlantName]);
 
+
+    const getShiftHours = async () => {
+        try {
+
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShiftHours`, {
+                shiftID: "A",
+            });
+            setShiftHours(response.data.ShiftHours)
+        }
+        catch (error) {
+            console.error("Failed to shift pieces");
+        }
+    }
+
+    const getDailyTarget = async () => {
+        try {
+            const username = window.location.pathname.split('/').pop();
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDailyTarget`,{
+                username:username
+            });
+            setDaillytarget(response.data.dailyTarget)
+
+        }
+        catch (error) {
+            console.error("Failed to dailyTarget");
+        }
+    }
 
     const handleSideBarClick = (type) => {
         setSideBarType(type)

@@ -120,7 +120,7 @@ const PlannedRadialBarChart = ({ Smv, dailyTarget, latestHour, shift }) => {
 
     return (
         <div className='d-flex align-content-center justify-content-center'>
-            <h1 className='text-warning'>135</h1>
+            <h1 className='text-warning'>135%</h1>
         </div>
 
 
