@@ -4,7 +4,7 @@ import axios from 'axios';
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from '../i18n';
 
-function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
+function CurrentDeviation({ shift, latestHour , pieceCount, currentHourOutput, sendDataToParent  }) {
 
     const { t } = useTranslation();
 
@@ -12,28 +12,25 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     const [shiftID, setShiftID] = useState('');
     const [dailyTarget, setDaillytarget] = useState();
     const [intHour, setIntHour] = useState()
-    const [deviation,setDeviation] = useState();
+    const [Deviation,setDeviation] = useState();
     const [requiredRate, setRequiredRate] = useState(0);
     const [actualRequiredRate, setActualRequiredRate] = useState();
     const[pieceCountForHour, setPieceCountForHour] = useState()
     const[nextHourTarget, setNextHourTarget] = useState()
     const [currentHourlyRate, setcurrentHourlyRate] = useState();
+    const [HourlyTarget, setHourlyTarget] = useState();
 
     useEffect(() => {
         setShiftID(shift);
     }, [shift]);
 
     useEffect(() => {
-            console.log("Sending to parent:", {
-        requiredRate,
-        dailyTarget,
-        actualRequiredRate,
-        nextHourTarget,
-        currentHourlyRate,
-        deviation
-    });
-        sendDataToParent(requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, deviation)
-    },[requiredRate,actualRequiredRate ,currentHourlyRate, deviation])
+        const intervalId = setInterval(sendDataToParent(requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, HourlyTarget), 10000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    },[requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, HourlyTarget, Deviation, pieceCount, currentHourOutput])
 
     useEffect(() => {
         getShiftHours();
@@ -71,7 +68,6 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     },[shift, shiftHours, dailyTarget, intHour, pieceCount])
 
     useEffect(() => {
-        // console.log(latestHour)
         switch (latestHour) {
             case "1st Hour":
                 setIntHour(1);
@@ -151,21 +147,21 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
             let deviation = alreadyDone - hourlyTarget;
             let nextHourTarget = (dailyTarget - pieceCount) / (shiftHours - intHour);
             let currentHourlyRate = pieceCount / intHour;
-            let newDeviation = dailyTarget - pieceCount
-            setcurrentHourlyRate(currentHourlyRate)
+            let newDeviation = hourlyTarget - currentHourOutput
+            setcurrentHourlyRate(parseInt(currentHourlyRate))
+            setHourlyTarget(hourlyTarget)
             setNextHourTarget(parseInt(nextHourTarget))
             setDeviation(newDeviation);
             setRequiredRate(hourlyTarget)
             setActualRequiredRate(alreadyDone + deviation)
-
     }
 
     return (
         <div className="d-flex flex-column align-items-center justify-content-center gap-2 ">
-            <h3 className="mb-0">{deviation || 'null'}</h3>
+            <h3 className="mb-0">{Deviation < 0 || Deviation == null ? '0' : parseInt(Deviation)}</h3>
             <p className="mb-0">{t("Deviation")}</p>
         </div>
     )
 }
 
-export default Deviation;
+export default CurrentDeviation;

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios';
-import { Row, Col, Input, Button, Container, Label, FormGroup } from "reactstrap";
+import { Row, Col, Button, Container, Label, FormGroup } from "reactstrap";
 import { Link } from 'react-router-dom';
 
 import logodark from "../assets/images/logo-dark.png";
@@ -11,22 +11,80 @@ function Login() {
     const [Username, setUsername] = useState('');
     const [Password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [verifiedToken, setVerifiedToken] = useState('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+
+        axios.get(`http://${process.env.REACT_APP_HOST_IP}/verifyToken`, {
+            headers: {
+                authorization: `Bearer ${token}`
+            }
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    console.log("Verification Successful")
+                    setVerifiedToken(token)
+                }
+            })
+            .catch(error => {
+                setTimeout(() => {
+                    console.log(error)
+                });
+            });
+
+        const storedUsername = localStorage.getItem('username');
+        const userLevel = parseInt(localStorage.getItem('userLevel'));
+        if (verifiedToken && userLevel === 3) {
+            const encodedUsername = btoa(storedUsername);
+            navigate(`/user-info/${encodedUsername}`);
+            // console.log(token,userLevel)
+        }
+        else if(verifiedToken && (userLevel === 1 || userLevel === 2)) {
+            // console.log(userLevel)
+            const encodedUsername = btoa(storedUsername);
+            navigate(`/admin/${encodedUsername}`);
+        }
+        else {
+            console.log('errrrrrrrrr')
+            // console.log(token,userLevel,storedUsername)
+        }
+    }, []);
 
     function handleSubmit(event) {
         event.preventDefault();
 
-        axios.post('http://4.193.94.82:5000/login', {
+
+        if (!navigator.onLine) {
+            setErrorMessage("You have no internet connection");
+            return;
+        }
+
+        axios.post(`http://${process.env.REACT_APP_HOST_IP}/login`, {
+
             username: Username,
             password: Password,
         })
             .then(res => {
-                console.log(res);
-                if (res.status === 200) {
-                    const encodedUsername = btoa(Username);
+                // console.log(res);
+                const token = res.data.token;
+                localStorage.setItem('token', token);
+                localStorage.setItem('username', Username);
+                localStorage.setItem('userLevel', res.data.userLevel) ;// Store the token in local storage
 
-                    // Redirect to another page with the extracted username
+                if (res.status === 200 && (res.data.userLevel === 3)) {
+                    const encodedUsername = btoa(Username);
                     navigate(`/user-info/${encodedUsername}`);
+                }
+                else if (res.status === 200 && (res.data.userLevel === 1 || res.data.userLevel === 2)) {
+                    const encodedUsername = btoa(Username);
+                    navigate(`/admin/${encodedUsername}`);
+                }
+                else if (res.status === 200 && (res.data.userLevel === 4)) {
+                    const encodedUsername = btoa(Username);
+                    navigate(`/operator/${encodedUsername}`);
+                    // console.log(res.data.userLevel)
                 }
                 else {
                     setErrorMessage("Invalid Username or Password");
@@ -34,7 +92,6 @@ function Login() {
                         setErrorMessage('');
                     }, 5000);
                 }
-
             })
             .catch(err => {
                 console.log(err);
@@ -45,9 +102,6 @@ function Login() {
             });
     }
 
-    function handleRegister(){
-        navigate(`/register`)
-    }
 
     return (
         <React.Fragment>
@@ -63,7 +117,7 @@ function Login() {
                                                 <div className="text-center">
                                                     <div>
                                                         <Link to="/" className="logo">
-                                                            <img src={logodark} alt="" height="40" className=" mx-auto" />
+                                                            <img src={logodark} alt=""  style={{ height: "50px", width: "140px" }} className=" mx-auto" />
                                                         </Link>
                                                     </div>
 
@@ -100,9 +154,9 @@ function Login() {
                                                         <div className="mt-4 text-center">
                                                             <Button color="primary" className="w-md waves-effect waves-light" type="submit">Log In</Button>
                                                         </div>
-                                                        <div className="mt-4 text-center">
+                                                        {/*<div className="mt-4 text-center">
                                                             <h7 className = 'text-decoration-underline'><a onClick={handleRegister}>Register</a></h7>
-                                                        </div>
+                                                </div>*/}
                                                         <p></p>
                                                     </form>
                                                 </div>

@@ -14,12 +14,9 @@ import { useNavigate } from 'react-router-dom'
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from '../i18n';
 import CallSupervisor from '../components/callSupervisor';
-import CurrentDeviation from '../components/currentHourDeviation';
-import PlannedRadialBarChart from '../components/PlannedChart';
-import ApiLineEndData from '../components/apiLineEnd';
 
 
-function MyDashboard() {
+function OperatorDashboard() {
 
     const { t } = useTranslation();
 
@@ -30,7 +27,6 @@ function MyDashboard() {
     const [pieceCountInfo, setPieceCountInfo] = useState();
     const [latestHour, setLatestHour] = useState('');
     const [requiredRate, setRequiredRate] = useState(0);
-    const [ActualRequiredRate, setActualRequiredRate] = useState(0);
     const [Smv, setSmv] = useState(0);
     const [downtimeClicked, setDowntimeClicked] = useState(false);
     const [machineClicked, setMachineClicked] = useState(false);
@@ -41,19 +37,6 @@ function MyDashboard() {
     const [GSDPieceRate, setGSDPieceRate] = useState()
     const [dailyTarget, setDaillytarget] = useState();
     const [language, setLanguage] = useState();
-    const [nextHourTarget, setNextHourTarget] = useState()
-    const [currentHourlyRate, setcurrentHourlyRate] = useState();
-    const [HourlyTarget, setHourlyTarget] = useState();
-    const [currentHourOutput, setCurrentHourOutput] = useState();
-    const [MyBest, setMyBest] = useState();
-    const [MASBest, setMASBest] = useState();
-    const [bestCycle, setBestCycle] = useState(Infinity);
-    const [intHour, setIntHour] = useState();
-    const [deviation, setDeviation] = useState();
-    const[requiredHourlyRate, setRequiredHourlyRate] = useState();
-    const [operatorInfo, setOperatorInfo] = useState(null);
-    const [shiftHours, setShiftHours] = useState();
-
     // const [ connection , setConnection] = useState(navigator.onLine ? "online" : "offline"); 
 
     const [timer, setTimer] = useState(0);
@@ -113,7 +96,7 @@ function MyDashboard() {
         // Fetch latest piece count on component mount
         fetchLatestPieceCount();
 
-        const intervalId = setInterval(fetchLatestPieceCount, 5000);
+        const intervalId = setInterval(fetchLatestPieceCount, 1000);
 
         return () => clearInterval(intervalId);
     }, []);
@@ -138,30 +121,6 @@ function MyDashboard() {
     }, [shift]);
 
     useEffect(() => {
-        getMyBest();
-
-        const intervalId = setInterval(getMyBest, 5000);
-
-        return () => clearInterval(intervalId);
-    }, [pieceCountInfo]);
-
-    useEffect(() => {
-        getMASBest();
-
-        const intervalId = setInterval(getMASBest, 5000);
-
-        return () => clearInterval(intervalId);
-    }, [pieceCountInfo]);
-
-    useEffect(() => {
-        getBarChartData();
-
-        const intervalId = setInterval(getBarChartData, 10000);
-
-        return () => clearInterval(intervalId);
-    }, [requiredRate, shift, pieceCountInfo]);
-
-    useEffect(() => {
         getBarChartData();
 
         const intervalId = setInterval(getBarChartData, 10000);
@@ -176,89 +135,6 @@ function MyDashboard() {
 
         return () => clearInterval(intervalId);
     }, []);
-
-    useEffect(() => {
-        calculateHourlyRequiredRate();
-
-        const intervalId = setInterval(calculateHourlyRequiredRate, 20000);
-
-        return () => clearInterval(intervalId);
-    }, [deviation,pieceCountInfo]);
-
-    useEffect(() => {
-        switch (latestHour) {
-            case "1st Hour":
-                setIntHour(0.5);
-                break;
-            case "2nd Hour":
-                setIntHour(1.5);
-                break;
-            case "3rd Hour":
-                setIntHour(2.5);
-                break;
-            case "4th Hour":
-                setIntHour(3.5);
-                break;
-            case "5th Hour":
-                setIntHour(4.5);
-                break;
-            case "6th Hour":
-                setIntHour(5.5);
-                break;
-            case "7th Hour":
-                setIntHour(6.5);
-                break;
-            case "8th Hour":
-                setIntHour(7);
-                break;
-            default:
-                setIntHour(7.3);
-                break;
-        }
-    }, [latestHour]);
-
-    
-    useEffect(() => {
-        // Fetch data from your backend when the component mounts
-        const fetchData = async () => {
-            const username = window.location.pathname.split('/').pop();
-            setUsername(username);
-            try {
-                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/info/getInfo`, {
-                    username: username,
-                });
-                setOperatorInfo(response.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchData();
-
-    }, []);
-    useEffect(() => {
-        getShiftHours();
-
-        const intervalId = setInterval(getShiftHours, 10000);
-
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, [shiftHours]);
-
-    
-    const getShiftHours = async () => {
-        try {
-
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShiftHours`, {
-                shiftID: "A",
-            });
-            setShiftHours(response.data.ShiftHours)
-        }
-        catch (error) {
-            console.error("Failed to shift pieces");
-        }
-    }
 
     const handleStopTimerClick = async () => {
         setDowntimeClicked(false);
@@ -314,7 +190,7 @@ function MyDashboard() {
                     downTime: timer,
                     startTime: downtimeStartTime.toISOString().slice(0, 19).replace('T', ' '),
                 });
-                // console.log(response);
+                console.log(response);
 
                 // Handle response if needed
             } catch (error) {
@@ -323,6 +199,7 @@ function MyDashboard() {
             }
         }
     };
+
 
     const [pieceCountData, setPieceCountData] = useState({
         labels: ["06.00", "06.20", "07.20", "08.20", "09.40", "10.40", "11.00", "12.00", "13.00", "14.00"],
@@ -360,32 +237,9 @@ function MyDashboard() {
         }
     };
 
-    const receiveDataFromChild = ( requiredRate, dailyTarget, actualRequiredRate, nextHourTarget, currentHourlyRate, HourlyTarget, deviation) => {
+    const receiveDataFromChild = (requiredRate, dailyTarget) => {
+        setRequiredRate(requiredRate);
         setDaillytarget(dailyTarget)
-        setActualRequiredRate(actualRequiredRate);
-        setNextHourTarget(nextHourTarget);
-        setcurrentHourlyRate(currentHourlyRate)
-        setHourlyTarget(HourlyTarget);
-        setDeviation(deviation)
-        setRequiredRate(requiredRate)
-    };
-
-
-
-    const calculateHourlyRequiredRate = () =>{
-        let deviation = parseInt(dailyTarget - pieceCountInfo);
-        let intHourValue = shiftHours - intHour;
-    
-        // Calculate the hourly required rate
-        let hourlyRequiredRate = deviation / intHourValue;
-        // Fix to 2 decimal places and convert back to a number
-        let answer = parseFloat(hourlyRequiredRate.toFixed(2));
-        
-        setRequiredHourlyRate(answer)
-    }
-
-    const updateBestCycle = (newBestCycle) => {
-        setBestCycle(newBestCycle);
     };
 
 
@@ -397,71 +251,97 @@ function MyDashboard() {
         setShowModal(false);
     };
 
+    const [pieceCounts, setPieceCounts] = useState({
+        "06:00": 0,
+        "06:20": 0,
+        "07:20": 0,
+        "08:20": 0,
+        "09:40": 0,
+        "10:40": 0,
+        "11:00": 0,
+        "12:00": 0,
+        "13:00": 0,
+        "14:00": 0
+    });
+    
     const fetchLatestPieceCount = async () => {
+        const now = new Date();
+        let start, end;
+
         const username = window.location.pathname.split('/').pop();
-        setUsername(username);
-
+    
+        // Define the time slots
+        const timeSlots = [
+            { start: "06:00", end: "06:20", label: "1st Hour" },
+            { start: "06:20", end: "07:20", label: "2nd Hour" },
+            { start: "07:20", end: "08:20", label: "3rd Hour" },
+            { start: "08:20", end: "09:40", label: "4th Hour" },
+            { start: "09:40", end: "10:40", label: "5th Hour" },
+            { start: "10:40", end: "11:00", label: "6th Hour" },
+            { start: "11:00", end: "12:00", label: "7th Hour" },
+            { start: "12:00", end: "13:00", label: "8th Hour" },
+            { start: "13:00", end: "14:00", label: "9th Hour" }
+        ];
+    
+        // Find the current time slot
+        const currentSlot = timeSlots.find(slot => {
+            const slotStart = new Date(now.toDateString() + " " + slot.start);
+            const slotEnd = new Date(now.toDateString() + " " + slot.end);
+            return now >= slotStart && now <= slotEnd;
+        });
+    
+        if (currentSlot) {
+            start = new Date(now.toDateString() + " " + currentSlot.start);
+            end = new Date(now.toDateString() + " " + currentSlot.end);
+        } else {
+            // If no current slot found, default to the first slot
+            start = new Date(now.toDateString() + " " + timeSlots[0].start);
+            end = new Date(now.toDateString() + " " + timeSlots[0].end);
+        }
+    
+        const startFormatted = start.toISOString().slice(0, 19).replace('T', ' ');
+        const endFormatted = end.toISOString().slice(0, 19).replace('T', ' ');
+    
         try {
-
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/set/getPieceCount`, {
-
-                username: username,
+            const response = await axios.post(`https://utech-iiot.lk/enmonqa/public/api/MachineData_mas/bulk`, {
+                start: "2024-05-20 10:20:47",
+                end: "2024-05-20 10:21:47"
             });
-
-            setPieceCountInfo(response.data.totalPieceCount);
-            setLatestHour(response.data.latestHour);
+            console.log(response)
+    
+            const hour = currentSlot ? currentSlot.label : "1st Hour";
+            const newPieceCounts = { ...pieceCounts, [hour]: response.data['first pullout'][0].data_set.shooter_Count };
+            setPieceCounts(newPieceCounts);
+    
+            // Send request to update pieceCount in the database
+            await axios.post(`http://${process.env.REACT_APP_HOST_IP}/set/setPieceCount`, {
+                username: username,
+                pieceCount: response.data['first pullout'][0].data_set.shooter_Count,
+                shift: shift,
+                hour: hour
+            });
+    
         } catch (error) {
             console.error('Error fetching latest Piece count data:', error);
         }
     };
 
+
     const getShift = async () => {
         try {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
-
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShift`, {
-
                 username: username,
             });
 
             setShift(response.data.Shift)
-            // console.log("shift",shift)
 
         }
         catch (error) {
             console.error("Failed to shift pieces");
         }
     }
-
-    const getMyBest = async () => {
-        try {
-            const username = window.location.pathname.split('/').pop();
-            setUsername(username);
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getMyBest`, {
-                username: username,
-            });
-
-            setMyBest(response.data.mybest)
-
-        }
-        catch (error) {
-            console.error("Failed to shift pieces");
-        }
-    }
-
-    const getMASBest = async () => {
-        try {
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getMASBest`, {
-            });
-            setMASBest(response.data.masbest)
-
-        }
-        catch (error) {
-            console.error("Failed to get MASBEST pieces");
-        }
-    }
-
 
     const getBarChartData = async () => {
 
@@ -469,23 +349,20 @@ function MyDashboard() {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
-                operatorType: operatorInfo.operation,
-                username: Username,
-                shift: shift
+                operatorType: 'operator',
+                username: Username
             });
-            // console.log(username)
+            console.log(username)
             const response2 = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
-
                 operatorType: 'LineEnd',
-                username: Username,
-                shift: shift
+                username: Username
             });
 
             let labels = [];
             if (shift === 'A') {
-                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th","10th"];
+                labels = ["06.00", "06.20", "07.20", "08.20", "09.40", "10.40", "11.00", "12.00", "13.00", "14.00"];
             } else if (shift === 'B') {
-                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th","10th"];
+                labels = ["14.00", "14.20", "15.20", "16.20", "18.20", "18.40", "19.40", "20.40", "21.40", "22.40"];
             }
 
             const getGradientFillStyle = () => {
@@ -548,7 +425,6 @@ function MyDashboard() {
             Object.keys(totalPieceCountByHour).forEach(hour => {
                 const pieceCountForHour = totalPieceCountByHour[hour];
                 newData.datasets[0].data.push(pieceCountForHour);
-                setCurrentHourOutput(totalPieceCountByHour[latestHour])
             });
 
             const totalLineEndPieceCountByHour = response2.data.totalPieceCountByHour;
@@ -571,9 +447,7 @@ function MyDashboard() {
         try {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
-
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getsmv`, {
-
                 username: username,
             });
 
@@ -646,7 +520,7 @@ function MyDashboard() {
                             </button>
                         </div>}
                         <div className='row mx-1 mt-3'>
-                            <div style={{ height: '100dvh' }} className={downtimeClicked || machineClicked ? 'downtime-blur col-3 col-md-4' : 'col-3 col-md-5 '}>
+                            <div style={{ height: '100dvh' }} className={downtimeClicked || machineClicked ? 'downtime-blur col-3 col-md-4' : 'col-3 col-md-4 '}>
                                 <div className='row' >
                                     <div className="col" style={{ marginBottom: '-0.7rem' }}>
                                         <div className="card rounded-4">
@@ -654,33 +528,10 @@ function MyDashboard() {
                                                 <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 ">
                                                     <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                         <h3 className="mb-0">{(pieceCountInfo) || '0'}</h3>
-                                                        <p className="mb-0">{t("Total Pieces Out")}</p>
+                                                        <p className="mb-0">{t("Pieces")}</p>
                                                     </div>
                                                     <div className="vr"></div>
-                                                    <DailyTarget />
-                                                    <div className="vr"></div>
-                                                    <Deviation pieceCount={pieceCountInfo} sendDataToParent={receiveDataFromChild} />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className='row' >
-                                    <div className="col" style={{ marginBottom: '-0.7rem' }}>
-                                        <div className="card rounded-4">
-                                            <div className="card-body align-items-center justify-content-center">
-                                                <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 ">
-                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                        <h3 className="mb-0">{(HourlyTarget ? HourlyTarget.toFixed(2) : 0) || '0'}</h3>
-                                                        <p className="mb-0">{t("Hourly Target")}</p>
-                                                    </div>
-                                                    <div className="vr"></div>
-                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                        <h3 className="mb-0">{(currentHourOutput) || '0'}</h3>
-                                                        <p className="mb-0">{t("Current Hour Output")}</p>
-                                                    </div>
-                                                    <div className="vr"></div>
-                                                    <CurrentDeviation shift={shift} latestHour={latestHour} pieceCount={pieceCountInfo} currentHourOutput={currentHourOutput} sendDataToParent={receiveDataFromChild} />
+                                                    <Deviation shift={shift} latestHour={latestHour} pieceCount={pieceCountInfo} sendDataToParent={receiveDataFromChild} />
                                                 </div>
                                             </div>
                                         </div>
@@ -690,15 +541,10 @@ function MyDashboard() {
                                     <div className="col" style={{ marginBottom: '-0.7rem' }}>
                                         <div className="card rounded-4 h-80">
                                             <div className="card-body">
-                                                <div className="d-flex align-items-center justify-content-center flex-wrap gap-2">
-                                                    <div className="d-flex align-items-center justify-content-between gap-4 ">
-                                                        <div style={{ width: '11.5rem' }}>
-                                                            <PlannedRadialBarChart Smv={Smv} dailyTarget={dailyTarget} latestHour={latestHour} shift={shift}/>
-                                                            <p className="mb-0">{t("Planned Efficiency")}</p>
-                                                        </div>
-                                                        <div style={{ width: '11.5rem' }}>
-                                                            <RadialBarChart Smv={Smv} pieceCount={pieceCountInfo} latestHour={latestHour} dailyTarget={dailyTarget}/>
-                                                            <p className="mb-0">{t("Actual Efficiency")}</p>
+                                                <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
+                                                        <div style={{ width: '13rem' }}>
+                                                            <RadialBarChart Smv={Smv} pieceCount={pieceCountInfo} latestHour={latestHour} />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -712,11 +558,11 @@ function MyDashboard() {
                                             <div className="card-body">
                                                 <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
                                                     <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                        <h3 className="mb-0">{bestCycle || '0'}</h3>
-                                                        <p className="mb-0">{t("Best Cycle Time")}</p>
+                                                        <h3 className="mb-0">10</h3>
+                                                        <p className="mb-0">{t("Best Cycle")}</p>
                                                     </div>
                                                     <div className="vr"></div>
-                                                    <AvgCycle latestHour={latestHour} currentHourOutput={currentHourOutput} onUpdateBestCycle={updateBestCycle}/>
+                                                    <AvgCycle latestHour={latestHour} pieceCount={pieceCountInfo} />
                                                 </div>
                                             </div>
                                         </div>
@@ -749,12 +595,12 @@ function MyDashboard() {
                                             <div className="card-body">
                                                 <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
                                                     <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                        <h3 className="mb-0">{MyBest || '0'}</h3>
+                                                        <h3 className="mb-0">10</h3>
                                                         <p className="mb-0">{t("My Best")}</p>
                                                     </div>
                                                     <div className="vr"></div>
                                                     <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                        <h3 className="mb-0">{MASBest || '0'}</h3>
+                                                        <h3 className="mb-0">10</h3>
                                                         <p className="mb-0">{t("MAS Best")}</p>
                                                     </div>
                                                 </div>
@@ -763,48 +609,46 @@ function MyDashboard() {
                                     </div>
                                 </div>
                             </div>
-                            <div className={downtimeClicked || machineClicked ? 'downtime-blur col-6 mx-4' : 'col-5 mx-2'}>
-                                <div className='row d-flex' style={{ marginBottom: '-0.7rem' }}>
-                                    <div className='col-md-8 col-sm-6 d-flex align-items-center justify-content-center'>
-                                        <div className="card border-primary border-bottom rounded-4">
-                                            <div className="card-body">
-                                                <div className="d-flex align-items-center justify-content-around">
-                                                    <div className="d-flex flex-column align-items-center justify-content-center">
-                                                        <h4 className="mb-0 fw-bold">{(requiredHourlyRate ? requiredHourlyRate : '0')}</h4>
-                                                        <div className="d-flex align-items-center justify-content-center gap-1 text-success mt-1">
-                                                            <p className="mb-0 fs-6">{t("Required Hourly Rate")}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="vr"></div>
-                                                    <div className="d-flex flex-column align-items-center justify-content-center">
-                                                        <h3 className="mb-0">{currentHourlyRate || '0'}</h3>
-                                                        <p className="mb-0">{t("Current Hourly Rate")}</p>
+                            <div className={downtimeClicked || machineClicked ? 'downtime-blur col-6 mx-4' : 'col-6 mx-2'}>
+                                <div className='row' style={{ marginBottom: '-0.7rem' }}>
+                                    <div className="card border-primary border-bottom rounded-4">
+                                        <div className="card-body">
+                                            <div className="d-flex align-items-center justify-content-around ">
+                                                <div className="d-flex flex-column align-items-center justify-content-center">
+                                                    <h4 className="mb-0 fw-bold">{requiredRate || '0'}</h4>
+                                                    <div className="d-flex align-items-center justify-content-center gap-1 text-success mt-1">
+                                                        <span className="material-symbols-outlined">
+                                                            trending_up
+                                                        </span>
+                                                        <p className="mb-0 fs-6">{t("Required Rate")}</p>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className='col col-sm-3 d-flex align-items-center justify-content-around w-auto'>
-                                        <div className={`card border-primary border-bottom rounded-4 ${ActualRequiredRate < requiredRate ? 'bg-danger' : 'bg-success'}`}>
-                                            <div className="card-body">
-                                                <div className="d-flex align-items-center justify-content-between">
-                                                    <div className="">
-                                                        <h4 className="mb-0 fw-bold">Status</h4>
-                                                        <div className="d-flex align-items-center justify-content-start gap-1 text-dark mt-0">
-                                                            <span className="material-symbols-outlined">
-                                                                {ActualRequiredRate < requiredRate ? 'thumb_down' : 'thumb_up'}
-                                                            </span>
-                                                            <p className="mb-0 fs-6">{ActualRequiredRate < requiredRate ? 'Behind' : 'OK'}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <div className="vr"></div>
+                                                <LineEndPieceCount />
+                                                <div className="vr"></div>
+                                                <DailyTarget />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className='row'>
+                                {/*<div className='row'>
+                                <div className="card border-primary border-bottom rounded-4 bg-success">
+                                    <div className="card-body">
+                                        <div className="d-flex align-items-center justify-content-between mt-3">
+                                            <div className="">
+                                                <h4 className="mb-0 fw-bold">Status</h4>
+                                                <div className="d-flex align-items-center justify-content-start gap-1 text-dark mt-3">
+                                                    <span className="material-symbols-outlined">
+                                                        thumb_up
+                                                    </span>
+                                                    <p className="mb-0 fs-6">OK</p>
+                                                </div>
+                                            </div>
+                                            <div id="chart1"></div>
+                                        </div>
+                                    </div>
                                 </div>
-
+    </div>*/}
                                 <div className='row'>
                                     <div className="card">
                                         <div className="card-header py-1">
@@ -820,19 +664,15 @@ function MyDashboard() {
                                         </div>
                                     </div>
                                 </div>
-                                {/*<div className='row'>
-                                    <ApiLineEndData />
-                                </div>*/}
-                                <LineEndPieceCount shift={shift}/>
                             </div>
 
-                            <div className='col mx-2'>
-                                <div className="row">
-                                    <button type="button" style={{ height: "3.5rem", fontWeight: "600", fontSize: "0.9rem" }} onClick={handleAddPieceCountClick}
-                                        className={downtimeClicked ? 'downtime-blur btn ripple btn-primary col mb-4' : 'btn ripple btn-primary col mb-4'}>
-                                        {t("Add Piece Count")}
-                                    </button>
-                                </div>
+                            <div className='col mx-2 my-5'>
+                                {/*<div className="row">
+                                <button type="button" style={{ height: "3.5rem", fontWeight: "600", fontSize: "0.9rem" }} onClick={handleAddPieceCountClick}
+                                    className={downtimeClicked ? 'downtime-blur btn ripple btn-primary col mb-4' : 'btn ripple btn-primary col mb-4'}>
+                                    {t("Add Piece Count")}
+                                </button>
+</div>*/}
                                 <div className="row">
                                     <h2
                                         className='d-flex align-content-center justify-content-center mb-4'
@@ -872,4 +712,4 @@ function MyDashboard() {
     )
 }
 
-export default MyDashboard;
+export default OperatorDashboard;

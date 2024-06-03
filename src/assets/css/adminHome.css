@@ -14,6 +14,9 @@ header {
     height: 30px;
 }
 
+.admin-home-container{
+    background: linear-gradient(to right,#011e29 , #2d8aa1) ;
+}
 .left_area h3 {
     color: #fff;
     margin: 0;
@@ -48,7 +51,7 @@ header {
 .sidebar {
     z-index: 1;
     top: 0;
-    background: #2f323a;
+    background: #011e29 ;
     margin-top: 70px;
     padding-top: 30px;
     position: fixed;
@@ -139,7 +142,7 @@ label #sidebar_btn:hover {
     /* background: url(background.png) no-repeat; */
     background-position: center;
     background-size: cover;
-    /* height: 100vh; */
+    height: 100vh;
     transition: 0.5s;
 }
 

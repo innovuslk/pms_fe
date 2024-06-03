@@ -1,14 +1,19 @@
 import React from 'react';
 import ApexCharts from 'react-apexcharts';
 import { useState, useEffect } from 'react';
+import { I18nextProvider, useTranslation } from "react-i18next";
+import axios from 'axios';
 
-const RadialBarChart = ({ Smv, pieceCount, latestHour }) => {
+const RadialBarChart = ({ Smv, pieceCount, latestHour, dailyTarget }) => {
+
+    const { t } = useTranslation();
 
     const [intHour, setIntHour] = useState();
     const [efficiency, setEfficiency] = useState();
+    const [shiftHours, setShiftHours] = useState();
 
     useEffect(() => {
-        let efficiency = calculateEfficiency(Smv, pieceCount, intHour)
+        let efficiency = calculateEfficiency(pieceCount, intHour, dailyTarget , shiftHours)
 
         setEfficiency(efficiency)
 
@@ -18,6 +23,16 @@ const RadialBarChart = ({ Smv, pieceCount, latestHour }) => {
             clearInterval(intervalId);
         };
     })
+
+    useEffect(() => {
+        getShiftHours();
+
+        const intervalId = setInterval(getShiftHours, 10000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [shiftHours]);
 
     useEffect(() => {
         switch (latestHour) {
@@ -48,84 +63,90 @@ const RadialBarChart = ({ Smv, pieceCount, latestHour }) => {
         }
     }, [latestHour])
 
-    const calculateEfficiency = (Smv, pieceCount, intHour) => {
+    const getShiftHours = async () => {
+        try {
 
-        let targetRatePerHour = 60 / Smv;
-        let pieceCountRate = pieceCount / intHour;
-
-        let difference = targetRatePerHour - pieceCountRate;
-
-        let efficiency;
-
-        if (Math.round(difference) <= 0) {
-            efficiency = 100;
-        } else {
-            efficiency = 100 - Math.round((difference / targetRatePerHour) * 100);
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShiftHours`, {
+                shiftID: "A",
+            });
+            setShiftHours(response.data.ShiftHours)
         }
-
-        return efficiency;
-
+        catch (error) {
+            console.error("Failed to shift pieces");
+        }
     }
 
-    const options = {
-        chart: {
-            // height: 'auto',
-            // width:'5rem',
-            type: 'radialBar',
-        },
-        series: [67],
-        colors: ['#20E647'],
-        plotOptions: {
-            radialBar: {
-                hollow: {
-                    margin: 0,
-                    size: '70%',
-                    background: '#293450',
-                },
-                track: {
-                    dropShadow: {
-                        enabled: true,
-                        top: 2,
-                        left: 0,
-                        blur: 4,
-                        opacity: 0.15,
-                    },
-                },
-                dataLabels: {
-                    name: {
-                        offsetY: -10,
-                        color: '#fff',
-                        fontSize: '13px',
-                    },
-                    value: {
-                        color: '#fff',
-                        fontSize: '30px',
-                        show: true,
-                    },
-                },
-            },
-        },
-        fill: {
-            type: 'gradient',
-            gradient: {
-                shade: 'dark',
-                type: 'vertical',
-                gradientToColors: ['#87D4F9'],
-                stops: [0, 100],
-            },
-        },
-        stroke: {
-            lineCap: 'round',
-        },
-        labels: ['Efficiency'],
-    };
+    const calculateEfficiency = (pieceCount, intHour, dailyTarget , shiftHours) => {
+        // Calculate the target hourly rate
+        let targetHourlyRate = dailyTarget / shiftHours;
+    
+        // Calculate the current hourly rate
+        let currentHourlyRate = pieceCount / intHour;
+    
+        // Calculate efficiency
+        let efficiency = (currentHourlyRate / targetHourlyRate) * 135;
+    
+        return Math.round(efficiency);
+    }
+
+    // const options = {
+    //     chart: {
+    //         // height: 'auto',
+    //         // width:'5rem',
+    //         type: 'radialBar',
+    //     },
+    //     series: [67],
+    //     colors: ['#20E647'],
+    //     plotOptions: {
+    //         radialBar: {
+    //             hollow: {
+    //                 margin: 0,
+    //                 size: '70%',
+    //                 background: '#293450',
+    //             },
+    //             track: {
+    //                 dropShadow: {
+    //                     enabled: true,
+    //                     top: 2,
+    //                     left: 0,
+    //                     blur: 4,
+    //                     opacity: 0.15,
+    //                 },
+    //             },
+    //             dataLabels: {
+    //                 name: {
+    //                     offsetY: -10,
+    //                     color: '#fff',
+    //                     fontSize: '13px',
+    //                 },
+    //                 value: {
+    //                     color: '#fff',
+    //                     fontSize: '30px',
+    //                     show: true,
+    //                 },
+    //             },
+    //         },
+    //     },
+    //     fill: {
+    //         type: 'gradient',
+    //         gradient: {
+    //             shade: 'dark',
+    //             type: 'vertical',
+    //             gradientToColors: ['#87D4F9'],
+    //             stops: [0, 100],
+    //         },
+    //     },
+    //     stroke: {
+    //         lineCap: 'round',
+    //     },
+    //     labels: [t("Efficiency")],
+    // };
 
     return (
-        <ApexCharts
-            options={options}
-            series={[efficiency || 0]}
-            type="radialBar"
-        />
+        <div className='d-flex align-content-center justify-content-center'>
+            <h1 className='text-danger'>{efficiency || '0'}</h1>
+        </div>
+
     );
 };
 

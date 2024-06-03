@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios';
+import { I18nextProvider, useTranslation } from "react-i18next";
 
-function LineEndPieceCount() {
-    const [pieceCount , setPieceCount] = useState();
+
+function LineEndPieceCount({shift}) {
+    const { t } = useTranslation();
+
+    const [pieceCount, setPieceCount] = useState();
 
     useEffect(() => {
         getLineEndPieceCount();
@@ -18,9 +22,11 @@ function LineEndPieceCount() {
 
     const getLineEndPieceCount = async () => {
         try {
-
-            const response = await axios.post('http://localhost:5000/get/getLineEndPieceCount', {
+            const username = window.location.pathname.split('/').pop();
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getLineEndPieceCount`, {
                 operation: "LineEnd",
+                username: username,
+                shift:shift
             });
             setPieceCount(response.data.totalLineEndPieceCount)
         }
@@ -30,10 +36,16 @@ function LineEndPieceCount() {
     }
 
     return (
-        <div className="d-flex flex-column align-items-center justify-content-center">
-        <h3 className="mb-0">{pieceCount || '0'}</h3>
-        <p className="mb-0">Line End Pieces</p>
-    </div>
+        <div className="col">
+            <div className="card rounded-4">
+                <div className="card-body">
+                <div className="d-flex flex-column align-items-center justify-content-center">
+                    <h3 className="mb-0">{pieceCount || '0'}</h3>
+                    <p className="mb-0">{t("Line End Pieces")}</p>
+                </div>
+                </div>
+            </div>
+        </div>
     )
 
 }
