@@ -166,7 +166,6 @@ function AdminHome() {
 
     async function handleSubmitDailyPlan(event) {
         event.preventDefault();
-
         await axios.post(`http://${process.env.REACT_APP_HOST_IP}/insert/insertDailyPlan`, {
             Date: Date,
             Sbu: Sbu,

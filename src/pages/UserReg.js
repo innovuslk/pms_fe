@@ -21,7 +21,6 @@ function Register() {
 
     function handleSubmit(event) {
         event.preventDefault();
-
         axios.post(`http://${process.env.REACT_APP_HOST_IP}/register`, {
             PN: PN,
             username: Username,

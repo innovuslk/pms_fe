@@ -324,7 +324,6 @@ function MyDashboard() {
         }
     };
 
-
     const [pieceCountData, setPieceCountData] = useState({
         labels: ["06.00", "06.20", "07.20", "08.20", "09.40", "10.40", "11.00", "12.00", "13.00", "14.00"],
         datasets: [
@@ -403,7 +402,9 @@ function MyDashboard() {
         setUsername(username);
 
         try {
+
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/set/getPieceCount`, {
+
                 username: username,
             });
 
@@ -418,7 +419,9 @@ function MyDashboard() {
         try {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
+
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShift`, {
+
                 username: username,
             });
 
@@ -472,6 +475,7 @@ function MyDashboard() {
             });
             // console.log(username)
             const response2 = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
+
                 operatorType: 'LineEnd',
                 username: Username,
                 shift: shift
@@ -567,7 +571,9 @@ function MyDashboard() {
         try {
             const username = window.location.pathname.split('/').pop();
             setUsername(username);
+
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getsmv`, {
+
                 username: username,
             });
 

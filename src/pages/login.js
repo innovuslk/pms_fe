@@ -55,12 +55,14 @@ function Login() {
     function handleSubmit(event) {
         event.preventDefault();
 
+
         if (!navigator.onLine) {
             setErrorMessage("You have no internet connection");
             return;
         }
 
         axios.post(`http://${process.env.REACT_APP_HOST_IP}/login`, {
+
             username: Username,
             password: Password,
         })

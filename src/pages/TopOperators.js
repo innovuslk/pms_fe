@@ -8,6 +8,7 @@ const TopOperatorsTable = () => {
 
     useEffect(() => {
         axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getTopUsers`)
+
             .then(response => {
                 if (response.data && response.data.topUsers) {
                     setTopUsers(response.data.topUsers);
