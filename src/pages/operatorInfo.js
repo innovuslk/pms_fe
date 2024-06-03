@@ -9,6 +9,8 @@ function OperatorInfo() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedPlant, setSelectedPlant] = useState('All');
     const [loading, setLoading] = useState(true); // Loading state
+    const [dailyTarget, setDaillytarget] = useState();
+
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -32,6 +34,16 @@ function OperatorInfo() {
         }
     }, [users]);
 
+    useEffect(() => {
+        getDailyTarget();
+
+        const intervalId = setInterval(getDailyTarget, 10000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [dailyTarget]);
+
     const getAllUsers = async () => {
         setLoading(true); // Start loading
         try {
@@ -42,6 +54,20 @@ function OperatorInfo() {
             console.error('Error fetching users:', error);
         }
     };
+
+    const getDailyTarget = async () => {
+        try {
+            const username = window.location.pathname.split('/').pop();
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getSupervisorDailyTarget`,{
+                username:username
+            });
+            setDaillytarget(response.data.dailyTarget)
+
+        }
+        catch (error) {
+            console.error("Failed to dailyTarget");
+        }
+    }
 
     const fetchLatestPieceCount = async (user) => {
         try {
@@ -135,7 +161,7 @@ function OperatorInfo() {
                                 <div className="card rounded-4">
                                     <div className="card-body d-flex flex-column align-items-center">
                                         <div className="mb-0">
-                                            <RadialBarChart Smv={user.smv} pieceCount={user.pieceCount} latestHour={user.latestHour} />
+                                            <RadialBarChart Smv={user.smv} pieceCount={user.pieceCount} latestHour={user.latestHour} dailyTarget={dailyTarget}/>
                                         </div>
                                         <div className="text-center">
                                             <p className="mb-1 text-bg-dark">UserName - {user.username}</p>

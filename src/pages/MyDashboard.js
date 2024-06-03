@@ -487,6 +487,12 @@ function MyDashboard() {
             } else if (shift === 'B') {
                 labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th","10th"];
             }
+            else if (shift === 'C') {
+                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th","10th"];
+            }
+            else if (shift === 'D') {
+                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th","10th"];
+            }
 
             const getGradientFillStyle = () => {
                 const ctx = document.createElement('canvas').getContext('2d');
@@ -543,13 +549,16 @@ function MyDashboard() {
             };
 
             // Accessing the totalPieceCountByHour object from the response
-            const totalPieceCountByHour = response.data.totalPieceCountByHour;
+            if(operatorInfo.operation == 'Operator' || operatorInfo.operation == 'Pullout 1' || operatorInfo.operation == 'Pullout 2'){
+                const totalPieceCountByHour = response.data.totalPieceCountByHour;
 
-            Object.keys(totalPieceCountByHour).forEach(hour => {
-                const pieceCountForHour = totalPieceCountByHour[hour];
-                newData.datasets[0].data.push(pieceCountForHour);
-                setCurrentHourOutput(totalPieceCountByHour[latestHour])
-            });
+                Object.keys(totalPieceCountByHour).forEach(hour => {
+                    const pieceCountForHour = totalPieceCountByHour[hour];
+                    newData.datasets[0].data.push(pieceCountForHour);
+                    setCurrentHourOutput(totalPieceCountByHour[latestHour])
+                });
+            }
+
 
             const totalLineEndPieceCountByHour = response2.data.totalPieceCountByHour;
 
