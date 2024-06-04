@@ -620,7 +620,7 @@ function AdminHome() {
                                                 <span className="input-group-text"><span class="material-symbols-outlined">
                                                     nest_clock_farsight_analog
                                                 </span></span>
-                                                <input type="number" className="form-control" id="input31" placeholder="Smv(in minutes)" validate={{ required: true }} onChange={e => setSmv(e.target.value)} />
+                                                <input type="number" step="0.01" className="form-control" id="input31" placeholder="Smv(in minutes)" validate={{ required: true }} onChange={e => setSmv(e.target.value)} />
                                             </div>
                                         </div>
                                         {message && (

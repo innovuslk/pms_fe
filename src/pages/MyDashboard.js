@@ -599,8 +599,8 @@ function MyDashboard() {
 
     const calculateGSDPieceRate = (smv) => {
 
-        let GSDPieceRate = 60 / smv;
-        let answer = GSDPieceRate / 7.5
+        let GSDPieceRate = smv;
+        let answer = (parseFloat(shiftHours) * 60) / GSDPieceRate
         return Math.round(answer);
     }
 
@@ -746,7 +746,7 @@ function MyDashboard() {
                                                     </div>
                                                     <div className="vr"></div>
                                                     <div className="d-flex flex-column align-items-center justify-content-center">
-                                                        <h3 className="mb-0">{Math.round((dailyTarget / 10) / 7.5) || '0'}</h3>
+                                                        <h3 className="mb-0">{Math.round((dailyTarget / 8) / parseFloat(shiftHours)) || '0'}</h3>
                                                         <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("Target Piece Rate")}</p>
                                                     </div>
                                                 </div>
