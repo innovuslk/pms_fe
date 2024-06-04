@@ -782,7 +782,7 @@ function MyDashboard() {
                                                 <div className="d-flex align-items-center justify-content-around">
                                                     <div className="d-flex flex-column align-items-center justify-content-center">
                                                         <h4 className="mb-0 fw-bold">{(requiredHourlyRate ? requiredHourlyRate : '0')}</h4>
-                                                        <div className="d-flex align-items-center justify-content-center gap-1 text-success mt-1">
+                                                        <div className="d-flex align-items-center justify-content-center text-success">
                                                             <p className="mb-0" style={{fontSize:'0.7rem',padding:'0.3rem'}}>{t("Required Hourly Rate")}</p>
                                                         </div>
                                                     </div>
@@ -801,11 +801,11 @@ function MyDashboard() {
                                                 <div className="d-flex align-items-center justify-content-between">
                                                     <div className="">
                                                         <h4 className="mb-0 fw-bold" style={{fontSize:'1.2rem'}}>Status</h4>
-                                                        <div className="d-flex align-items-center justify-content-start text-dark mt-0">
+                                                        <div className="d-flex align-items-center justify-content-start text-dark">
                                                             <span className="material-symbols-outlined">
                                                                 {ActualRequiredRate < requiredRate ? 'thumb_down' : 'thumb_up'}
                                                             </span>
-                                                            <p className="mb-0 fs-6">{ActualRequiredRate < requiredRate ? 'Behind' : 'OK'}</p>
+                                                            <p className="mb-0 fs-7" style={{padding:'1px'}}>{ActualRequiredRate < requiredRate ? 'Behind' : 'OK'}</p>
                                                         </div>
                                                     </div>
                                                 </div>
