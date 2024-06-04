@@ -183,7 +183,7 @@ function MyDashboard() {
         const intervalId = setInterval(calculateHourlyRequiredRate, 20000);
 
         return () => clearInterval(intervalId);
-    }, [deviation,pieceCountInfo]);
+    }, [deviation,pieceCountInfo,latestHour]);
 
     useEffect(() => {
         switch (latestHour) {
@@ -211,11 +211,8 @@ function MyDashboard() {
             case "8th Hour":
                 setIntHour(7);
                 break;
-            default:
-                setIntHour(7.3);
-                break;
         }
-    }, [latestHour]);
+    }, [latestHour,pieceCountInfo,shift]);
 
     
     useEffect(() => {
