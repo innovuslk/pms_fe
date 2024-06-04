@@ -112,24 +112,24 @@ function Navbar({ sendLanguage }) {
                         </button>
                         <div className="collapse navbar-collapse" id="navbarSupportedContent2">
                             <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-2 align-items-center">
-                                <li className="nav-item"><a className="nav-link active d-flex align-items-center gap-1" aria-current="page"><span className="material-symbols-outlined">
+                                <li className="nav-item"><a className="nav-link active d-flex align-items-center gap-1" aria-current="page" style={{fontSize:'0.8rem'}}><span className="material-symbols-outlined">
                                     factory
                                 </span>{operatorInfo && operatorInfo.plantName || t('Plant')}</a>
                                 </li>
-                                <li className="nav-item me-auto"><a className="nav-link d-flex align-items-center gap-1"><span className="material-symbols-outlined">
+                                <li className="nav-item me-auto"><a className="nav-link d-flex align-items-center gap-1" style={{fontSize:'0.8rem'}}><span className="material-symbols-outlined">
                                     view_module
                                 </span>{t('Line')} - {operatorInfo && operatorInfo.lineNo || t('Line')}</a>
                                 </li>
-                                <li className="nav-item me-auto"><a className="nav-link d-flex align-items-center gap-1"><span className="material-symbols-outlined">
+                                <li className="nav-item me-auto"><a className="nav-link d-flex align-items-center gap-1" style={{fontSize:'0.8rem'}}><span className="material-symbols-outlined">
                                     styler
                                 </span>{t('Style')} - {style && style.style || t('Style')}</a>
                                 </li>
-                                <li className="nav-item me-auto"><a className="nav-link d-flex align-items-center gap-1"><span className="material-symbols-outlined">
+                                <li className="nav-item me-auto"><a className="nav-link d-flex align-items-center gap-1" style={{fontSize:'0.8rem'}}><span className="material-symbols-outlined">
                                     engineering
                                 </span>{t('Operation')} - {operatorInfo && operatorInfo.operation || t('Operation')}</a>
                                 </li>
                                 <li className="nav-item me-auto">
-                                    <a className="nav-link d-flex align-items-center gap-1" href="javascript:;">
+                                    <a className="nav-link d-flex align-items-center gap-1" href="javascript:;" style={{fontSize:'0.8rem'}}>
                                         {current_date}
                                         <a></a>
                                         <Clock format={'HH:mm:ss'} ticking={true} timezone={'Asia/Colombo'} />

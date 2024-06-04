@@ -483,9 +483,9 @@ function MyDashboard() {
 
             let labels = [];
             if (shift === 'A') {
-                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th","10th"];
+                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
             } else if (shift === 'B') {
-                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th","10th"];
+                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
             }
             else if (shift === 'C') {
                 labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th","10th"];
@@ -565,6 +565,9 @@ function MyDashboard() {
             Object.keys(totalLineEndPieceCountByHour).forEach(hour => {
                 const pieceCountForHour = totalLineEndPieceCountByHour[hour];
                 newData.datasets[1].data.push(pieceCountForHour);
+                if(operatorInfo.operation == 'LineEnd'){
+                    setCurrentHourOutput(totalLineEndPieceCountByHour[latestHour])
+                }
             });
 
 
@@ -632,9 +635,10 @@ function MyDashboard() {
         await handleDowntimeClick('Machine');
     };
 
+    
+
     return (
-        <html lang="en" data-bs-theme="dark">
-            <body>
+        <div lang="en" data-bs-theme="">
                 <Navbar sendLanguage={getLanguage} />
                 <I18nextProvider i18n={i18n}>
                     <div className='container-fluid'>
@@ -657,13 +661,13 @@ function MyDashboard() {
                         <div className='row mx-1 mt-3'>
                             <div style={{ height: '100dvh' }} className={downtimeClicked || machineClicked ? 'downtime-blur col-3 col-md-4' : 'col-3 col-md-5 '}>
                                 <div className='row' >
-                                    <div className="col" style={{ marginBottom: '-0.7rem' }}>
-                                        <div className="card rounded-4">
-                                            <div className="card-body align-items-center justify-content-center">
+                                    <div className="col" style={{ marginBottom: '-0.9rem' }}>
+                                        <div className="card rounded-3">
+                                            <div className="card-body align-items-center justify-content-center p-xxl-3" style={{padding:'5px'}}>
                                                 <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 ">
                                                     <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                         <h3 className="mb-0">{(pieceCountInfo) || '0'}</h3>
-                                                        <p className="mb-0">{t("Total Pieces Out")}</p>
+                                                        <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("Total Pieces Out")}</p>
                                                     </div>
                                                     <div className="vr"></div>
                                                     <DailyTarget />
@@ -675,18 +679,18 @@ function MyDashboard() {
                                     </div>
                                 </div>
                                 <div className='row' >
-                                    <div className="col" style={{ marginBottom: '-0.7rem' }}>
-                                        <div className="card rounded-4">
-                                            <div className="card-body align-items-center justify-content-center">
-                                                <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 ">
-                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                    <div className="col" style={{ marginBottom: '-0.9rem' }}>
+                                        <div className="card rounded-3">
+                                            <div className="card-body align-items-center justify-content-center p-xxl-3"  style={{padding:'5px'}}>
+                                                <div className="d-flex align-items-center justify-content-around flex-wrap">
+                                                    <div className="d-flex flex-column align-items-center justify-content-center">
                                                         <h3 className="mb-0">{(HourlyTarget ? HourlyTarget.toFixed(2) : 0) || '0'}</h3>
-                                                        <p className="mb-0">{t("Hourly Target")}</p>
+                                                        <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("Hourly Target")}</p>
                                                     </div>
                                                     <div className="vr"></div>
-                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                                    <div className="d-flex flex-column align-items-center justify-content-center">
                                                         <h3 className="mb-0">{(currentHourOutput) || '0'}</h3>
-                                                        <p className="mb-0">{t("Current Hour Output")}</p>
+                                                        <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("Current Hour Output")}</p>
                                                     </div>
                                                     <div className="vr"></div>
                                                     <CurrentDeviation shift={shift} latestHour={latestHour} pieceCount={pieceCountInfo} currentHourOutput={currentHourOutput} sendDataToParent={receiveDataFromChild} />
@@ -696,18 +700,18 @@ function MyDashboard() {
                                     </div>
                                 </div>
                                 <div className='row'>
-                                    <div className="col" style={{ marginBottom: '-0.7rem' }}>
-                                        <div className="card rounded-4 h-80">
-                                            <div className="card-body">
-                                                <div className="d-flex align-items-center justify-content-center flex-wrap gap-2">
-                                                    <div className="d-flex align-items-center justify-content-between gap-4 ">
+                                    <div className="col" style={{ marginBottom: '-0.9rem' }}>
+                                        <div className="card rounded-3">
+                                            <div className="card-body p-xxl-3"  style={{padding:'5px'}}>
+                                                <div className="d-flex align-items-center justify-content-center flex-wrap">
+                                                    <div className="d-flex align-items-center justify-content-between">
                                                         <div style={{ width: '11.5rem' }}>
                                                             <PlannedRadialBarChart Smv={Smv} dailyTarget={dailyTarget} latestHour={latestHour} shift={shift}/>
-                                                            <p className="mb-0">{t("Planned Efficiency")}</p>
+                                                            <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("Planned Efficiency")}</p>
                                                         </div>
                                                         <div style={{ width: '11.5rem' }}>
                                                             <RadialBarChart Smv={Smv} pieceCount={pieceCountInfo} latestHour={latestHour} dailyTarget={dailyTarget}/>
-                                                            <p className="mb-0">{t("Actual Efficiency")}</p>
+                                                            <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("Actual Efficiency")}</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -716,13 +720,13 @@ function MyDashboard() {
                                     </div>
                                 </div>
                                 <div className='row'>
-                                    <div className="col" style={{ marginBottom: '-0.7rem' }}>
-                                        <div className="card rounded-4">
-                                            <div className="card-body">
+                                    <div className="col" style={{ marginBottom: '-0.9rem' }}>
+                                        <div className="card rounded-3">
+                                            <div className="card-body p-xxl-3" style={{padding:'5px'}}>
                                                 <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
                                                     <div className="d-flex flex-column align-items-center justify-content-center gap-2">
                                                         <h3 className="mb-0">{bestCycle || '0'}</h3>
-                                                        <p className="mb-0">{t("Best Cycle Time")}</p>
+                                                        <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("Best Cycle Time")}</p>
                                                     </div>
                                                     <div className="vr"></div>
                                                     <AvgCycle latestHour={latestHour} currentHourOutput={currentHourOutput} onUpdateBestCycle={updateBestCycle}/>
@@ -732,20 +736,18 @@ function MyDashboard() {
                                     </div>
                                 </div>
                                 <div className='row'>
-                                    <div className="col" style={{ marginBottom: '-0.7rem' }}>
-                                        <div className="card rounded-4">
-                                            <div className="card-body">
-                                                <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
-                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                    <div className="col" style={{ marginBottom: '-0.9rem' }}>
+                                        <div className="card rounded-3">
+                                            <div className="card-body p-xxl-3" style={{padding:'5px'}}>
+                                                <div className="d-flex align-items-center justify-content-around flex-wrap">
+                                                    <div className="d-flex flex-column align-items-center justify-content-center">
                                                         <h3 className="mb-0">{GSDPieceRate || '0'}</h3>
-                                                        <p className="mb-0">{t("GSD Piece")}</p>
-                                                        <p className="mb-0" style={{ marginTop: "-10px" }}>{t("Rate")}</p>
+                                                        <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("GSD Piece Rate")}</p>
                                                     </div>
                                                     <div className="vr"></div>
-                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                                    <div className="d-flex flex-column align-items-center justify-content-center">
                                                         <h3 className="mb-0">{Math.round((dailyTarget / 10) / 7.5) || '0'}</h3>
-                                                        <p className="mb-0">{t("Target Piece")}</p>
-                                                        <p className="mb-0" style={{ marginTop: "-10px" }}>{t("Rate")}</p>
+                                                        <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("Target Piece Rate")}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -753,18 +755,18 @@ function MyDashboard() {
                                     </div>
                                 </div>
                                 <div className='row'>
-                                    <div className="col" style={{ marginBottom: '-0.7rem' }}>
-                                        <div className="card rounded-4">
-                                            <div className="card-body">
-                                                <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
-                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                    <div className="col" style={{ marginBottom: '-0.9rem' }}>
+                                        <div className="card rounded-3">
+                                            <div className="card-body p-xxl-3" style={{padding:'5px'}}>
+                                                <div className="d-flex align-items-center justify-content-around flex-wrap">
+                                                    <div className="d-flex flex-column align-items-center justify-content-center">
                                                         <h3 className="mb-0">{MyBest || '0'}</h3>
-                                                        <p className="mb-0">{t("My Best")}</p>
+                                                        <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("My Best")}</p>
                                                     </div>
                                                     <div className="vr"></div>
-                                                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                                                    <div className="d-flex flex-column align-items-center justify-content-center">
                                                         <h3 className="mb-0">{MASBest || '0'}</h3>
-                                                        <p className="mb-0">{t("MAS Best")}</p>
+                                                        <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("MAS Best")}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -773,33 +775,33 @@ function MyDashboard() {
                                 </div>
                             </div>
                             <div className={downtimeClicked || machineClicked ? 'downtime-blur col-6 mx-4' : 'col-5 mx-2'}>
-                                <div className='row d-flex' style={{ marginBottom: '-0.7rem' }}>
+                                <div className='row d-flex' style={{ marginBottom: '-0.9rem' }}>
                                     <div className='col-md-8 col-sm-6 d-flex align-items-center justify-content-center'>
-                                        <div className="card border-primary border-bottom rounded-4">
-                                            <div className="card-body">
+                                        <div className="card border-primary rounded-3 ">
+                                            <div className="card-body p-xxl-3" style={{padding:'5px'}}>
                                                 <div className="d-flex align-items-center justify-content-around">
                                                     <div className="d-flex flex-column align-items-center justify-content-center">
                                                         <h4 className="mb-0 fw-bold">{(requiredHourlyRate ? requiredHourlyRate : '0')}</h4>
                                                         <div className="d-flex align-items-center justify-content-center gap-1 text-success mt-1">
-                                                            <p className="mb-0 fs-6">{t("Required Hourly Rate")}</p>
+                                                            <p className="mb-0" style={{fontSize:'0.7rem',padding:'0.3rem'}}>{t("Required Hourly Rate")}</p>
                                                         </div>
                                                     </div>
-                                                    <div className="vr"></div>
+                                                    <div className="vr mx-3"></div>
                                                     <div className="d-flex flex-column align-items-center justify-content-center">
                                                         <h3 className="mb-0">{currentHourlyRate || '0'}</h3>
-                                                        <p className="mb-0">{t("Current Hourly Rate")}</p>
+                                                        <p className="mb-0" style={{fontSize:'0.7rem',padding:'0.3rem'}}>{t("Current Hourly Rate")}</p>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div className='col col-sm-3 d-flex align-items-center justify-content-around w-auto'>
-                                        <div className={`card border-primary border-bottom rounded-4 ${ActualRequiredRate < requiredRate ? 'bg-danger' : 'bg-success'}`}>
-                                            <div className="card-body">
+                                        <div className={`card border-primary border-bottom rounded-3 ${ActualRequiredRate < requiredRate ? 'bg-danger' : 'bg-success'}`}>
+                                            <div className="card-body p-xxl-3" style={{padding:'0.7rem'}}>
                                                 <div className="d-flex align-items-center justify-content-between">
                                                     <div className="">
-                                                        <h4 className="mb-0 fw-bold">Status</h4>
-                                                        <div className="d-flex align-items-center justify-content-start gap-1 text-dark mt-0">
+                                                        <h4 className="mb-0 fw-bold" style={{fontSize:'1.2rem'}}>Status</h4>
+                                                        <div className="d-flex align-items-center justify-content-start text-dark mt-0">
                                                             <span className="material-symbols-outlined">
                                                                 {ActualRequiredRate < requiredRate ? 'thumb_down' : 'thumb_up'}
                                                             </span>
@@ -822,7 +824,7 @@ function MyDashboard() {
 
                                             </div>
                                         </div>
-                                        <div className="card-body">
+                                        <div className="card-body p-xxl-3" style={{padding:'5px'}}>
                                             <div className="chart-container1">
                                                 <BarChart canvasId="chart2-facebook" data={pieceCountData} shift={shift} options={options} />
                                             </div>
@@ -835,7 +837,7 @@ function MyDashboard() {
                                 <LineEndPieceCount shift={shift}/>
                             </div>
 
-                            <div className='col mx-2'>
+                            <div className='col mx-1'>
                                 <div className="row">
                                     <button type="button" style={{ height: "3.5rem", fontWeight: "600", fontSize: "0.9rem" }} onClick={handleAddPieceCountClick}
                                         className={downtimeClicked ? 'downtime-blur btn ripple btn-primary col mb-4' : 'btn ripple btn-primary col mb-4'}>
@@ -876,8 +878,8 @@ function MyDashboard() {
                     {showModal && <div className="modal-backdrop show"></div>}
                     <Modal showModal={showModal} handleCloseModal={handleCloseModal} />
                 </I18nextProvider>
-            </body>
-        </html>
+
+        </div>
     )
 }
 

@@ -157,9 +157,9 @@ function CurrentDeviation({ shift, latestHour , pieceCount, currentHourOutput, s
     }
 
     return (
-        <div className="d-flex flex-column align-items-center justify-content-center gap-2 ">
+        <div className="d-flex flex-column align-items-center justify-content-center ">
             <h3 className="mb-0">{Deviation < 0 || Deviation == null ? '0' : parseInt(Deviation)}</h3>
-            <p className="mb-0">{t("Deviation")}</p>
+            <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("Deviation")}</p>
         </div>
     )
 }
