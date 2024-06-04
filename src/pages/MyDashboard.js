@@ -684,7 +684,7 @@ function MyDashboard() {
                                             <div className="card-body align-items-center justify-content-center p-xxl-3"  style={{padding:'5px'}}>
                                                 <div className="d-flex align-items-center justify-content-around flex-wrap">
                                                     <div className="d-flex flex-column align-items-center justify-content-center">
-                                                        <h3 className="mb-0">{(HourlyTarget ? HourlyTarget.toFixed(2) : 0) || '0'}</h3>
+                                                        <h3 className="mb-0">{(requiredRate ? requiredRate.toFixed(2) : 0) || '0'}</h3>
                                                         <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("Hourly Target")}</p>
                                                     </div>
                                                     <div className="vr"></div>
@@ -782,7 +782,7 @@ function MyDashboard() {
                                                 <div className="d-flex align-items-center justify-content-around">
                                                     <div className="d-flex flex-column align-items-center justify-content-center">
                                                         <h4 className="mb-0 fw-bold">{(requiredHourlyRate ? requiredHourlyRate : '0')}</h4>
-                                                        <div className="d-flex align-items-center justify-content-center gap-1 text-success mt-1">
+                                                        <div className="d-flex align-items-center justify-content-center text-success">
                                                             <p className="mb-0" style={{fontSize:'0.7rem',padding:'0.3rem'}}>{t("Required Hourly Rate")}</p>
                                                         </div>
                                                     </div>
@@ -797,15 +797,15 @@ function MyDashboard() {
                                     </div>
                                     <div className='col col-sm-3 d-flex align-items-center justify-content-around w-auto'>
                                         <div className={`card border-primary border-bottom rounded-3 ${ActualRequiredRate < requiredRate ? 'bg-danger' : 'bg-success'}`}>
-                                            <div className="card-body p-xxl-3" style={{padding:'0.7rem'}}>
+                                            <div className="card-body p-xxl-3" style={{padding:'0.5rem'}}>
                                                 <div className="d-flex align-items-center justify-content-between">
                                                     <div className="">
                                                         <h4 className="mb-0 fw-bold" style={{fontSize:'1.2rem'}}>Status</h4>
-                                                        <div className="d-flex align-items-center justify-content-start text-dark mt-0">
+                                                        <div className="d-flex align-items-center justify-content-start text-dark">
                                                             <span className="material-symbols-outlined">
                                                                 {ActualRequiredRate < requiredRate ? 'thumb_down' : 'thumb_up'}
                                                             </span>
-                                                            <p className="mb-0 fs-6">{ActualRequiredRate < requiredRate ? 'Behind' : 'OK'}</p>
+                                                            <p className="mb-0 fs-7" style={{padding:'1px'}}>{ActualRequiredRate < requiredRate ? 'Behind' : 'OK'}</p>
                                                         </div>
                                                     </div>
                                                 </div>
