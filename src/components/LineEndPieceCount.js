@@ -36,9 +36,9 @@ function LineEndPieceCount({shift}) {
     }
 
     return (
-        <div className="col">
-            <div className="card rounded-4">
-                <div className="card-body">
+        <div className="col" style={{marginTop:'-10px'}}>
+            <div className="card rounded-3">
+                <div className="card-body" style={{padding:'5px'}}>
                 <div className="d-flex flex-column align-items-center justify-content-center">
                     <h3 className="mb-0">{pieceCount || '0'}</h3>
                     <p className="mb-0">{t("Line End Pieces")}</p>
