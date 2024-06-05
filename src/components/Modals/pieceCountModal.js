@@ -69,8 +69,8 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
 
     useEffect(() => {
         const setTimeRanges = (shift) => {
-            const timeRanges = {
-                A: [
+            if (shift === 'A') {
+                return [
                     { startHour: 6, startMinute: 20, endHour: 7, endMinute: 40, label: '1st Hour', hourValue: 1 },
                     { startHour: 7, startMinute: 40, endHour: 8, endMinute: 40, label: '2nd Hour', hourValue: 2 },
                     { startHour: 8, startMinute: 40, endHour: 9, endMinute: 40, label: '3rd Hour', hourValue: 3 },
@@ -79,8 +79,9 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
                     { startHour: 11, startMinute: 40, endHour: 12, endMinute: 0, label: '6th Hour', hourValue: 6 },
                     { startHour: 12, startMinute: 0, endHour: 13, endMinute: 0, label: '7th Hour', hourValue: 7 },
                     { startHour: 13, startMinute: 0, endHour: 14, endMinute: 0, label: '8th Hour', hourValue: 8 },
-                ],
-                B: [
+                ];
+            } else if (shift === 'B') {
+                return [
                     { startHour: 14, startMinute: 0, endHour: 14, endMinute: 20, label: '1st Hour', hourValue: 1 },
                     { startHour: 14, startMinute: 20, endHour: 15, endMinute: 20, label: '2nd Hour', hourValue: 2 },
                     { startHour: 15, startMinute: 20, endHour: 16, endMinute: 20, label: '3rd Hour', hourValue: 3 },
@@ -89,9 +90,40 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
                     { startHour: 18, startMinute: 20, endHour: 19, endMinute: 20, label: '6th Hour', hourValue: 6 },
                     { startHour: 19, startMinute: 20, endHour: 19, endMinute: 40, label: '7th Hour', hourValue: 7 },
                     { startHour: 19, startMinute: 40, endHour: 20, endMinute: 0, label: '8th Hour', hourValue: 8 },
-                ],
-            };
-            return timeRanges[shift];
+                ];
+            } else if (shift === 'C') {
+                return [
+                    { startHour: 6, startMinute: 0, endHour: 6, endMinute: 20, label: '1st Hour', hourValue: 1 },
+                    { startHour: 6, startMinute: 20, endHour: 7, endMinute: 20, label: '2nd Hour', hourValue: 2 },
+                    { startHour: 7, startMinute: 20, endHour: 8, endMinute: 40, label: '3rd Hour', hourValue: 3 },
+                    { startHour: 8, startMinute: 40, endHour: 9, endMinute: 40, label: '4th Hour', hourValue: 4 },
+                    { startHour: 9, startMinute: 40, endHour: 10, endMinute: 45, label: '5th Hour', hourValue: 5 },
+                    { startHour: 10, startMinute: 45, endHour: 12, endMinute: 5, label: '6th Hour', hourValue: 6 },
+                    { startHour: 12, startMinute: 5, endHour: 13, endMinute: 5, label: '7th Hour', hourValue: 7 },
+                    { startHour: 13, startMinute: 5, endHour: 14, endMinute: 5, label: '8th Hour', hourValue: 8 },
+                    { startHour: 14, startMinute: 5, endHour: 15, endMinute: 5, label: '9th Hour', hourValue: 9 },
+                    { startHour: 15, startMinute: 5, endHour: 16, endMinute: 20, label: '10th Hour', hourValue: 10 },
+                    { startHour: 16, startMinute: 20, endHour: 17, endMinute: 20, label: '11th Hour', hourValue: 11 },
+                ];
+            } 
+            else if (shift === 'D') {
+                return [
+                    { startHour: 18, startMinute: 0, endHour: 18, endMinute: 20, label: '1st Hour', hourValue: 1 },
+                    { startHour: 18, startMinute: 20, endHour: 19, endMinute: 40, label: '2nd Hour', hourValue: 2 },
+                    { startHour: 19, startMinute: 40, endHour: 20, endMinute: 40, label: '3rd Hour', hourValue: 3 },
+                    { startHour: 20, startMinute: 40, endHour: 21, endMinute: 40, label: '4th Hour', hourValue: 4 },
+                    { startHour: 21, startMinute: 40, endHour: 22, endMinute: 45, label: '5th Hour', hourValue: 5 },
+                    { startHour: 22, startMinute: 45, endHour: 23, endMinute: 45, label: '6th Hour', hourValue: 6 },
+                    { startHour: 23, startMinute: 45, endHour: 1, endMinute: 0, label: '7th Hour', hourValue: 7 },
+                    { startHour: 1, startMinute: 0, endHour: 2, endMinute: 0, label: '8th Hour', hourValue: 8 },
+                    { startHour: 2, startMinute: 0, endHour: 3, endMinute: 0, label: '9th Hour', hourValue: 9 },
+                    { startHour: 3, startMinute: 0, endHour: 4, endMinute: 15, label: '10th Hour', hourValue: 10 },
+                    { startHour: 4, startMinute: 15, endHour: 5, endMinute: 15, label: '11th Hour', hourValue: 11 },
+                ];
+            } 
+            else {
+                return [];
+            }
         };
 
         const currentTime = new Date();
@@ -99,6 +131,11 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
         const minutes = currentTime.getMinutes();
 
         const timeRanges = setTimeRanges(shiftData);
+
+        if (timeRanges.length === 0) {
+            console.warn("No time ranges found for shift:", shiftData);
+            return;
+        }
 
         const matchingRange = timeRanges.find(range => {
             const withinHourRange =
