@@ -17,7 +17,7 @@ function LineEndPieceCount({shift}) {
         return () => {
             clearInterval(intervalId);
         };
-    }, [pieceCount]);
+    }, [pieceCount,shift]);
 
 
     const getLineEndPieceCount = async () => {

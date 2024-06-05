@@ -4,7 +4,7 @@ import axios from 'axios';
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from '../i18n';
 
-function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
+function Deviation({ shift, latestHour, pieceCount, sendDataToParent }) {
 
     const { t } = useTranslation();
 
@@ -12,11 +12,11 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     const [shiftID, setShiftID] = useState('');
     const [dailyTarget, setDaillytarget] = useState();
     const [intHour, setIntHour] = useState()
-    const [deviation,setDeviation] = useState();
+    const [deviation, setDeviation] = useState();
     const [requiredRate, setRequiredRate] = useState(0);
     const [actualRequiredRate, setActualRequiredRate] = useState();
-    const[pieceCountForHour, setPieceCountForHour] = useState()
-    const[nextHourTarget, setNextHourTarget] = useState()
+    const [pieceCountForHour, setPieceCountForHour] = useState()
+    const [nextHourTarget, setNextHourTarget] = useState()
     const [currentHourlyRate, setcurrentHourlyRate] = useState();
 
     useEffect(() => {
@@ -24,16 +24,16 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     }, [shift]);
 
     useEffect(() => {
-            console.log("Sending to parent:", {
-        requiredRate,
-        dailyTarget,
-        actualRequiredRate,
-        nextHourTarget,
-        currentHourlyRate,
-        deviation
-    });
-        sendDataToParent(requiredRate,dailyTarget,actualRequiredRate,nextHourTarget, currentHourlyRate, deviation)
-    },[requiredRate,actualRequiredRate ,currentHourlyRate, deviation])
+        console.log("Sending to parent:", {
+            requiredRate,
+            dailyTarget,
+            actualRequiredRate,
+            nextHourTarget,
+            currentHourlyRate,
+            deviation
+        });
+        sendDataToParent(requiredRate, dailyTarget, actualRequiredRate, nextHourTarget, currentHourlyRate, deviation)
+    }, [requiredRate, actualRequiredRate, currentHourlyRate, deviation])
 
     useEffect(() => {
         getShiftHours();
@@ -66,39 +66,45 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     }, [dailyTarget]);
 
     useEffect(() => {
-        calculateDeviation(shiftHours,dailyTarget,intHour,pieceCount);
+        calculateDeviation(shiftHours, dailyTarget, intHour, pieceCount);
 
-    },[shift, shiftHours, dailyTarget, intHour, pieceCount])
+    }, [shift, shiftHours, dailyTarget, intHour, pieceCount])
 
     useEffect(() => {
         // console.log(latestHour)
         switch (latestHour) {
-            case "1st Hour":
-                setIntHour(1);
+            case "1":
+                setIntHour(0.5);
                 break;
-            case "2nd Hour":
-                setIntHour(2);
+            case "2":
+                setIntHour(1.5);
                 break;
-            case "3rd Hour":
-                setIntHour(3);
+            case "3":
+                setIntHour(2.5);
                 break;
-            case "4th Hour":
-                setIntHour(4);
+            case "4":
+                setIntHour(3.5);
                 break;
-            case "5th Hour":
-                setIntHour(5);
+            case "5":
+                setIntHour(4.5);
                 break;
-            case "6th Hour":
-                setIntHour(6);
+            case "6":
+                setIntHour(5.5);
                 break;
-            case "7th Hour":
+            case "7":
+                setIntHour(6.5);
+                break;
+            case "8":
                 setIntHour(7);
                 break;
-            case "8th Hour":
-                setIntHour(8);
+            case "9":
+                setIntHour(8.5);
+                break;
+            case "10":
+                setIntHour(10);
                 break;
         }
-    },[latestHour])
+    }, [latestHour])
 
     const getShiftHours = async () => {
         try {
@@ -116,8 +122,8 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
     const getDailyTarget = async () => {
         try {
             const username = window.location.pathname.split('/').pop();
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDailyTarget`,{
-                username:username
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDailyTarget`, {
+                username: username
             });
             setDaillytarget(response.data.dailyTarget)
 
@@ -140,30 +146,30 @@ function Deviation({ shift, latestHour , pieceCount, sendDataToParent  }) {
         } catch (error) {
             console.error("Failed to get barchart data", error);
         }
-        }
+    }
 
-    const calculateDeviation = ( shiftHours, dailyTarget , intHour , pieceCount) => {
+    const calculateDeviation = (shiftHours, dailyTarget, intHour, pieceCount) => {
 
         // console.log("deviation values",shiftHours, dailyTarget ,intHour ,pieceCount )
 
-            let hourlyTarget = parseInt(dailyTarget) / shiftHours
-            let alreadyDone = pieceCountForHour && pieceCountForHour.data.totalPieceCountByHour[latestHour]
-            let deviation = alreadyDone - hourlyTarget;
-            let nextHourTarget = (dailyTarget - pieceCount) / (shiftHours - intHour);
-            let currentHourlyRate = pieceCount / intHour;
-            let newDeviation = dailyTarget - pieceCount
-            setcurrentHourlyRate(currentHourlyRate)
-            setNextHourTarget(parseInt(nextHourTarget))
-            setDeviation(newDeviation);
-            setRequiredRate(hourlyTarget)
-            setActualRequiredRate(alreadyDone + deviation)
+        let hourlyTarget = parseInt(dailyTarget) / shiftHours
+        let alreadyDone = pieceCountForHour && pieceCountForHour.data.totalPieceCountByHour[latestHour]
+        let deviation = alreadyDone - hourlyTarget;
+        let nextHourTarget = (dailyTarget - pieceCount) / (shiftHours - intHour);
+        let currentHourlyRate = pieceCount / intHour;
+        let newDeviation = dailyTarget - pieceCount
+        setcurrentHourlyRate(currentHourlyRate)
+        setNextHourTarget(parseInt(nextHourTarget))
+        setDeviation(newDeviation);
+        setRequiredRate(hourlyTarget)
+        setActualRequiredRate(alreadyDone + deviation)
 
     }
 
     return (
         <div className="d-flex flex-column align-items-center justify-content-center gap-2 ">
             <h3 className="mb-0">{deviation || 'null'}</h3>
-            <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("Deviation")}</p>
+            <p className="mb-0" style={{ fontSize: '0.7rem', padding: '0px' }}>{t("Deviation")}</p>
         </div>
     )
 }

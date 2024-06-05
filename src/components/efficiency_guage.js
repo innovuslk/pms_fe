@@ -4,16 +4,17 @@ import { useState, useEffect } from 'react';
 import { I18nextProvider, useTranslation } from "react-i18next";
 import axios from 'axios';
 
-const RadialBarChart = ({ Smv, pieceCount, latestHour, dailyTarget }) => {
+const RadialBarChart = ({ pieceCount, dailyTarget }) => {
 
     const { t } = useTranslation();
 
     const [intHour, setIntHour] = useState();
     const [efficiency, setEfficiency] = useState();
     const [shiftHours, setShiftHours] = useState();
+    const [latestHour, setLatestHour] = useState('');
 
     useEffect(() => {
-        let efficiency = calculateEfficiency(pieceCount, intHour, dailyTarget , shiftHours)
+        let efficiency = calculateEfficiency()
 
         setEfficiency(efficiency)
 
@@ -22,7 +23,7 @@ const RadialBarChart = ({ Smv, pieceCount, latestHour, dailyTarget }) => {
         return () => {
             clearInterval(intervalId);
         };
-    })
+    }, [pieceCount, latestHour])
 
     useEffect(() => {
         getShiftHours();
@@ -35,33 +36,48 @@ const RadialBarChart = ({ Smv, pieceCount, latestHour, dailyTarget }) => {
     }, [shiftHours]);
 
     useEffect(() => {
+        // Fetch latest piece count on component mount
+        fetchLatestPieceCount();
+
+        const intervalId = setInterval(fetchLatestPieceCount, 5000);
+
+        return () => clearInterval(intervalId);
+    }, [latestHour]);
+
+    useEffect(() => {
         switch (latestHour) {
-            case "1st Hour":
-                setIntHour(1);
+            case "1":
+                setIntHour(0.5);
                 break;
-            case "2nd Hour":
-                setIntHour(2);
+            case "2":
+                setIntHour(1.5);
                 break;
-            case "3rd Hour":
-                setIntHour(3);
+            case "3":
+                setIntHour(2.5);
                 break;
-            case "4th Hour":
-                setIntHour(4);
+            case "4":
+                setIntHour(3.5);
                 break;
-            case "5th Hour":
-                setIntHour(5);
+            case "5":
+                setIntHour(4.5);
                 break;
-            case "6th Hour":
-                setIntHour(6);
+            case "6":
+                setIntHour(5.5);
                 break;
-            case "7th Hour":
+            case "7":
+                setIntHour(6.5);
+                break;
+            case "8":
                 setIntHour(7);
                 break;
-            case "8th Hour":
-                setIntHour(8);
+            case "9":
+                setIntHour(8.5);
+                break;
+            case "10":
+                setIntHour(10);
                 break;
         }
-    }, [latestHour])
+    }, [latestHour, pieceCount])
 
     const getShiftHours = async () => {
         try {
@@ -76,16 +92,34 @@ const RadialBarChart = ({ Smv, pieceCount, latestHour, dailyTarget }) => {
         }
     }
 
-    const calculateEfficiency = (pieceCount, intHour, dailyTarget , shiftHours) => {
+    const fetchLatestPieceCount = async () => {
+        const username = window.location.pathname.split('/').pop();
+
+        try {
+
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/set/getPieceCount`, {
+                username: username,
+            });
+
+            setLatestHour(response.data.latestHour);
+            console.log("latest", latestHour)
+        } catch (error) {
+            console.error('Error fetching latest Piece count data:', error);
+        }
+    };
+
+    const calculateEfficiency = () => {
         // Calculate the target hourly rate
         let targetHourlyRate = dailyTarget / shiftHours;
-    
+
         // Calculate the current hourly rate
         let currentHourlyRate = pieceCount / intHour;
-    
+
         // Calculate efficiency
         let efficiency = (currentHourlyRate / targetHourlyRate) * 135;
-    
+
+        console.log(pieceCount, intHour, dailyTarget, shiftHours)
+
         return Math.round(efficiency);
     }
 
