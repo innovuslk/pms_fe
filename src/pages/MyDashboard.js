@@ -53,6 +53,8 @@ function MyDashboard() {
     const [requiredHourlyRate, setRequiredHourlyRate] = useState();
     const [operatorInfo, setOperatorInfo] = useState(null);
     const [shiftHours, setShiftHours] = useState();
+    const [pieceCountForHour, setPieceCountForHour] = useState()
+
 
     // const [ connection , setConnection] = useState(navigator.onLine ? "online" : "offline"); 
 
@@ -183,7 +185,7 @@ function MyDashboard() {
         const intervalId = setInterval(calculateHourlyRequiredRate, 20000);
 
         return () => clearInterval(intervalId);
-    }, [deviation, pieceCountInfo, latestHour]);
+    }, [deviation, pieceCountInfo, latestHour, currentHourOutput]);
 
     useEffect(() => {
         switch (latestHour) {
@@ -220,6 +222,23 @@ function MyDashboard() {
         }
     }, [latestHour, pieceCountInfo, shift]);
 
+    useEffect(() => {
+        switch (shift) {
+            case "A":
+                setShiftHours(7.33);
+                break;
+            case "B":
+                setShiftHours(7.33);
+                break;
+            case "C":
+                setShiftHours(11);
+                break;
+            case "D":
+                setShiftHours(11);
+                break;
+        }
+    }, [latestHour, pieceCountInfo, shift]);
+
 
     useEffect(() => {
         // Fetch data from your backend when the component mounts
@@ -239,29 +258,7 @@ function MyDashboard() {
         fetchData();
 
     }, []);
-    useEffect(() => {
-        getShiftHours();
 
-        const intervalId = setInterval(getShiftHours, 10000);
-
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, [shiftHours]);
-
-
-    const getShiftHours = async () => {
-        try {
-
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShiftHours`, {
-                shiftID: "A",
-            });
-            setShiftHours(response.data.ShiftHours)
-        }
-        catch (error) {
-            console.error("Failed to shift pieces");
-        }
-    }
 
     const handleStopTimerClick = async () => {
         setDowntimeClicked(false);
@@ -364,6 +361,7 @@ function MyDashboard() {
     };
 
     const receiveDataFromChild = (requiredRate, dailyTarget, actualRequiredRate, nextHourTarget, currentHourlyRate, HourlyTarget, deviation) => {
+        // console.log("Received from child:", { requiredRate, dailyTarget, actualRequiredRate, nextHourTarget, currentHourlyRate, HourlyTarget, deviation });
         setDaillytarget(dailyTarget)
         setActualRequiredRate(actualRequiredRate);
         setNextHourTarget(nextHourTarget);
@@ -412,7 +410,7 @@ function MyDashboard() {
 
             setPieceCountInfo(response.data.totalPieceCount);
             setLatestHour(response.data.latestHour);
-            console.log("latest", latestHour)
+            // console.log("latest", latestHour)
         } catch (error) {
             console.error('Error fetching latest Piece count data:', error);
         }
@@ -607,6 +605,22 @@ function MyDashboard() {
         return Math.round(answer);
     }
 
+    const getBarChartDataForHour = async () => {
+
+        try {
+            const username = window.location.pathname.split('/').pop();
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
+                operatorType: operatorInfo.operation,
+                shift:shift,
+                username: username
+            });
+            setPieceCountForHour(response.data.totalPieceCountByHour[latestHour])
+
+        } catch (error) {
+            console.error("Failed to get barchart data", error);
+        }
+    }
+
 
     function formatTime(seconds) {
         const hours = Math.floor(seconds / 3600);
@@ -675,7 +689,7 @@ function MyDashboard() {
                                                 <div className="vr"></div>
                                                 <DailyTarget />
                                                 <div className="vr"></div>
-                                                <Deviation pieceCount={pieceCountInfo} sendDataToParent={receiveDataFromChild} />
+                                                <Deviation shift={shift} latestHour={latestHour} shiftHours={shiftHours} pieceCount={pieceCountInfo} currentHourOutput={currentHourOutput} sendDataToParent={receiveDataFromChild} operator={operatorInfo && operatorInfo.operation}/>
                                             </div>
                                         </div>
                                     </div>
@@ -696,7 +710,7 @@ function MyDashboard() {
                                                     <p className="mb-0" style={{ fontSize: '0.7rem', padding: '0px' }}>{t("Current Hour Output")}</p>
                                                 </div>
                                                 <div className="vr"></div>
-                                                <CurrentDeviation shift={shift} latestHour={latestHour} pieceCount={pieceCountInfo} currentHourOutput={currentHourOutput} sendDataToParent={receiveDataFromChild} />
+                                                <CurrentDeviation shift={shift} shiftHours={shiftHours} latestHour={latestHour} pieceCount={pieceCountInfo} currentHourOutput={currentHourOutput} sendDataToParent={receiveDataFromChild} operator={operatorInfo && operatorInfo.operation}/>
                                             </div>
                                         </div>
                                     </div>
