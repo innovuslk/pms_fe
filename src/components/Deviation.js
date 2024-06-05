@@ -4,11 +4,10 @@ import axios from 'axios';
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from '../i18n';
 
-function Deviation({ shift, latestHour, pieceCount, sendDataToParent }) {
+function Deviation({ shift, shiftHours, latestHour, pieceCount, sendDataToParent, operator }) {
 
     const { t } = useTranslation();
 
-    const [shiftHours, setShiftHours] = useState();
     const [shiftID, setShiftID] = useState('');
     const [dailyTarget, setDaillytarget] = useState();
     const [intHour, setIntHour] = useState()
@@ -24,26 +23,19 @@ function Deviation({ shift, latestHour, pieceCount, sendDataToParent }) {
     }, [shift]);
 
     useEffect(() => {
-        console.log("Sending to parent:", {
-            requiredRate,
-            dailyTarget,
-            actualRequiredRate,
-            nextHourTarget,
-            currentHourlyRate,
-            deviation
-        });
+        // console.log("Sending to parent:", {
+        //     requiredRate,
+        //     dailyTarget,
+        //     actualRequiredRate,
+        //     nextHourTarget,
+        //     currentHourlyRate,
+        //     deviation,
+        //     shift,
+        //     shiftHours,
+        //     latestHour
+        // });
         sendDataToParent(requiredRate, dailyTarget, actualRequiredRate, nextHourTarget, currentHourlyRate, deviation)
     }, [requiredRate, actualRequiredRate, currentHourlyRate, deviation])
-
-    useEffect(() => {
-        getShiftHours();
-
-        const intervalId = setInterval(getShiftHours, 10000);
-
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, [shiftHours]);
 
     useEffect(() => {
         getDailyTarget();
@@ -106,18 +98,6 @@ function Deviation({ shift, latestHour, pieceCount, sendDataToParent }) {
         }
     }, [latestHour])
 
-    const getShiftHours = async () => {
-        try {
-
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShiftHours`, {
-                shiftID: "A",
-            });
-            setShiftHours(response.data.ShiftHours)
-        }
-        catch (error) {
-            console.error("Failed to shift pieces");
-        }
-    }
 
     const getDailyTarget = async () => {
         try {
@@ -138,7 +118,8 @@ function Deviation({ shift, latestHour, pieceCount, sendDataToParent }) {
         try {
             const username = window.location.pathname.split('/').pop();
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
-                operatorType: 'operator',
+                operatorType: operator,
+                shift:shift,
                 username: username
             });
             setPieceCountForHour(response)
@@ -163,6 +144,8 @@ function Deviation({ shift, latestHour, pieceCount, sendDataToParent }) {
         setDeviation(newDeviation);
         setRequiredRate(hourlyTarget)
         setActualRequiredRate(alreadyDone + deviation)
+
+        console.log(alreadyDone,"alreadyDone")
 
     }
 

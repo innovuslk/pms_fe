@@ -102,7 +102,6 @@ const RadialBarChart = ({ pieceCount, dailyTarget }) => {
             });
 
             setLatestHour(response.data.latestHour);
-            console.log("latest", latestHour)
         } catch (error) {
             console.error('Error fetching latest Piece count data:', error);
         }
@@ -118,7 +117,6 @@ const RadialBarChart = ({ pieceCount, dailyTarget }) => {
         // Calculate efficiency
         let efficiency = (currentHourlyRate / targetHourlyRate) * 135;
 
-        console.log(pieceCount, intHour, dailyTarget, shiftHours)
 
         return Math.round(efficiency);
     }
