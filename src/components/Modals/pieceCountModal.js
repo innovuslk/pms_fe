@@ -1,5 +1,4 @@
-// Modal.js
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import VirtualNumPad from './VirtualNumPad';
 import axios from 'axios';
 
@@ -12,8 +11,6 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
     const [nextHour, setNextHour] = useState('');
     const [hour, setHour] = useState();
     const [selectedButton, setSelectedButton] = useState(null);
-
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -38,7 +35,6 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
             clearInterval(intervalId);
         };
     }, []);
-
 
     const handleKeyPress = (value) => {
         setPieceCount((prevCount) => prevCount + value);
@@ -72,100 +68,104 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
     };
 
     useEffect(() => {
-
-
-        if (shiftData === 'A') {
-            const currentTime = new Date();
-            const currentHourValue = currentTime.getHours();
-            const minutes = currentTime.getMinutes();
-
-            // Define time ranges with start and end minutes
-            const timeRanges = [
-                { startHour: 6, startMinute: 20, endHour: 7, endMinute: 40, label: '1st Hour' },
-                { startHour: 7, startMinute: 40, endHour: 8, endMinute: 40, label: '2nd Hour' },
-                { startHour: 8, startMinute: 40, endHour: 9, endMinute: 40, label: '3rd Hour' },
-                { startHour: 9, startMinute: 40, endHour: 10, endMinute: 40, label: '4th Hour' },
-                { startHour: 10, startMinute: 40, endHour: 11, endMinute: 40, label: '5th Hour' },
-                { startHour: 11, startMinute: 40, endHour: 12, endMinute: 0, label: '6th Hour' },
-                { startHour: 12, startMinute: 0, endHour: 13, endMinute: 0, label: '7th Hour' },
-                { startHour: 13, startMinute: 0, endHour: 14, endMinute: 0, label: '8th Hour' },
-            ];
-
-            // Find the matching time range
-            const matchingRange = timeRanges.find(range => {
-                const withinHourRange =
-                    (currentHourValue === range.startHour && minutes >= range.startMinute) ||
-                    (currentHourValue > range.startHour && currentHourValue < range.endHour) ||
-                    (currentHourValue === range.endHour && minutes <= range.endMinute);
-
-                return withinHourRange;
-            });
-
-            if (matchingRange) {
-                setCurrentHour(matchingRange.label);
-
-                // Find the next time range
-                const nextIndex = timeRanges.indexOf(matchingRange) + 1;
-                if (nextIndex < timeRanges.length) {
-                    setNextHour(timeRanges[nextIndex].label);
-                } else {
-                    setNextHour('No data');
-                }
-            } else {
-                setCurrentHour('No data');
-                setNextHour('No data');
+        const setTimeRanges = (shift) => {
+            if (shift === 'A') {
+                return [
+                    { startHour: 6, startMinute: 20, endHour: 7, endMinute: 40, label: '1st Hour', hourValue: 1 },
+                    { startHour: 7, startMinute: 40, endHour: 8, endMinute: 40, label: '2nd Hour', hourValue: 2 },
+                    { startHour: 8, startMinute: 40, endHour: 9, endMinute: 40, label: '3rd Hour', hourValue: 3 },
+                    { startHour: 9, startMinute: 40, endHour: 10, endMinute: 40, label: '4th Hour', hourValue: 4 },
+                    { startHour: 10, startMinute: 40, endHour: 11, endMinute: 40, label: '5th Hour', hourValue: 5 },
+                    { startHour: 11, startMinute: 40, endHour: 12, endMinute: 0, label: '6th Hour', hourValue: 6 },
+                    { startHour: 12, startMinute: 0, endHour: 13, endMinute: 0, label: '7th Hour', hourValue: 7 },
+                    { startHour: 13, startMinute: 0, endHour: 14, endMinute: 0, label: '8th Hour', hourValue: 8 },
+                ];
+            } else if (shift === 'B') {
+                return [
+                    { startHour: 14, startMinute: 0, endHour: 14, endMinute: 20, label: '1st Hour', hourValue: 1 },
+                    { startHour: 14, startMinute: 20, endHour: 15, endMinute: 20, label: '2nd Hour', hourValue: 2 },
+                    { startHour: 15, startMinute: 20, endHour: 16, endMinute: 20, label: '3rd Hour', hourValue: 3 },
+                    { startHour: 16, startMinute: 20, endHour: 17, endMinute: 20, label: '4th Hour', hourValue: 4 },
+                    { startHour: 17, startMinute: 20, endHour: 18, endMinute: 20, label: '5th Hour', hourValue: 5 },
+                    { startHour: 18, startMinute: 20, endHour: 19, endMinute: 20, label: '6th Hour', hourValue: 6 },
+                    { startHour: 19, startMinute: 20, endHour: 19, endMinute: 40, label: '7th Hour', hourValue: 7 },
+                    { startHour: 19, startMinute: 40, endHour: 20, endMinute: 0, label: '8th Hour', hourValue: 8 },
+                ];
+            } else if (shift === 'C') {
+                return [
+                    { startHour: 6, startMinute: 0, endHour: 6, endMinute: 20, label: '1st Hour', hourValue: 1 },
+                    { startHour: 6, startMinute: 20, endHour: 7, endMinute: 20, label: '2nd Hour', hourValue: 2 },
+                    { startHour: 7, startMinute: 20, endHour: 8, endMinute: 40, label: '3rd Hour', hourValue: 3 },
+                    { startHour: 8, startMinute: 40, endHour: 9, endMinute: 40, label: '4th Hour', hourValue: 4 },
+                    { startHour: 9, startMinute: 40, endHour: 10, endMinute: 45, label: '5th Hour', hourValue: 5 },
+                    { startHour: 10, startMinute: 45, endHour: 12, endMinute: 5, label: '6th Hour', hourValue: 6 },
+                    { startHour: 12, startMinute: 5, endHour: 13, endMinute: 5, label: '7th Hour', hourValue: 7 },
+                    { startHour: 13, startMinute: 5, endHour: 14, endMinute: 5, label: '8th Hour', hourValue: 8 },
+                    { startHour: 14, startMinute: 5, endHour: 15, endMinute: 5, label: '9th Hour', hourValue: 9 },
+                    { startHour: 15, startMinute: 5, endHour: 16, endMinute: 20, label: '10th Hour', hourValue: 10 },
+                    { startHour: 16, startMinute: 20, endHour: 17, endMinute: 20, label: '11th Hour', hourValue: 11 },
+                ];
+            } 
+            else if (shift === 'D') {
+                return [
+                    { startHour: 18, startMinute: 0, endHour: 18, endMinute: 20, label: '1st Hour', hourValue: 1 },
+                    { startHour: 18, startMinute: 20, endHour: 19, endMinute: 40, label: '2nd Hour', hourValue: 2 },
+                    { startHour: 19, startMinute: 40, endHour: 20, endMinute: 40, label: '3rd Hour', hourValue: 3 },
+                    { startHour: 20, startMinute: 40, endHour: 21, endMinute: 40, label: '4th Hour', hourValue: 4 },
+                    { startHour: 21, startMinute: 40, endHour: 22, endMinute: 45, label: '5th Hour', hourValue: 5 },
+                    { startHour: 22, startMinute: 45, endHour: 23, endMinute: 45, label: '6th Hour', hourValue: 6 },
+                    { startHour: 23, startMinute: 45, endHour: 1, endMinute: 0, label: '7th Hour', hourValue: 7 },
+                    { startHour: 1, startMinute: 0, endHour: 2, endMinute: 0, label: '8th Hour', hourValue: 8 },
+                    { startHour: 2, startMinute: 0, endHour: 3, endMinute: 0, label: '9th Hour', hourValue: 9 },
+                    { startHour: 3, startMinute: 0, endHour: 4, endMinute: 15, label: '10th Hour', hourValue: 10 },
+                    { startHour: 4, startMinute: 15, endHour: 5, endMinute: 15, label: '11th Hour', hourValue: 11 },
+                ];
+            } 
+            else {
+                return [];
             }
+        };
+
+        const currentTime = new Date();
+        const currentHourValue = currentTime.getHours();
+        const minutes = currentTime.getMinutes();
+
+        const timeRanges = setTimeRanges(shiftData);
+
+        if (timeRanges.length === 0) {
+            console.warn("No time ranges found for shift:", shiftData);
+            return;
         }
 
+        const matchingRange = timeRanges.find(range => {
+            const withinHourRange =
+                (currentHourValue === range.startHour && minutes >= range.startMinute) ||
+                (currentHourValue > range.startHour && currentHourValue < range.endHour) ||
+                (currentHourValue === range.endHour && minutes <= range.endMinute);
 
-        if (shiftData === 'B') {
-            const currentTime = new Date();
-            const currentHourValue = currentTime.getHours();
-            const minutes = currentTime.getMinutes();
+            return withinHourRange;
+        });
 
-            // Define time ranges with start and end minutes
-            const timeRanges = [
-                { startHour: 14, startMinute: 0, endHour: 14, endMinute: 20, label: '1st Hour' },
-                { startHour: 14, startMinute: 20, endHour: 15, endMinute: 20, label: '2nd Hour' },
-                { startHour: 15, startMinute: 20, endHour: 16, endMinute: 20, label: '3rd Hour' },
-                { startHour: 16, startMinute: 20, endHour: 17, endMinute: 20, label: '4th Hour' },
-                { startHour: 17, startMinute: 20, endHour: 18, endMinute: 20, label: '5th Hour' },
-                { startHour: 18, startMinute: 20, endHour: 19, endMinute: 20, label: '6th Hour' },
-                { startHour: 19, startMinute: 20, endHour: 19, endMinute: 40, label: '7th Hour' },
-                { startHour: 19, startMinute: 40, endHour: 20, endMinute: 0, label: '8th Hour' },
-            ];
+        if (matchingRange) {
+            setCurrentHour(matchingRange.label);
+            setHour(matchingRange.hourValue);
 
-            // Find the matching time range
-            const matchingRange = timeRanges.find(range => {
-                const withinHourRange =
-                    (currentHourValue === range.startHour && minutes >= range.startMinute) ||
-                    (currentHourValue > range.startHour && currentHourValue < range.endHour) ||
-                    (currentHourValue === range.endHour && minutes <= range.endMinute);
-                return withinHourRange;
-            });
-
-            if (matchingRange) {
-                setCurrentHour(matchingRange.label);
-
-                // Find the next time range
-                const nextIndex = timeRanges.indexOf(matchingRange) + 1;
-                if (nextIndex < timeRanges.length) {
-                    setNextHour(timeRanges[nextIndex].label);
-                } else {
-                    setNextHour('No data');
-                }
+            const nextIndex = timeRanges.indexOf(matchingRange) + 1;
+            if (nextIndex < timeRanges.length) {
+                setNextHour(timeRanges[nextIndex].label);
             } else {
-                setCurrentHour('No data');
                 setNextHour('No data');
             }
+        } else {
+            setCurrentHour('No data');
+            setNextHour('No data');
         }
     }, [shiftData]);
 
-    const handleButtonSelect = (hour) => {
-        setHour((prevCount) => (selectedButton === hour ? '' : hour));
-        setSelectedButton((prevButton) => (prevButton === hour ? null : hour));
+    const handleButtonSelect = (label, hourValue) => {
+        setHour((prevHour) => (selectedButton === label ? '' : hourValue));
+        setSelectedButton((prevButton) => (prevButton === label ? null : label));
     };
-
 
     const handleOk = async () => {
         try {
@@ -182,7 +182,7 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
     };
 
     const handleOkWithClose = async () => {
-        let success = await handleOk().then( handleCloseModal());
+        let success = await handleOk().then(handleCloseModal());
     };
 
     return (
@@ -202,14 +202,14 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
                         <button
                             type="button"
                             className={`btn btn-secondary mx-2 ${selectedButton === currentHour ? 'btn btn-warning' : ''}`}
-                            onClick={() => handleButtonSelect(currentHour)}
+                            onClick={() => handleButtonSelect(currentHour, hour)}
                         >
                             {currentHour}
                         </button>
                         <button
                             type="button"
                             className={`btn btn-secondary mx-2 ${selectedButton === nextHour ? 'active btn btn-warning' : ''}`}
-                            onClick={() => handleButtonSelect(nextHour)}
+                            onClick={() => handleButtonSelect(nextHour, hour)}
                         >
                             {nextHour}
                         </button>
