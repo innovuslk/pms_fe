@@ -20,7 +20,7 @@ i18n
                 translation: snTranslation.translation
             }
         },
-        debug:true,
+        debug:false,
         fallbackLng: "en",
         detection: {
             order: ["querystring", "cookie", "localStorage", "navigator", "htmlTag", "path", "subdomain"],

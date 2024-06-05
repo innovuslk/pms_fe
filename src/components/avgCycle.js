@@ -40,29 +40,35 @@ function AvgCycle({ latestHour, currentHourOutput, onUpdateBestCycle }) {
 
     useEffect(() => {
         switch (latestHour) {
-            case "1st Hour":
+            case "1":
                 setIntHour(20);
                 break;
-            case "2nd Hour":
+            case "2":
                 setIntHour(60);
                 break;
-            case "3rd Hour":
+            case "3":
                 setIntHour(60);
                 break;
-            case "4th Hour":
+            case "4":
                 setIntHour(60);
                 break;
-            case "5th Hour":
+            case "5":
                 setIntHour(60);
                 break;
-            case "6th Hour":
+            case "6":
                 setIntHour(60);
                 break;
-            case "7th Hour":
+            case "7":
                 setIntHour(60);
                 break;
-            case "8th Hour":
+            case "8":
                 setIntHour(60);
+                break;
+            case "9":
+                setIntHour(8.5);
+                break;
+            case "10":
+                setIntHour(10);
                 break;
             default:
                 setIntHour(60);
@@ -78,7 +84,7 @@ function AvgCycle({ latestHour, currentHourOutput, onUpdateBestCycle }) {
     return (
         <div className="d-flex flex-column align-items-center justify-content-center gap-2">
             <h3 className="mb-0">{avgCycle || '0'}</h3>
-            <p className="mb-0" style={{fontSize:'0.7rem',padding:'0px'}}>{t("Avg Cycle Time")}</p>
+            <p className="mb-0" style={{ fontSize: '0.7rem', padding: '0px' }}>{t("Avg Cycle Time")}</p>
         </div>
     );
 }
