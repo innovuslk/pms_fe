@@ -325,7 +325,7 @@ function MyDashboard() {
     };
 
     const [pieceCountData, setPieceCountData] = useState({
-        labels: ["06.00", "06.20", "07.20", "08.20", "09.40", "10.40", "11.00", "12.00", "13.00", "14.00"],
+        labels: ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"],
         datasets: [
             {
                 label: 'Piece Count',
@@ -489,10 +489,10 @@ function MyDashboard() {
                 labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
             }
             else if (shift === 'C') {
-                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"];
+                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th","11th"];
             }
             else if (shift === 'D') {
-                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"];
+                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th","11th"];
             }
 
             const getGradientFillStyle = () => {
@@ -538,7 +538,7 @@ function MyDashboard() {
                     },
                     {
                         label: 'Required Rate',
-                        data: [requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate],
+                        data: [requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate, requiredRate],
                         backgroundColor: '#ff7588',
                         tension: 0,
                         borderColor: ['#ff7588'],
