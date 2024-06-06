@@ -1,0 +1,12 @@
+.neon-gradient-btn {
+    background: linear-gradient(45deg, #00ffd5, #3333ff);
+    border: none;
+    box-shadow: 0 0 2px #ff00cc, 0 0 2px #ff00cc, 0 0 3px #3333ff, 0 0 4px #3333ff;
+    transition: all 0.3s ease;
+    color: black;
+}
+
+.neon-gradient-btn:hover {
+    box-shadow: 0 0 2px #ff00cc, 0 0 3px #ff00cc, 0 0 4px #3333ff, 0 0 5px #3333ff;
+    color: white;
+}
