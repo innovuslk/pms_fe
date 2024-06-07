@@ -17,6 +17,7 @@ import CallSupervisor from '../components/callSupervisor';
 import CurrentDeviation from '../components/currentHourDeviation';
 import PlannedRadialBarChart from '../components/PlannedChart';
 import ApiLineEndData from '../components/apiLineEnd';
+import Style from '../components/Style';
 
 
 function MyDashboard() {
@@ -257,7 +258,7 @@ function MyDashboard() {
 
         fetchData();
 
-    }, []);
+    }, [dailyTarget]);
 
 
     const handleStopTimerClick = async () => {
@@ -550,7 +551,7 @@ function MyDashboard() {
             };
 
             // Accessing the totalPieceCountByHour object from the response
-            if (operatorInfo.operation == 'Operator' || operatorInfo.operation == 'Pullout 1' || operatorInfo.operation == 'Pullout 2') {
+            if (operatorInfo.operation === 'Operator' || operatorInfo.operation === 'Pullout 1' || operatorInfo.operation === 'Pullout 2') {
                 const totalPieceCountByHour = response.data.totalPieceCountByHour;
 
                 Object.keys(totalPieceCountByHour).forEach(hour => {
@@ -566,7 +567,7 @@ function MyDashboard() {
             Object.keys(totalLineEndPieceCountByHour).forEach(hour => {
                 const pieceCountForHour = totalLineEndPieceCountByHour[hour];
                 newData.datasets[1].data.push(pieceCountForHour);
-                if (operatorInfo.operation == 'LineEnd') {
+                if (operatorInfo.operation === 'LineEnd') {
                     setCurrentHourOutput(totalLineEndPieceCountByHour[latestHour])
                 }
             });
@@ -605,21 +606,21 @@ function MyDashboard() {
         return Math.round(answer);
     }
 
-    const getBarChartDataForHour = async () => {
+    // const getBarChartDataForHour = async () => {
 
-        try {
-            const username = window.location.pathname.split('/').pop();
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
-                operatorType: operatorInfo.operation,
-                shift:shift,
-                username: username
-            });
-            setPieceCountForHour(response.data.totalPieceCountByHour[latestHour])
+    //     try {
+    //         const username = window.location.pathname.split('/').pop();
+    //         const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
+    //             operatorType: operatorInfo.operation,
+    //             shift:shift,
+    //             username: username
+    //         });
+    //         setPieceCountForHour(response.data.totalPieceCountByHour[latestHour])
 
-        } catch (error) {
-            console.error("Failed to get barchart data", error);
-        }
-    }
+    //     } catch (error) {
+    //         console.error("Failed to get barchart data", error);
+    //     }
+    // }
 
 
     function formatTime(seconds) {
@@ -805,7 +806,7 @@ function MyDashboard() {
                                                 </div>
                                                 <div className="vr mx-3"></div>
                                                 <div className="d-flex flex-column align-items-center justify-content-center">
-                                                    <h3 className="mb-0">{currentHourlyRate || '0'}</h3>
+                                                    <h3 className="mb-0">{parseInt(currentHourlyRate) || '0'}</h3>
                                                     <p className="mb-0" style={{ fontSize: '0.7rem', padding: '0.3rem' }}>{t("Current Hourly Rate")}</p>
                                                 </div>
                                             </div>
@@ -857,36 +858,31 @@ function MyDashboard() {
                         <div className='col mx-1'>
                             <div className="row">
                                 <button type="button" style={{ height: "3.5rem", fontWeight: "600", fontSize: "0.9rem" }} onClick={handleAddPieceCountClick}
-                                    className={downtimeClicked ? 'downtime-blur btn ripple btn-primary col mb-4' : 'btn ripple btn-primary col mb-4'}>
+                                    className={downtimeClicked ? 'downtime-blur btn ripple btn-primary col mb-4' : 'btn ripple btn-primary col mb-3'}>
                                     {t("Add Piece Count")}
                                 </button>
                             </div>
                             <div className="row">
-                                <h2
-                                    className='d-flex align-content-center justify-content-center mb-4'
-                                    style={{ color: 'white', fontWeight: "500", fontSize: "1rem" }}
-                                >
-                                    {t("DownTime")}
-                                </h2>
+                               <Style/>
                             </div>
                             <div className="row">
-                                <button type="button" className={`btn btn-warning col mb-4 ${machineClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }}
+                                <button type="button" className={`btn btn-warning col mb-3 ${machineClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }}
                                     onClick={handleClickMachine}>
                                     {t('Machine')}
                                 </button>
                             </div>
                             <div className="row">
-                                <button type="button" className={`btn btn-warning col mb-4 ${downtimeClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }}
+                                <button type="button" className={`btn btn-warning col mb-3 ${downtimeClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }}
                                     onClick={handleClickMaterial}>
                                     {t("Material")}
                                 </button>
                             </div>
                             <CallSupervisor />
                             <div className="row">
-                                <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3rem", fontWeight: "600" }}>{t("Man")}</button>
+                                <button type="button" className="btn ripple btn-danger col mb-3" style={{ height: "3rem", fontWeight: "600" }}>{t("Man")}</button>
                             </div>
                             <div className="row">
-                                <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3rem", fontWeight: "600" }}>{t("Machine")}</button>
+                                <button type="button" className="btn ripple btn-danger col mb-3" style={{ height: "3rem", fontWeight: "600" }}>{t("Machine")}</button>
                             </div>
 
                         </div>

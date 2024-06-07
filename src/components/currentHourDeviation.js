@@ -144,7 +144,7 @@ function CurrentDeviation({ shift, shiftHours, latestHour, pieceCount, currentHo
 
     return (
         <div className="d-flex flex-column align-items-center justify-content-center ">
-            <h3 className="mb-0">{Deviation < 0 || isNaN(Deviation) ? HourlyTarget : parseInt(Deviation)}</h3>
+            <h3 className="mb-0">{isNaN(Deviation) ? HourlyTarget : (Deviation < 0 ? 0 : parseInt(Deviation))}</h3>
             <p className="mb-0" style={{ fontSize: '0.7rem', padding: '0px' }}>{t("Deviation")}</p>
         </div>
     )

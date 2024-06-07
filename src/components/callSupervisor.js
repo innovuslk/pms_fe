@@ -69,7 +69,7 @@ const CallSupervisor = () => {
     return (
         <div>
             <div className="row">
-                <button type="button" className="btn ripple btn-danger col mb-4" style={{ height: "3.5rem", fontWeight: "600" }}
+                <button type="button" className="btn ripple btn-danger col mb-3" style={{ height: "3.5rem", fontWeight: "600" }}
                     onClick={handleSMSClick}
                 >{t("Call Supervisor")}</button>
             </div>
