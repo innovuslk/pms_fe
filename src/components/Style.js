@@ -8,7 +8,7 @@ import axios from 'axios';
 function Style() {
     const { t } = useTranslation();
     const [styles, setStyles] = useState([]);
-    const [selectedStyle, setSelectedStyle] = useState('Select Style');
+    const [selectedStyle, setSelectedStyle] = useState('Select Size');
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null); // null: default, 'success': success, 'error': error
 
@@ -21,7 +21,6 @@ function Style() {
                 if (response.data.styles) {
                     setStyles(response.data.styles);
                 }
-                console.log(response);
             })
             .catch(error => {
                 console.error('Error fetching styles:', error);
@@ -38,7 +37,6 @@ function Style() {
             size: style
         })
         .then(response => {
-            console.log('Style updated successfully:', response);
             setLoading(false);
             setStatus('success');
         })

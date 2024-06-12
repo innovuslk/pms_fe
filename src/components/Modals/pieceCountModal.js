@@ -153,6 +153,7 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
             const nextIndex = timeRanges.indexOf(matchingRange) + 1;
             if (nextIndex < timeRanges.length) {
                 setNextHour(timeRanges[nextIndex].label);
+                setHour(matchingRange.hourValue);
             } else {
                 setNextHour('No data');
             }
@@ -163,7 +164,7 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
     }, [shiftData]);
 
     const handleButtonSelect = (label, hourValue) => {
-        setHour((prevHour) => (selectedButton === label ? '' : hourValue));
+        setHour((label) => (selectedButton === label ? '' : hourValue));
         setSelectedButton((prevButton) => (prevButton === label ? null : label));
     };
 

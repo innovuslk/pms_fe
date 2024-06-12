@@ -145,7 +145,6 @@ function Deviation({ shift, shiftHours, latestHour, pieceCount, sendDataToParent
         setRequiredRate(hourlyTarget)
         setActualRequiredRate(alreadyDone + deviation)
 
-        console.log(alreadyDone,"alreadyDone")
 
     }
 

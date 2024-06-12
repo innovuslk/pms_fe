@@ -170,7 +170,7 @@ function MyDashboard() {
         const intervalId = setInterval(getBarChartData, 10000);
 
         return () => clearInterval(intervalId);
-    }, [requiredRate, shift, pieceCountInfo]);
+    }, [requiredRate, shift, pieceCountInfo, Username]);
 
     useEffect(() => {
         getSmv();
@@ -258,7 +258,7 @@ function MyDashboard() {
 
         fetchData();
 
-    }, [dailyTarget]);
+    }, [dailyTarget,pieceCountInfo]);
 
 
     const handleStopTimerClick = async () => {

@@ -15,6 +15,7 @@ import OperatorInfo from './operatorInfo';
 import SupervisorJoin from './supervisorChatRoom';
 import Style from '../components/Style';
 import AddStyle from './addStyle';
+import OperatorWeekPlanUpload from '../components/OperatorWeekUpload';
 
 function AdminHome() {
 
@@ -374,6 +375,10 @@ function AdminHome() {
                     person_pin_circle
                 </span>Operator Assign
                 </a>
+                <a className='d-flex align-items-center' onClick={() => handleSideBarClick('OperatorWeek')}><span class="material-symbols-outlined mx-1">
+                person_pin_circle
+            </span>Week Assign
+            </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('style')}><span class="material-symbols-outlined mx-1">
                     styler
                 </span>Add Style
@@ -655,6 +660,7 @@ function AdminHome() {
             {sideBarType === 'Users' ? <UserManagement /> : ''}
             {sideBarType === 'OperatorInfo' ? <OperatorInfo /> : ''}
             {sideBarType === 'style' ? <AddStyle /> : ''}
+            {sideBarType === 'OperatorWeek' ? <OperatorWeekPlanUpload /> : ''}
         </div>
     );
 }
