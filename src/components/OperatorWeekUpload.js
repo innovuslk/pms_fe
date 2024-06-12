@@ -3,7 +3,7 @@ import * as XLSX from 'xlsx';
 import '../assets/css/adminHome.css';
 import axios from 'axios';
 
-function WeekPlanUpload() {
+function OperatorWeekPlanUpload() {
     const [data, setData] = useState([]);
     const [message, setMessage] = useState('');
     const [uploading, setUploading] = useState(false);
@@ -40,7 +40,7 @@ function WeekPlanUpload() {
     const handleUpload = async () => {
         setUploading(true);
         try {
-            await axios.post(`http://${process.env.REACT_APP_HOST_IP}/insert/insertWeekPlan`, {
+            await axios.post(`http://${process.env.REACT_APP_HOST_IP}/insert/insertOperatorWeek`, {
                 data: data, // Skip the header row
             });
             setMessage('Successfully Uploaded!');
@@ -58,7 +58,7 @@ function WeekPlanUpload() {
     return (
         <div className="content">
             <div className='col-6 col-xl-6 col-md-8 mx-auto'>
-            <h6 className='align-items-center justify-content-center text-success font-21'>Select an excel file here for Week Daily Plan</h6>
+            <h6 className='align-items-center justify-content-center text-success font-21'>Select an excel file here for Operator Assignment</h6>
                 <input
                     className='form-control mb-4'
                     id="formFile"
@@ -98,4 +98,4 @@ function WeekPlanUpload() {
     );
 }
 
-export default WeekPlanUpload;
+export default OperatorWeekPlanUpload;

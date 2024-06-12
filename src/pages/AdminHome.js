@@ -13,6 +13,9 @@ import UserManagement from '../components/UserManagement';
 import SupervisorDashboard from './supervisorDashboard';
 import OperatorInfo from './operatorInfo';
 import SupervisorJoin from './supervisorChatRoom';
+import Style from '../components/Style';
+import AddStyle from './addStyle';
+import OperatorWeekPlanUpload from '../components/OperatorWeekUpload';
 
 function AdminHome() {
 
@@ -37,19 +40,19 @@ function AdminHome() {
     const [username, setUsername] = useState();
     const [plantUsers, setPlantUsers] = useState();
     const [iconClicked, setIconClicked] = useState(false);
-    const [connection , setConnection] = useState(); 
-    const[supervisor,setSupervisor]= useState();
-    const[supervisors,setSupervisors]= useState();
+    const [connection, setConnection] = useState();
+    const [supervisor, setSupervisor] = useState();
+    const [supervisors, setSupervisors] = useState();
     const [dailyTarget, setDaillytarget] = useState();
     const [shiftHours, setShiftHours] = useState();
 
     useEffect(() => {
         // Fetch data from your backend when the component mounts
         const checkConnection = () => {
-            if(!navigator.onLine){
+            if (!navigator.onLine) {
                 setConnection('offline')
             }
-            else{
+            else {
                 setConnection('')
             }
         };
@@ -180,8 +183,8 @@ function AdminHome() {
     const getDailyTarget = async () => {
         try {
             const username = window.location.pathname.split('/').pop();
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDailyTarget`,{
-                username:username
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDailyTarget`, {
+                username: username
             });
             setDaillytarget(response.data.dailyTarget)
 
@@ -266,7 +269,7 @@ function AdminHome() {
             userId: userId,
             Shift: shift,
             operation: operation,
-            supervisor:supervisor,
+            supervisor: supervisor,
             Smv: Smv
         })
             .then(res => {
@@ -334,9 +337,9 @@ function AdminHome() {
                                 <a className="nav-link" ><Clock format={'HH:mm:ss'} ticking={true} timezone={'Asia/Colombo'} /></a>
                             </li>
                             {connection === 'offline' ? <li className="nav-item me-auto"><a className="nav-link d-flex align-items-center gap-1 text-danger"><span class="material-symbols-outlined text-danger">
-                            wifi_off
+                                wifi_off
                             </span> You Have No Internet</a>
-                            </li>: ''}
+                            </li> : ''}
                         </ul>
                         <form className="d-flex justify-content-center align-items-center">
                             <h6 className='p-1 mx-2'>{operatorInfo && operatorInfo.decodedUsername || 'User'}</h6>
@@ -357,39 +360,47 @@ function AdminHome() {
                 </span>Dashboard
                 </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('OperatorInfo')}><span class="material-symbols-outlined mx-1">
-                groups_2
-            </span>Operator Info
-            </a>
+                    groups_2
+                </span>Operator Info
+                </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('DailyPlan')}><span class="material-symbols-outlined mx-1" >
                     assignment
                 </span>Daily Plan Form
                 </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('WeekPlan')}><span class="material-symbols-outlined mx-1" >
-                assignment
-            </span>Week Plan Upload
-            </a>
+                    assignment
+                </span>Week Plan Upload
+                </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('operator')}><span class="material-symbols-outlined mx-1">
                     person_pin_circle
                 </span>Operator Assign
+                </a>
+                <a className='d-flex align-items-center' onClick={() => handleSideBarClick('OperatorWeek')}><span class="material-symbols-outlined mx-1">
+                person_pin_circle
+            </span>Week Assign
+            </a>
+                <a className='d-flex align-items-center' onClick={() => handleSideBarClick('style')}><span class="material-symbols-outlined mx-1">
+                    styler
+                </span>Add Style
                 </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('register')}><span class="material-symbols-outlined mx-1">
                     person_pin_circle
                 </span>User Register
                 </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('downtime')}><span class="material-symbols-outlined mx-1">
-                flex_direction
+                    flex_direction
                 </span>
-                DownTime Info
+                    DownTime Info
                 </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('topusers')}><span class="material-symbols-outlined mx-1">
-                family_star
+                    family_star
                 </span>
-                Top Users
+                    Top Users
                 </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('Users')}><span class="material-symbols-outlined mx-1">
-                person_search
+                    person_search
                 </span>
-                User Management
+                    User Management
                 </a>
                 {/*<a className='d-flex align-items-center' onClick={() => handleSideBarClick('Chat')}><span class="material-symbols-outlined mx-1">
                 message
@@ -400,8 +411,8 @@ function AdminHome() {
             </div>
 
             {sideBarType === 'Dashboard' ?
-                <SupervisorDashboard/> : ''}
-            
+                <SupervisorDashboard /> : ''}
+
             {/*sideBarType === 'Chat' ? 
             <SupervisorJoin/> : ''
     */}
@@ -579,19 +590,19 @@ function AdminHome() {
                                             </div>
                                         </div>
                                         <div className="col-md-12">
-                                        <label for="input26" className="form-label">Supervisor(only for operators)</label>
-                                        <div className="input-group">
-                                            <span className="input-group-text"><span className="material-symbols-outlined">
-                                                crisis_alert
-                                            </span></span>
-                                            <select className="form-select" id="input32" onChange={e => setSupervisor(e.target.value)}>
-                                                <option value="">Select Supervisor</option>
-                                                {supervisors && supervisors.map(user => (
-                                                    <option key={user.userid} value={user.userid}>{user.username}</option>
-                                                ))}
-                                            </select>
+                                            <label for="input26" className="form-label">Supervisor(only for operators)</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text"><span className="material-symbols-outlined">
+                                                    crisis_alert
+                                                </span></span>
+                                                <select className="form-select" id="input32" onChange={e => setSupervisor(e.target.value)}>
+                                                    <option value="">Select Supervisor</option>
+                                                    {supervisors && supervisors.map(user => (
+                                                        <option key={user.userid} value={user.userid}>{user.username}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
                                         <div className="col-md-12">
                                             <label for="input31" className="form-label">Shift</label>
                                             <div className="input-group">
@@ -644,10 +655,12 @@ function AdminHome() {
                 </div> : ''}
             {sideBarType === 'register' ? <Register /> : ''}
             {sideBarType === 'downtime' ? <Downtime /> : ''}
-            {sideBarType === 'topusers' ? <TopOperatorsTable/ >: ''}
-            {sideBarType === 'WeekPlan' ? <WeekPlanUpload/> : '' }
-            {sideBarType === 'Users' ? <UserManagement/> : '' }
-            {sideBarType === 'OperatorInfo' ? <OperatorInfo/>: ''}
+            {sideBarType === 'topusers' ? <TopOperatorsTable /> : ''}
+            {sideBarType === 'WeekPlan' ? <WeekPlanUpload /> : ''}
+            {sideBarType === 'Users' ? <UserManagement /> : ''}
+            {sideBarType === 'OperatorInfo' ? <OperatorInfo /> : ''}
+            {sideBarType === 'style' ? <AddStyle /> : ''}
+            {sideBarType === 'OperatorWeek' ? <OperatorWeekPlanUpload /> : ''}
         </div>
     );
 }
