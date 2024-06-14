@@ -258,7 +258,7 @@ function MyDashboard() {
 
         fetchData();
 
-    }, [dailyTarget,pieceCountInfo]);
+    }, [dailyTarget, pieceCountInfo]);
 
 
     const handleStopTimerClick = async () => {
@@ -490,10 +490,10 @@ function MyDashboard() {
                 labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
             }
             else if (shift === 'C') {
-                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th","11th"];
+                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th"];
             }
             else if (shift === 'D') {
-                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th","11th"];
+                labels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th"];
             }
 
             const getGradientFillStyle = () => {
@@ -690,7 +690,7 @@ function MyDashboard() {
                                                 <div className="vr"></div>
                                                 <DailyTarget />
                                                 <div className="vr"></div>
-                                                <Deviation shift={shift} latestHour={latestHour} shiftHours={shiftHours} pieceCount={pieceCountInfo} currentHourOutput={currentHourOutput} sendDataToParent={receiveDataFromChild} operator={operatorInfo && operatorInfo.operation}/>
+                                                <Deviation shift={shift} latestHour={latestHour} shiftHours={shiftHours} pieceCount={pieceCountInfo} currentHourOutput={currentHourOutput} sendDataToParent={receiveDataFromChild} operator={operatorInfo && operatorInfo.operation} />
                                             </div>
                                         </div>
                                     </div>
@@ -711,7 +711,7 @@ function MyDashboard() {
                                                     <p className="mb-0" style={{ fontSize: '0.7rem', padding: '0px' }}>{t("Current Hour Output")}</p>
                                                 </div>
                                                 <div className="vr"></div>
-                                                <CurrentDeviation shift={shift} shiftHours={shiftHours} latestHour={latestHour} pieceCount={pieceCountInfo} currentHourOutput={currentHourOutput} sendDataToParent={receiveDataFromChild} operator={operatorInfo && operatorInfo.operation}/>
+                                                <CurrentDeviation shift={shift} shiftHours={shiftHours} latestHour={latestHour} pieceCount={pieceCountInfo} currentHourOutput={currentHourOutput} sendDataToParent={receiveDataFromChild} operator={operatorInfo && operatorInfo.operation} />
                                             </div>
                                         </div>
                                     </div>
@@ -799,7 +799,7 @@ function MyDashboard() {
                                         <div className="card-body p-xxl-3" style={{ padding: '5px' }}>
                                             <div className="d-flex align-items-center justify-content-around">
                                                 <div className="d-flex flex-column align-items-center justify-content-center">
-                                                    <h4 className="mb-0 fw-bold">{(requiredHourlyRate ? requiredHourlyRate : '0')}</h4>
+                                                    <h4 className="mb-0 fw-bold">{(requiredHourlyRate > 0 ? requiredHourlyRate : '0')}</h4>
                                                     <div className="d-flex align-items-center justify-content-center text-success">
                                                         <p className="mb-0" style={{ fontSize: '0.7rem', padding: '0.3rem' }}>{t("Required Hourly Rate")}</p>
                                                     </div>
@@ -814,16 +814,16 @@ function MyDashboard() {
                                     </div>
                                 </div>
                                 <div className='col col-sm-3 d-flex align-items-center justify-content-around w-auto'>
-                                    <div className={`card border-primary border-bottom rounded-3 ${ActualRequiredRate < requiredRate ? 'bg-danger' : 'bg-success'}`}>
+                                    <div className={`card border-primary border-bottom rounded-3 ${ActualRequiredRate > requiredRate ? 'bg-success' : 'bg-danger'}`}>
                                         <div className="card-body p-xxl-3" style={{ padding: '0.5rem' }}>
                                             <div className="d-flex align-items-center justify-content-between">
                                                 <div className="">
                                                     <h4 className="mb-0 fw-bold" style={{ fontSize: '1.2rem' }}>Status</h4>
                                                     <div className="d-flex align-items-center justify-content-start text-dark">
                                                         <span className="material-symbols-outlined">
-                                                            {ActualRequiredRate < requiredRate ? 'thumb_down' : 'thumb_up'}
+                                                            {ActualRequiredRate > requiredRate ? 'thumb_up' : 'thumb_down'}
                                                         </span>
-                                                        <p className="mb-0 fs-7" style={{ padding: '1px' }}>{ActualRequiredRate < requiredRate ? 'Behind' : 'OK'}</p>
+                                                        <p className="mb-0 fs-7" style={{ padding: '1px' }}>{ActualRequiredRate > requiredRate ? 'OK' : 'Behind'}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -863,7 +863,7 @@ function MyDashboard() {
                                 </button>
                             </div>
                             <div className="row">
-                               <Style/>
+                                <Style />
                             </div>
                             <div className="row">
                                 <button type="button" className={`btn btn-warning col mb-3 ${machineClicked ? 'downtime-button-active downtime-unblured-content btn btn-danger' : ''}`} style={{ height: "3rem", color: 'black', fontWeight: "600" }}

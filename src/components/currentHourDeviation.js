@@ -24,7 +24,7 @@ function CurrentDeviation({ shift, shiftHours, latestHour, pieceCount, currentHo
     }, [shift]);
 
     useEffect(() => {
-        const intervalId = setInterval(sendDataToParent(requiredRate, dailyTarget, actualRequiredRate, nextHourTarget, currentHourlyRate, HourlyTarget), 10000);
+        const intervalId = setInterval(sendDataToParent(requiredRate, dailyTarget, actualRequiredRate, nextHourTarget, currentHourlyRate, HourlyTarget), 5000);
 
         return () => {
             clearInterval(intervalId);
@@ -55,7 +55,7 @@ function CurrentDeviation({ shift, shiftHours, latestHour, pieceCount, currentHo
     useEffect(() => {
         calculateDeviation(shiftHours, dailyTarget, intHour, pieceCount);
 
-    }, [shift, shiftHours, dailyTarget, intHour, pieceCount, latestHour, currentHourOutput])
+    }, [shift, shiftHours, dailyTarget, intHour, pieceCount, latestHour, currentHourOutput, currentHourlyRate])
 
     useEffect(() => {
         switch (latestHour) {
@@ -139,7 +139,7 @@ function CurrentDeviation({ shift, shiftHours, latestHour, pieceCount, currentHo
         setRequiredRate(hourlyTarget)
         setActualRequiredRate(alreadyDone + deviation)
 
-        console.log("deviation values", alreadyDone, deviation,latestHour, operator,shift)
+        // console.log("deviation values", alreadyDone, deviation,latestHour, operator,shift)
     }
 
     return (
