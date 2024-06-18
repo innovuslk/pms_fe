@@ -227,6 +227,7 @@ function AdminHome() {
             PlantName: PlantName,
             style: style,
             DailyTarget: parseInt(Dailytarget),
+            shift: shift
         })
             .then(res => {
                 // console.log(res);
@@ -238,7 +239,8 @@ function AdminHome() {
                     setLineItem('')
                     setLineNo('');
                     setStyle('');
-                    setPlantName('')
+                    setPlantName('');
+                    setShift('')
 
                 }
                 else {
@@ -376,9 +378,9 @@ function AdminHome() {
                 </span>Operator Assign
                 </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('OperatorWeek')}><span class="material-symbols-outlined mx-1">
-                person_pin_circle
-            </span>Week Assign
-            </a>
+                    person_pin_circle
+                </span>Week Assign
+                </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('style')}><span class="material-symbols-outlined mx-1">
                     styler
                 </span>Add Style
@@ -503,6 +505,15 @@ function AdminHome() {
                                                     crisis_alert
                                                 </span></span>
                                                 <input type="number" className="form-control" id="input32" placeholder="Daily Target" validate={{ required: true }} onChange={e => setDailytarget(e.target.value)} />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-12">
+                                            <label for="input32" className="form-label">Shift</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text"><span class="material-symbols-outlined">
+                                                    crisis_alert
+                                                </span></span>
+                                                <input type="text" className="form-control" id="input32" placeholder="Shift" validate={{ required: true }} onChange={e => setShift(e.target.value)} />
                                             </div>
                                         </div>
                                         {message && (

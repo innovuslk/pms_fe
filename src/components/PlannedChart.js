@@ -33,12 +33,12 @@ const PlannedRadialBarChart = ({ Smv, dailyTarget, latestHour, shift }) => {
 
         const fetchShiftHours = async () => {
             try {
-                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShiftHours`, {
-                    shiftID: shift,
-                });
-                setShiftHours(response.data.ShiftHours);
+                // const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShiftHours`, {
+                //     shiftID: shift,
+                // });
+                // setShiftHours(response.data.ShiftHours);
             } catch (error) {
-                console.error("Failed to get shift hours");
+                // console.error("Failed to get shift hours");
             }
         };
 
