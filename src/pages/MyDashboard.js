@@ -52,7 +52,7 @@ function MyDashboard() {
     const [intHour, setIntHour] = useState();
     const [deviation, setDeviation] = useState();
     const [requiredHourlyRate, setRequiredHourlyRate] = useState();
-    const [operatorInfo, setOperatorInfo] = useState(null);
+    const [operatorInfo, setOperatorInfo] = useState();
     const [shiftHours, setShiftHours] = useState();
     const [pieceCountForHour, setPieceCountForHour] = useState()
     const [loading, setLoading] = useState(true);
