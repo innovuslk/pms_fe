@@ -3,6 +3,7 @@ import '../assets/css/adminHome.css';
 import axios from 'axios';
 import RadialBarChart from '../components/efficiency_guage';
 import { ClipLoader } from 'react-spinners';
+import SupervisorEfficiency from '../components/supervisorEfficiency';
 
 function OperatorInfo() {
     const [users, setUsers] = useState([]);
@@ -15,7 +16,7 @@ function OperatorInfo() {
     useEffect(() => {
         const intervalId = setInterval(() => {
             getAllUsers();
-        }, 20000);
+        }, 60000);
 
         return () => clearInterval(intervalId);
     }, []);
@@ -161,7 +162,7 @@ function OperatorInfo() {
                                 <div className="card rounded-4">
                                     <div className="card-body d-flex flex-column align-items-center">
                                         <div className="mb-0">
-                                            <RadialBarChart Smv={user.smv} pieceCount={user.pieceCount} latestHour={user.latestHour} dailyTarget={dailyTarget}/>
+                                            <SupervisorEfficiency pieceCount={user.pieceCount} latestHour={user.latestHour} dailyTarget={dailyTarget}/>
                                         </div>
                                         <div className="text-center">
                                             <p className="mb-1 text-bg-dark">UserName - {user.username}</p>

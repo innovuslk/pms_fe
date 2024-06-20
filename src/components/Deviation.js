@@ -125,7 +125,7 @@ function Deviation({ shift, shiftHours, latestHour, pieceCount, sendDataToParent
             setPieceCountForHour(response)
 
         } catch (error) {
-            console.error("Failed to get barchart data", error);
+            // console.error("Failed to get barchart data", error);
         }
     }
 

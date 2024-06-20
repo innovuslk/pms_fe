@@ -44,6 +44,7 @@ function Navbar({ sendLanguage }) {
                     username: username,
                 });
                 setOperatorInfo(response.data);
+                localStorage.setItem('operation', response.data.operation);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -94,6 +95,7 @@ function Navbar({ sendLanguage }) {
         localStorage.removeItem('token');
         localStorage.removeItem('username');
         localStorage.removeItem('userLevel');
+        localStorage.removeItem('operation');
         navigate(`/`);
     };
 

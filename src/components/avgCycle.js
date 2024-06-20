@@ -15,8 +15,8 @@ function AvgCycle({ latestHour, currentHourOutput, onUpdateBestCycle }) {
 
         setAvgCycle(avgCycle);
 
-        // Update best cycle time if avgCycle is lower
-        if (avgCycle < bestCycle) {
+        // Update best cycle time if avgCycle is lower and greater than 0
+        if (avgCycle > 0 && avgCycle < bestCycle) {
             setBestCycle(avgCycle);
             onUpdateBestCycle(avgCycle);
         }
@@ -26,8 +26,8 @@ function AvgCycle({ latestHour, currentHourOutput, onUpdateBestCycle }) {
 
             setAvgCycle(avgCycle);
 
-            // Update best cycle time if avgCycle is lower
-            if (avgCycle < bestCycle) {
+            // Update best cycle time if avgCycle is lower and greater than 0
+            if (avgCycle > 0 && avgCycle < bestCycle) {
                 setBestCycle(avgCycle);
                 onUpdateBestCycle(avgCycle);
             }
@@ -77,8 +77,10 @@ function AvgCycle({ latestHour, currentHourOutput, onUpdateBestCycle }) {
     }, [latestHour]);
 
     const calculateAvgCycle = (intHour, currentHourOutput) => {
-        let avgCycle = (currentHourOutput / intHour);
-        return avgCycle.toFixed(2);
+        if (intHour > 0 && currentHourOutput > 0) {
+            return (currentHourOutput / intHour).toFixed(2);
+        }
+        return 0;
     };
 
     return (

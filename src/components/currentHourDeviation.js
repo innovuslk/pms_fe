@@ -120,7 +120,7 @@ function CurrentDeviation({ shift, shiftHours, latestHour, pieceCount, currentHo
             setPieceCountForHour(response)
 
         } catch (error) {
-            console.error("Failed to get barchart data", error);
+            // console.error("Failed to get barchart data", error);
         }
     }
 

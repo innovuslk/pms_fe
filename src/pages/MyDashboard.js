@@ -52,9 +52,10 @@ function MyDashboard() {
     const [intHour, setIntHour] = useState();
     const [deviation, setDeviation] = useState();
     const [requiredHourlyRate, setRequiredHourlyRate] = useState();
-    const [operatorInfo, setOperatorInfo] = useState(null);
+    const [operatorInfo, setOperatorInfo] = useState();
     const [shiftHours, setShiftHours] = useState();
     const [pieceCountForHour, setPieceCountForHour] = useState()
+    const [loading, setLoading] = useState(true);
 
 
     // const [ connection , setConnection] = useState(navigator.onLine ? "online" : "offline"); 
@@ -157,20 +158,36 @@ function MyDashboard() {
     }, [pieceCountInfo]);
 
     useEffect(() => {
-        getBarChartData();
+        // Fetch data from your backend when the component mounts
+        const fetchData = async () => {
+            const username = window.location.pathname.split('/').pop();
+            setUsername(username);
+            try {
+                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/info/getInfo`, {
+                    username: username,
+                });
+                setOperatorInfo(response.data);
+                console.log(response)
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
 
-        const intervalId = setInterval(getBarChartData, 10000);
+        fetchData();
 
-        return () => clearInterval(intervalId);
-    }, [requiredRate, shift, pieceCountInfo]);
+    }, [dailyTarget, pieceCountInfo]);
 
     useEffect(() => {
-        getBarChartData();
+        if (!loading) {
+            getBarChartData();
 
-        const intervalId = setInterval(getBarChartData, 10000);
+            const intervalId = setInterval(getBarChartData, 10000);
 
-        return () => clearInterval(intervalId);
-    }, [requiredRate, shift, pieceCountInfo, Username]);
+            return () => clearInterval(intervalId);
+        }
+    }, [loading, requiredRate, shift, pieceCountInfo]);
+
 
     useEffect(() => {
         getSmv();
@@ -240,25 +257,6 @@ function MyDashboard() {
         }
     }, [latestHour, pieceCountInfo, shift]);
 
-
-    useEffect(() => {
-        // Fetch data from your backend when the component mounts
-        const fetchData = async () => {
-            const username = window.location.pathname.split('/').pop();
-            setUsername(username);
-            try {
-                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/info/getInfo`, {
-                    username: username,
-                });
-                setOperatorInfo(response.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchData();
-
-    }, [dailyTarget, pieceCountInfo]);
 
 
     const handleStopTimerClick = async () => {
@@ -336,14 +334,14 @@ function MyDashboard() {
                 borderWidth: 0
             },
             {
-                label: 'Piece Count',
+                label: 'Line End Piece Count',
                 data: Array(10).fill(0),
                 tension: 0,
                 borderColor: ['#02c27a'],
                 borderWidth: 0
             }
         ]
-    }, [requiredRate, shift]);
+    });
 
     const options = {
         scales: {
@@ -472,14 +470,14 @@ function MyDashboard() {
             setUsername(username);
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
                 operatorType: operatorInfo.operation,
-                username: Username,
+                username: username,
                 shift: shift
             });
             // console.log(username)
             const response2 = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
 
                 operatorType: 'LineEnd',
-                username: Username,
+                username: username,
                 shift: shift
             });
 
@@ -577,7 +575,7 @@ function MyDashboard() {
             setPieceCountData(newData);
 
         } catch (error) {
-            console.error("Failed to get barchart data", error);
+            // console.error("Failed to get barchart data", error);
         }
     };
 

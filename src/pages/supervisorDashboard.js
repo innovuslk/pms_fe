@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../assets/css/adminHome.css';
 import axios from 'axios';
-import RadialBarChart from '../components/efficiency_guage';
+import SupervisorEfficiency from '../components/supervisorEfficiency';
 
 function SupervisorDashboard() {
 
@@ -50,12 +50,11 @@ function SupervisorDashboard() {
                 plantName: plantName
             });
             const lineNos = response.data.linePieceCounts;
-            console.log(lineNos)
-            const newLinesData = lineNos.map(({ lineNo, pieceCount }) => ({
+            const newLinesData = lineNos.map(({ lineNo, pieceCount, latestHour }) => ({
                 lineNo: lineNo,
                 smv: null,
                 totalPieceCount: pieceCount,
-                latestHour: null
+                latestHour: latestHour
             }));
             
             setLinesData(newLinesData);
@@ -102,16 +101,14 @@ function SupervisorDashboard() {
     const getDailyTarget = async () => {
         try {
             const username = window.location.pathname.split('/').pop();
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getSupervisorDailyTarget`,{
-                username:username
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getSupervisorDailyTarget`, {
+                username: username
             });
-            setDaillytarget(parseInt(response.data.dailyTarget))
-
-        }
-        catch (error) {
+            setDaillytarget(parseInt(response.data.dailyTarget));
+        } catch (error) {
             console.error("Failed to dailyTarget");
         }
-    }
+    };
 
     return (
         <div className="content">
@@ -126,14 +123,14 @@ function SupervisorDashboard() {
                                 {linesData.map((line, index) => (
                                     index % 2 === 0 &&
                                     <div key={index} className={selectedLine ? 'd-none' : 'row'}>
-                                        {linesData[index] &&
+                                        {linesData[index] && (
                                             <div className="col">
                                                 <div className="card rounded-4 cursor-pointer" onClick={() => setSelectedLine(linesData[index].lineNo)}>
                                                     <div className="card-body">
                                                         <div className="d-flex align-items-center justify-content-between flex-wrap">
                                                             <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
                                                                 <div style={{ width: '13rem' }}>
-                                                                    <RadialBarChart Smv={linesData[index].smv} pieceCount={linesData[index].totalPieceCount} latestHour={linesData[index].latestHour} dailyTarget={dailyTarget}/>
+                                                                    <SupervisorEfficiency pieceCount={linesData[index].totalPieceCount} dailyTarget={dailyTarget} latestHour={linesData[index].latestHour} />
                                                                 </div>
                                                             </div>
                                                             <div className="align-items-center justify-content-center gap-2">
@@ -144,15 +141,15 @@ function SupervisorDashboard() {
                                                     </div>
                                                 </div>
                                             </div>
-                                        }
-                                        {linesData[index + 1] &&
+                                        )}
+                                        {linesData[index + 1] && (
                                             <div className="col">
                                                 <div className="card rounded-4 cursor-pointer" onClick={() => setSelectedLine(linesData[index + 1].lineNo)}>
                                                     <div className="card-body">
                                                         <div className="d-flex align-items-center justify-content-between flex-wrap">
                                                             <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
                                                                 <div style={{ width: '13rem' }}>
-                                                                    <RadialBarChart Smv={linesData[index + 1].smv} pieceCount={linesData[index + 1].totalPieceCount} latestHour={linesData[index + 1].latestHour} dailyTarget={dailyTarget}/>
+                                                                    <SupervisorEfficiency pieceCount={linesData[index + 1].totalPieceCount} dailyTarget={dailyTarget} latestHour={linesData[index + 1].latestHour} />
                                                                 </div>
                                                             </div>
                                                             <div className="align-items-center justify-content-center gap-2">
@@ -163,7 +160,7 @@ function SupervisorDashboard() {
                                                     </div>
                                                 </div>
                                             </div>
-                                        }
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -188,20 +185,19 @@ function SupervisorDashboard() {
                     {selectedLine && (
                         <div className="row">
                             <div className="col-10">
-                            <button className='btn btn-close' onClick={() => setSelectedLine(null)}></button>
+                                <button className='btn btn-close' onClick={() => setSelectedLine(null)}></button>
                                 <div className="card rounded-4">
                                     <div className="card-body">
                                         <h5>Operators of Line {selectedLine}</h5>
                                         <hr></hr>
                                         {users.map((user, index) => (
-                                            <div classname key={index}>{user.username} -: PieceCount - {user.totalPieceCount}</div>
+                                            <div key={index}>{user.username} -: PieceCount - {user.totalPieceCount}</div>
                                         ))}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
-                    ) }
+                    )}
                 </>
             )}
         </div>
