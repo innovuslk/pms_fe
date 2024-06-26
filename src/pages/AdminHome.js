@@ -199,7 +199,7 @@ function AdminHome() {
 
         }
         catch (error) {
-            console.error("Failed to dailyTarget");
+            // console.error("Failed to dailyTarget");
         }
     }
 
