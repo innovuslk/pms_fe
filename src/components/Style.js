@@ -28,6 +28,12 @@ function Style() {
                 if (styleResponse.data.styles) {
                     setStyles(styleResponse.data.styles);
                 }
+
+                // Retrieve the last selected style for the specific user from local storage
+                const savedStyle = localStorage.getItem(`selectedStyle_${username}`);
+                if (savedStyle) {
+                    setSelectedStyle(savedStyle);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
@@ -42,6 +48,9 @@ function Style() {
         setSelectedStyle(style);
         setLoading(true);
         setStatus(null);
+
+        // Save the selected style to local storage with the username as part of the key
+        localStorage.setItem(`selectedStyle_${username}`, style);
 
         axios.post(`http://${process.env.REACT_APP_HOST_IP}/insert/insertStyle`, { username, size: style })
             .then(response => {
