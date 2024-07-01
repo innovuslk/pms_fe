@@ -8,12 +8,26 @@ const TopOperatorsTable = () => {
     const [selectedOperation, setSelectedOperation] = useState('');
 
     useEffect(() => {
+        const fetchTopUsers = () => {
+            axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getTopUsers`)
+                .catch(error => {
+                    console.error('Error fetching top users:', error);
+                });
+        };
+
+        fetchTopUsers();
+        const intervalId = setInterval(fetchTopUsers, 5000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    useEffect(() => {
         const fetchTopUsersWithCycle = () => {
             axios.get(`http://${process.env.REACT_APP_HOST_IP}/get/getTopUsersWithCycle`)
                 .then(response => {
                     if (response.data && response.data.topUsers) {
                         setTopUsersWithCycle(response.data.topUsers);
-                        console.log(response);
+                        // console.log(response);
                     }
                 })
                 .catch(error => {

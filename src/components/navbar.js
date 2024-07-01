@@ -96,6 +96,7 @@ function Navbar({ sendLanguage }) {
         localStorage.removeItem('username');
         localStorage.removeItem('userLevel');
         localStorage.removeItem('operation');
+        // localStorage.removeItem('selectedStyle');
         navigate(`/`);
     };
 

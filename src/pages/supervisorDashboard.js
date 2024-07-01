@@ -50,13 +50,15 @@ function SupervisorDashboard() {
                 plantName: plantName
             });
             const lineNos = response.data.linePieceCounts;
-            const newLinesData = lineNos.map(({ lineNo, pieceCount, latestHour }) => ({
+            const newLinesData = lineNos.map(({ lineNo, pieceCount, latestHour, style, salesOrder }) => ({
                 lineNo: lineNo,
                 smv: null,
                 totalPieceCount: pieceCount,
-                latestHour: latestHour
+                latestHour: latestHour,
+                style: style,
+                salesOrder: salesOrder
             }));
-            
+
             setLinesData(newLinesData);
         } catch (error) {
             console.error('Error fetching line numbers:', error);
@@ -130,12 +132,15 @@ function SupervisorDashboard() {
                                                         <div className="d-flex align-items-center justify-content-between flex-wrap">
                                                             <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
                                                                 <div style={{ width: '13rem' }}>
+                                                                <h3 className='text-center'>Efficiency</h3>
                                                                     <SupervisorEfficiency pieceCount={linesData[index].totalPieceCount} dailyTarget={dailyTarget} latestHour={linesData[index].latestHour} />
                                                                 </div>
                                                             </div>
                                                             <div className="align-items-center justify-content-center gap-2">
-                                                                <p className="mb-0 w-auto text-bg-dark cursor-pointer" onClick={() => setSelectedLine(linesData[index].lineNo)}>LineNo - {linesData[index].lineNo}</p>
-                                                                <p className="mb-0 w-auto text-bg-dark">PieceCount - {linesData[index].totalPieceCount}</p>
+                                                                <p className="mb-0 w-auto text-bg-dark text-warning fw-bolder mb-1 cursor-pointer" onClick={() => setSelectedLine(linesData[index].lineNo)}>LineNo - {linesData[index].lineNo}</p>
+                                                                <p className="mb-0 w-auto text-bg-dark mb-1">PieceCount - {linesData[index].totalPieceCount}</p>
+                                                                <p className="mb-0 w-auto text-bg-dark mb-1">SalesOrder - {linesData[index].salesOrder}</p>
+                                                                <p className="mb-0 w-auto text-bg-dark mb-1">Style - {linesData[index].style}</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -149,12 +154,15 @@ function SupervisorDashboard() {
                                                         <div className="d-flex align-items-center justify-content-between flex-wrap">
                                                             <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
                                                                 <div style={{ width: '13rem' }}>
+                                                                <h3 className='text-center'>Efficiency</h3>
                                                                     <SupervisorEfficiency pieceCount={linesData[index + 1].totalPieceCount} dailyTarget={dailyTarget} latestHour={linesData[index + 1].latestHour} />
                                                                 </div>
                                                             </div>
                                                             <div className="align-items-center justify-content-center gap-2">
-                                                                <p className="mb-0 w-auto text-bg-dark cursor-pointer" onClick={() => setSelectedLine(linesData[index + 1].lineNo)}>LineNo - {linesData[index + 1].lineNo}</p>
+                                                                <p className="mb-0 w-auto text-bg-dark cursor-pointer text-warning fw-bolder mb-1" onClick={() => setSelectedLine(linesData[index + 1].lineNo)}>LineNo - {linesData[index + 1].lineNo}</p>
                                                                 <p className="mb-0 w-auto text-bg-dark">PieceCount - {linesData[index + 1].totalPieceCount}</p>
+                                                                <p className="mb-0 w-auto text-bg-dark mb-1">SalesOrder - {linesData[index + 1].salesOrder}</p>
+                                                                <p className="mb-0 w-auto text-bg-dark mb-1">Style - {linesData[index + 1].style}</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -183,15 +191,17 @@ function SupervisorDashboard() {
                         </div>
                     )}
                     {selectedLine && (
-                        <div className="row">
+                        <div className="row g-3">
                             <div className="col-10">
-                                <button className='btn btn-close' onClick={() => setSelectedLine(null)}></button>
-                                <div className="card rounded-4">
+                                <button className='btn btn-close mb-3' onClick={() => setSelectedLine(null)}></button>
+                                <div className="card rounded-4 shadow-sm">
                                     <div className="card-body">
-                                        <h5>Operators of Line {selectedLine}</h5>
-                                        <hr></hr>
+                                        <h5 className="card-title">Operators of Line {selectedLine}</h5>
+                                        <hr className = 'text-secondary'></hr>
                                         {users.map((user, index) => (
-                                            <div key={index}>{user.username} -: PieceCount - {user.totalPieceCount}</div>
+                                            <div key={index} className="p-2 mb-2 border rounded bg-light">
+                                                <strong className = 'text-info'>{user.username}</strong> - PieceCount: {user.totalPieceCount}
+                                            </div>
                                         ))}
                                     </div>
                                 </div>
