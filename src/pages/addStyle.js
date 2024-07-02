@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.css';
 import '../assets/css/adminHome.css';
 import axios from 'axios';
@@ -10,6 +9,7 @@ function AddStyle() {
     const [Size, setSize] = useState('');
     const [StitchCount, setStitchCount] = useState('');
     const [message, setMessage] = useState('');
+    const [Operation, setOperation] = useState('');
     // const navigate = useNavigate();
 
     function handleSubmit(event) {
@@ -19,6 +19,7 @@ function AddStyle() {
             StyleNo: StyleNo,
             Size: Size,
             StitchCount: StitchCount,
+            Operation: Operation
         })
             .then(res => {
                 // console.log(res);
@@ -106,6 +107,21 @@ function AddStyle() {
                                             pin
                                         </span></span>
                                         <input type="number" className="form-control" id="input29" placeholder="Stitch Count" validate={{ required: true }} onChange={e => setStitchCount(e.target.value)} />
+                                    </div>
+                                </div>
+                                <div className="col-md-12">
+                                    <label htmlFor="input32" className="form-label">Operation</label>
+                                    <div className="input-group">
+                                        <span className="input-group-text"><span className="material-symbols-outlined">
+                                            recent_actors
+                                        </span></span>
+                                        <select className="form-select" id="input32" required onChange={e => setOperation(e.target.value)} value={Operation}>
+                                            <option value="">Select operation</option>
+                                            <option value="Pullout 1">Pullout 1</option>
+                                            <option value="Pullout 2">Pullout 2</option>
+                                            <option value="LineEnd">LineEnd</option>
+                                            <option value="operator">Operator</option>
+                                        </select>
                                     </div>
                                 </div>
                                 {message && (

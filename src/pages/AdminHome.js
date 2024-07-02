@@ -18,6 +18,7 @@ import AddStyle from './addStyle';
 import OperatorWeekPlanUpload from '../components/OperatorWeekUpload';
 import DailyPlan from './DailyPlan';
 import OperatorAssign from './OperatorAssign';
+import History from './History';
 
 function AdminHome() {
 
@@ -374,6 +375,11 @@ function AdminHome() {
                 </span>
                     User Management
                 </a>
+                <a className='d-flex align-items-center' onClick={() => handleSideBarClick('History')}><span class="material-symbols-outlined mx-1">
+                history
+            </span>
+                History
+            </a>
                 {/*<a className='d-flex align-items-center' onClick={() => handleSideBarClick('Chat')}><span class="material-symbols-outlined mx-1">
                 message
                 </span>
@@ -402,6 +408,7 @@ function AdminHome() {
             {sideBarType === 'OperatorInfo' ? <OperatorInfo /> : ''}
             {sideBarType === 'style' ? <AddStyle /> : ''}
             {sideBarType === 'OperatorWeek' ? <OperatorWeekPlanUpload /> : ''}
+            {sideBarType === 'History' ? <History /> : ''}
         </div>
     );
 }
