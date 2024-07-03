@@ -8,6 +8,7 @@ import '../assets/css/myDashboard.css';
 function History() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [sortBy, setSortBy] = useState('date'); // Default sorting option
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [
@@ -35,10 +36,18 @@ function History() {
         try {
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getHistory`, {
                 startDate,
-                endDate
+                endDate,
+                sortBy
             });
             const data = response.data;
-            const labels = data.map(entry => new Date(entry.date).toLocaleDateString());
+
+            const labels = data.map(entry => {
+                if (sortBy === 'date') {
+                    return new Date(entry.label).toLocaleDateString();
+                }
+                return entry.label;
+            });
+
             const pieceCounts = data.map(entry => entry.pieceCount);
 
             setChartData({
@@ -62,7 +71,7 @@ function History() {
     return (
         <div className="content">
             <div className="row mt-5">
-                <div className="col-md-4">
+                <div className="col-md-3">
                     <div className="form-group">
                         <label htmlFor="startDate">Start Date</label>
                         <input
@@ -74,7 +83,7 @@ function History() {
                         />
                     </div>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-3">
                     <div className="form-group">
                         <label htmlFor="endDate">End Date</label>
                         <input
@@ -86,14 +95,29 @@ function History() {
                         />
                     </div>
                 </div>
-                <div className="col-md-4 d-flex align-items-end">
+                <div className="col-md-3">
+                    <div className="form-group">
+                        <label htmlFor="sortBy">Sort By</label>
+                        <select
+                            id="sortBy"
+                            className="form-control"
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                        >
+                            <option value="date">Date</option>
+                            <option value="operation">Operation</option>
+                            <option value="plantName">Plant Name</option>
+                        </select>
+                    </div>
+                </div>
+                <div className="col-md-3 d-flex align-items-end">
                     <button onClick={fetchPieceCountData} className="btn btn-primary w-auto">Get Data</button>
                 </div>
             </div>
             <div className="row mt-5">
                 <div className="col">
                     <div className="card-body p-xxl-3" style={{ padding: '5px' }}>
-                        <div className="chart-container1 rounded-2 p-3" style={{backgroundColor: '#252B3B'}}>
+                        <div className="chart-container1 rounded-2 p-3" style={{ backgroundColor: '#252B3B' }}>
                             <BarChart canvasId="chart2-facebook" data={chartData} />
                         </div>
                     </div>

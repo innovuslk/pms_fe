@@ -92,6 +92,7 @@ function SupervisorDashboard() {
                 username: username,
             });
             const plantNames = response.data.plantNames;
+            console.log(plantNames)
             setPlantsData(plantNames);
         } catch (error) {
             console.error('Error fetching plant names:', error);
