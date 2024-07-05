@@ -85,7 +85,7 @@ function AvgCycle({ latestHour, currentHourOutput, onUpdateBestCycle }) {
 
     return (
         <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-            <h3 className="mb-0">{avgCycle || '0'}</h3>
+            <h3 className="mb-0">{avgCycle || '0'} <sub style={{fontSize: '0.7rem'}}>min</sub></h3>
             <p className="mb-0" style={{ fontSize: '0.7rem', padding: '0px' }}>{t("Avg Cycle Time")}</p>
         </div>
     );

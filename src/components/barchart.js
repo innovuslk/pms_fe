@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Chart from 'chart.js/auto';
 
-function BarChart({ canvasId, data, shift }) {
+function BarChart({ canvasId, data }) {
     useEffect(() => {
         const canvas = document.getElementById(canvasId);
 
@@ -24,17 +24,31 @@ function BarChart({ canvasId, data, shift }) {
                         display: true,
                     },
                 },
-                scales: {  
+                scales: {
                     y: {
                         beginAtZero: true,
                     },
+                    x: {
+                        grid: {
+                            display: true,
+                            drawBorder: true,
+                            drawOnChartArea: true,
+                            drawTicks: true,
+                            color: function(context) {
+                                // Add vertical lines conditionally based on label format
+                                if (context.tick && context.tick.label === '') {
+                                    return 'black'; // Line color for the placeholder
+                                }
+                                return 'rgba(0,0,0,0)'; // No line
+                            }
+                        }
+                    }
                 },
                 animation: {
                     duration: 0, // turn off the animation
                 },
-                },
             },
-        );
+        });
 
         // Customize the bar colors with gradient
         const gradient = ctx.createLinearGradient(0, 0, 0, 200);

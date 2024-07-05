@@ -41,14 +41,33 @@ function History() {
             });
             const data = response.data;
 
-            const labels = data.map(entry => {
-                if (sortBy === 'date') {
-                    return new Date(entry.label).toLocaleDateString();
-                }
-                return entry.label;
-            });
+            console.log(data);
 
-            const pieceCounts = data.map(entry => entry.pieceCount);
+            let labels = [];
+            let pieceCounts = [];
+            let lastDate = null;
+
+            data.forEach(entry => {
+                const currentDate = new Date(entry.date).toLocaleDateString();
+                
+                // Check if the date has changed
+                if (lastDate && lastDate !== currentDate) {
+                    // Insert a placeholder for the vertical line or extra space
+                    labels.push('');
+                    pieceCounts.push(null);  // null or 0 can be used for spacing
+                }
+
+                if (sortBy === 'date' || sortBy === 'plantName') {
+                    labels.push(currentDate);
+                } else if (sortBy === 'operation') {
+                    labels.push(entry.operation);
+                } else if (sortBy === 'lineNo') {
+                    labels.push(entry.lineNo);
+                }
+
+                pieceCounts.push(entry.pieceCount);
+                lastDate = currentDate;
+            });
 
             setChartData({
                 labels: labels,
@@ -107,6 +126,7 @@ function History() {
                             <option value="date">Date</option>
                             <option value="operation">Operation</option>
                             <option value="plantName">Plant Name</option>
+                            <option value="lineNo">Line Number</option>
                         </select>
                     </div>
                 </div>

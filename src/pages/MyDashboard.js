@@ -741,7 +741,7 @@ function MyDashboard() {
                                         <div className="card-body p-xxl-3" style={{ padding: '5px' }}>
                                             <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">{bestCycle || '0'}</h3>
+                                                    <h3 className="mb-0">{bestCycle || '0'}<sub style={{fontSize: '0.7rem'}}> min</sub></h3>
                                                     <p className="mb-0" style={{ fontSize: '0.7rem', padding: '0px' }}>{t("Best Cycle Time")}</p>
                                                 </div>
                                                 <div className="vr"></div>
