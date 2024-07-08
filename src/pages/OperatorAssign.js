@@ -281,6 +281,8 @@ const OperatorAssign = () => {
                                                 <option value="">Select Operation</option>
                                                 <option value="LineEnd">LineEnd</option>
                                                 <option value="Operator">operator</option>
+                                                <option value="Pullout 1">Pullout 1</option>
+                                                <option value="Pullout 2">Pullout 2</option>
                                             </select>
                                         </div>
                                     </div>
