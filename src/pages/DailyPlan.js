@@ -20,6 +20,9 @@ const DailyPlan = () => {
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowsPerPage = 10;
+
     useEffect(() => {
         fetchDailyPlans();
     }, []);
@@ -105,14 +108,85 @@ const DailyPlan = () => {
         }
     };
 
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
     const filteredPlans = dailyPlans.filter(plan =>
         plan.plantName.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const indexOfLastRow = currentPage * rowsPerPage;
+    const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+    const currentRows = filteredPlans.slice(indexOfFirstRow, indexOfLastRow);
+
+    const totalPages = Math.ceil(filteredPlans.length / rowsPerPage);
+
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', { timeZone: 'Asia/Colombo' }); 
     };
+
+    const renderPageNumbers = () => {
+        const pageNumbers = [];
+        const maxPagesToShow = 5;
+
+        if (totalPages <= maxPagesToShow) {
+            for (let i = 1; i <= totalPages; i++) {
+                pageNumbers.push(
+                    <li key={i} className={`page-item ${currentPage === i ? 'active' : ''}`}>
+                        <button onClick={() => handlePageChange(i)} className="page-link">
+                            {i}
+                        </button>
+                    </li>
+                );
+            }
+        } else {
+            const firstPages = [1, 2, 3];
+            const lastPages = [totalPages - 2, totalPages - 1, totalPages];
+            const middlePages = [];
+
+            if (currentPage > 3 && currentPage < totalPages - 2) {
+                middlePages.push(currentPage - 1, currentPage, currentPage + 1);
+            }
+
+            const renderPages = (pages) => {
+                return pages.map((page) => (
+                    <li key={page} className={`page-item ${currentPage === page ? 'active' : ''}`}>
+                        <button onClick={() => handlePageChange(page)} className="page-link">
+                            {page}
+                        </button>
+                    </li>
+                ));
+            };
+
+            pageNumbers.push(...renderPages(firstPages));
+
+            if (currentPage > 4) {
+                pageNumbers.push(
+                    <li key="ellipsis1" className="page-item disabled">
+                        <span className="page-link">...</span>
+                    </li>
+                );
+            }
+
+            pageNumbers.push(...renderPages(middlePages));
+
+            if (currentPage < totalPages - 3) {
+                pageNumbers.push(
+                    <li key="ellipsis2" className="page-item disabled">
+                        <span className="page-link">...</span>
+                    </li>
+                );
+            }
+
+            pageNumbers.push(...renderPages(lastPages));
+        }
+
+        return pageNumbers;
+    };
+
 
     return (
         <div>
@@ -265,7 +339,7 @@ const DailyPlan = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredPlans.map((plan, index) => (
+                                {currentRows.map((plan, index) => (
                                     <tr key={index} className="text-center">
                                         <td>{formatDate(plan.date)}</td>
                                         <td>{plan.sbu}</td>
@@ -290,6 +364,19 @@ const DailyPlan = () => {
                                 ))}
                             </tbody>
                         </table>
+                    </div>
+                    <div className="d-flex justify-content-center">
+                        <nav>
+                            <ul className="pagination">
+                                {[...Array(totalPages).keys()].map(number => (
+                                    <li key={number + 1} className={`page-item ${currentPage === number + 1 ? 'active' : ''}`}>
+                                        <button onClick={() => handlePageChange(number + 1)} className="page-link">
+                                            {number + 1}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             )}

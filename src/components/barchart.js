@@ -56,7 +56,7 @@ function BarChart({ canvasId, data }) {
         gradient.addColorStop(1, 'rgb(246,147,49)'); // End color
 
         // Apply gradient to the first dataset (Google)
-        chart.data.datasets[0].backgroundColor = gradient;
+        // chart.data.datasets[0].backgroundColor = gradient;
 
         // Clean up function
         return () => {
