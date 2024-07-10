@@ -86,7 +86,7 @@ function History() {
                     datasets[entry.operation] = {
                         label: entry.operation,
                         data: [],
-                        backgroundColor: getGradientFillStyle(ctx),
+                        backgroundColor: getRandomColor(),
                         tension: 0,
                         borderColor: getRandomColor(),
                         borderWidth: 0
@@ -107,12 +107,20 @@ function History() {
     };
 
     const getRandomColor = () => {
-        const letters = '0123456789ABCDEF';
-        let color = '#';
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+        const colors = [
+            '#FF6F61', // Coral
+            '#6B5B95', // Purple
+            '#88B04B', // Green
+            '#F7CAC9', // Light Pink
+            '#92A8D1', // Light Blue
+            '#955251', // Brown
+            '#B565A7', // Orchid
+            '#009B77', // Teal
+            '#DD4124', // Orange
+            '#D65076'  // Pink
+        ];
+        const randomIndex = Math.floor(Math.random() * colors.length);
+        return colors[randomIndex];
     };
 
     return (
