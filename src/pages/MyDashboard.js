@@ -812,17 +812,17 @@ function MyDashboard() {
                                     </div>
                                 </div>
                                 <div className='col col-sm-3 d-flex align-items-center justify-content-around w-auto'>
-                                    <div className={`card border-primary border-bottom rounded-3 ${(ActualRequiredRate > requiredRate || pieceCountInfo > dailyTarget) ? 'bg-success' : 'bg-danger'}`}>
+                                    <div className={`card border-primary border-bottom rounded-3 ${(ActualRequiredRate > requiredRate || pieceCountInfo > dailyTarget || currentHourlyRate > requiredHourlyRate) ? 'bg-success' : 'bg-danger'}`}>
                                         <div className="card-body p-xxl-3" style={{ padding: '0.5rem' }}>
                                             <div className="d-flex align-items-center justify-content-between">
                                                 <div className="">
                                                     <h4 className="mb-0 fw-bold" style={{ fontSize: '1.2rem' }}>Status</h4>
                                                     <div className="d-flex align-items-center justify-content-start text-dark">
                                                         <span className="material-symbols-outlined">
-                                                            {(ActualRequiredRate > requiredRate || pieceCountInfo > dailyTarget) ? 'thumb_up' : 'thumb_down'}
+                                                            {(ActualRequiredRate > requiredRate || pieceCountInfo > dailyTarget || currentHourlyRate > requiredHourlyRate) ? 'thumb_up' : 'thumb_down'}
                                                         </span>
                                                         <p className="mb-0 fs-7" style={{ padding: '1px' }}>
-                                                            {(ActualRequiredRate > requiredRate || pieceCountInfo > dailyTarget) ? 'OK' : 'Behind'}
+                                                            {(ActualRequiredRate > requiredRate || pieceCountInfo > dailyTarget || currentHourlyRate > requiredHourlyRate) ? 'OK' : 'Behind'}
                                                         </p>
                                                     </div>
                                                 </div>
