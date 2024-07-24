@@ -96,7 +96,7 @@ function CurrentDeviation({ shift, shiftHours, latestHour, pieceCount, currentHo
 
     const getDailyTarget = async () => {
         try {
-            const username = window.location.pathname.split('/').pop();
+            const username = window.location.pathname.split('/').pop().replace('&admin=true', '');
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDailyTarget`, {
                 username: username
             });
@@ -111,7 +111,7 @@ function CurrentDeviation({ shift, shiftHours, latestHour, pieceCount, currentHo
     const getBarChartData = async () => {
 
         try {
-            const username = window.location.pathname.split('/').pop();
+            const username = window.location.pathname.split('/').pop().replace('&admin=true', '');
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
                 operatorType: operator,
                 shift:shift,

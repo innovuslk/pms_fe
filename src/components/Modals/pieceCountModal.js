@@ -15,7 +15,7 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const username = window.location.pathname.split('/').pop();
+                const username = window.location.pathname.split('/').pop().replace('&admin=true', '');
                 setUsername(username);
                 const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShift`, {
                     username: username,
@@ -45,7 +45,7 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
     };
 
     const fetchLatestPieceCount = async () => {
-        const username = window.location.pathname.split('/').pop();
+        const username = window.location.pathname.split('/').pop().replace('&admin=true', '');
         setUsername(username);
     
         try {

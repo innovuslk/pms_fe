@@ -113,6 +113,11 @@ function SupervisorDashboard() {
         }
     };
 
+    const encodeCredentials = (username) => {
+        const encodedUsername = btoa(username);
+        return { encodedUsername };
+    };
+
     return (
         <div className="content">
             {loading ? (
@@ -133,7 +138,7 @@ function SupervisorDashboard() {
                                                         <div className="d-flex align-items-center justify-content-between flex-wrap">
                                                             <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
                                                                 <div style={{ width: '13rem' }}>
-                                                                <h3 className='text-center'>Efficiency</h3>
+                                                                    <h3 className='text-center'>Efficiency</h3>
                                                                     <SupervisorEfficiency pieceCount={linesData[index].totalPieceCount} dailyTarget={dailyTarget} latestHour={linesData[index].latestHour} />
                                                                 </div>
                                                             </div>
@@ -155,7 +160,7 @@ function SupervisorDashboard() {
                                                         <div className="d-flex align-items-center justify-content-between flex-wrap">
                                                             <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
                                                                 <div style={{ width: '13rem' }}>
-                                                                <h3 className='text-center'>Efficiency</h3>
+                                                                    <h3 className='text-center'>Efficiency</h3>
                                                                     <SupervisorEfficiency pieceCount={linesData[index + 1].totalPieceCount} dailyTarget={dailyTarget} latestHour={linesData[index + 1].latestHour} />
                                                                 </div>
                                                             </div>
@@ -198,12 +203,18 @@ function SupervisorDashboard() {
                                 <div className="card rounded-4 shadow-sm">
                                     <div className="card-body">
                                         <h5 className="card-title">Operators of Line {selectedLine}</h5>
-                                        <hr className = 'text-secondary'></hr>
-                                        {users.map((user, index) => (
-                                            <div key={index} className="p-2 mb-2 border rounded bg-light">
-                                                <strong className = 'text-info'>{user.username}</strong> - PieceCount: {user.totalPieceCount}
-                                            </div>
-                                        ))}
+                                        <hr className='text-secondary'></hr>
+                                        {users.map((user, index) => {
+                                            const { encodedUsername } = encodeCredentials(user.username);
+                                            return (
+                                                <div key={index} className="p-2 mb-2 border rounded bg-light">
+                                                    <span className='me-3'>{index + 1} - </span>
+                                                    <strong className='text-info'>{user.username}</strong> - PieceCount: {user.totalPieceCount}
+                                                    ----<a href={`http://${process.env.REACT_APP_HOST_IP2}/user-info/${encodedUsername}&admin=true`} target="_blank"> Dashboard Link
+                                                    </a>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>

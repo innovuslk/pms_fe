@@ -22,7 +22,7 @@ function DailyTarget() {
 
     const getDailyTarget = async () => {
         try {
-            const username = window.location.pathname.split('/').pop();
+            const username = window.location.pathname.split('/').pop().replace('&admin=true', '');
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDailyTarget`,{
                 username:username
             });
