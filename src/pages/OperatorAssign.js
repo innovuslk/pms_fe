@@ -26,6 +26,9 @@ const OperatorAssign = () => {
     const [operation, setOperation] = useState('');
     const [Smv, setSmv] = useState('');
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowsPerPage = 10;
+
     useEffect(() => {
         fetchOperatorAssigns();
     }, []);
@@ -41,7 +44,7 @@ const OperatorAssign = () => {
 
     const handleSubmitOperator = async (e) => {
         e.preventDefault();
-        const OperatorAssign = { PDate ,Sbu ,LineNo ,PlantName ,userId ,shift ,operation ,supervisor ,Smv };
+        const OperatorAssign = { PDate, Sbu, LineNo, PlantName, userId, shift, operation, supervisor, Smv };
 
         try {
             if (editMode) {
@@ -57,16 +60,16 @@ const OperatorAssign = () => {
                         setLineItem('')
                         setLineNo('');
                         setPlantName('')
-    
+
                         setTimeout(() => {
                             setMessage('');
                         }, 5000);
-    
+
                         const inputFields = document.querySelectorAll('input');
                         inputFields.forEach(input => {
                             input.value = '';
                         });
-    
+
                     }
                     else {
                         setMessage("Error Occured");
@@ -74,7 +77,7 @@ const OperatorAssign = () => {
                             setMessage('');
                         }, 5000);
                     }
-    
+
                 });
             }
             fetchOperatorAssigns();
@@ -173,148 +176,160 @@ const OperatorAssign = () => {
     //     }
     // };
 
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
     const filteredPlans = operatorAssigns.filter(plan =>
         plan.plantName.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    const indexOfLastRow = currentPage * rowsPerPage;
+    const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+    const currentRows = filteredPlans.slice(indexOfFirstRow, indexOfLastRow);
+
+    const totalPages = Math.ceil(filteredPlans.length / rowsPerPage);
+
+
+
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { timeZone: 'Asia/Colombo' }); 
+        return date.toLocaleDateString('en-US', { timeZone: 'Asia/Colombo' });
     };
 
     return (
         <div>
             {!editMode ?
                 <div className="content">
-                <div>
-                    <div className="col-6 col-xl-6 col-md-8 mx-auto z-index-1">
-                        <div className="card">
-                            <div className="card-body p-4">
-                                <h5 className="mb-4">Operator Daily Assignment</h5>
+                    <div>
+                        <div className="col-6 col-xl-6 col-md-8 mx-auto z-index-1">
+                            <div className="card">
+                                <div className="card-body p-4">
+                                    <h5 className="mb-4">Operator Daily Assignment</h5>
 
-                                <form className="row g-3" onSubmit={handleSubmitOperator}>
-                                    <div className="col-md-12">
-                                        <label for="input26" className="form-label">Date</label>
-                                        <div className="input-group">
-                                            <span className="input-group-text"><span class="material-symbols-outlined">
-                                                badge
-                                            </span></span>
-                                            <input type="date" className="form-control" id="input26" validate={{ required: true }} onChange={e => setDate(e.target.value)} />
+                                    <form className="row g-3" onSubmit={handleSubmitOperator}>
+                                        <div className="col-md-12">
+                                            <label for="input26" className="form-label">Date</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text"><span class="material-symbols-outlined">
+                                                    badge
+                                                </span></span>
+                                                <input type="date" className="form-control" id="input26" validate={{ required: true }} onChange={e => setDate(e.target.value)} />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="col-md-12">
-                                        <label for="input27" className="form-label">Sbu</label>
-                                        <div className="input-group">
-                                            <span className="input-group-text"><span class="material-symbols-outlined">
-                                                person
-                                            </span></span>
-                                            <input type="text" className="form-control" id="input27" placeholder="Sbu" validate={{ required: true }} onChange={e => setSbu(e.target.value)} />
+                                        <div className="col-md-12">
+                                            <label for="input27" className="form-label">Sbu</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text"><span class="material-symbols-outlined">
+                                                    person
+                                                </span></span>
+                                                <input type="text" className="form-control" id="input27" placeholder="Sbu" validate={{ required: true }} onChange={e => setSbu(e.target.value)} />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="col-md-12">
-                                        <label for="input29" className="form-label">Line No</label>
-                                        <div className="input-group">
-                                            <span className="input-group-text"><span class="material-symbols-outlined">
-                                                key
-                                            </span></span>
-                                            <input type="text" className="form-control" id="input29" placeholder="Line No" validate={{ required: true }} onChange={e => setLineNo(e.target.value)} />
+                                        <div className="col-md-12">
+                                            <label for="input29" className="form-label">Line No</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text"><span class="material-symbols-outlined">
+                                                    key
+                                                </span></span>
+                                                <input type="text" className="form-control" id="input29" placeholder="Line No" validate={{ required: true }} onChange={e => setLineNo(e.target.value)} />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="col-md-12">
-                                        <label for="input31" className="form-label">Plant Name</label>
-                                        <div className="input-group">
-                                            <span className="input-group-text"><span className="material-symbols-outlined">
-                                                crisis_alert
-                                            </span></span>
-                                            <select className="form-select" id="input32" onChange={e => setPlantName(e.target.value)}>
-                                                <option value="">Select Plant</option>
-                                                <option value="UPLP">UPLP</option>
-                                                <option value="LC">LC</option>
-                                                <option value="ExcelTech">ExcelTech</option>
-                                            </select>
+                                        <div className="col-md-12">
+                                            <label for="input31" className="form-label">Plant Name</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text"><span className="material-symbols-outlined">
+                                                    crisis_alert
+                                                </span></span>
+                                                <select className="form-select" id="input32" onChange={e => setPlantName(e.target.value)}>
+                                                    <option value="">Select Plant</option>
+                                                    <option value="UPLP">UPLP</option>
+                                                    <option value="LC">LC</option>
+                                                    <option value="ExcelTech">ExcelTech</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="col-md-12">
-                                        <label for="input26" className="form-label">UserName</label>
-                                        <div className="input-group">
-                                            <span className="input-group-text"><span className="material-symbols-outlined">
-                                                crisis_alert
-                                            </span></span>
-                                            <select className="form-select" id="input32" onChange={e => setUserID(e.target.value)}>
-                                                <option value="">Select User</option>
-                                                {plantUsers && plantUsers.map(user => (
-                                                    <option key={user.userid} value={user.userid}>{user.username}</option>
-                                                ))}
-                                            </select>
+                                        <div className="col-md-12">
+                                            <label for="input26" className="form-label">UserName</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text"><span className="material-symbols-outlined">
+                                                    crisis_alert
+                                                </span></span>
+                                                <select className="form-select" id="input32" onChange={e => setUserID(e.target.value)}>
+                                                    <option value="">Select User</option>
+                                                    {plantUsers && plantUsers.map(user => (
+                                                        <option key={user.userid} value={user.userid}>{user.username}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="col-md-12">
-                                        <label for="input26" className="form-label">Supervisor(only for operators)</label>
-                                        <div className="input-group">
-                                            <span className="input-group-text"><span className="material-symbols-outlined">
-                                                crisis_alert
-                                            </span></span>
-                                            <select className="form-select" id="input32" onChange={e => setSupervisor(e.target.value)}>
-                                                <option value="">Select Supervisor</option>
-                                                {supervisors && supervisors.map(user => (
-                                                    <option key={user.userid} value={user.userid}>{user.username}</option>
-                                                ))}
-                                            </select>
+                                        <div className="col-md-12">
+                                            <label for="input26" className="form-label">Supervisor(only for operators)</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text"><span className="material-symbols-outlined">
+                                                    crisis_alert
+                                                </span></span>
+                                                <select className="form-select" id="input32" onChange={e => setSupervisor(e.target.value)}>
+                                                    <option value="">Select Supervisor</option>
+                                                    {supervisors && supervisors.map(user => (
+                                                        <option key={user.userid} value={user.userid}>{user.username}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="col-md-12">
-                                        <label for="input31" className="form-label">Shift</label>
-                                        <div className="input-group">
-                                            <span className="input-group-text"><span class="material-symbols-outlined">
-                                                recent_actors
-                                            </span></span>
-                                            <input type="text" className="form-control" id="input31" placeholder="Shift" validate={{ required: true }} onChange={e => setShift(e.target.value)} />
+                                        <div className="col-md-12">
+                                            <label for="input31" className="form-label">Shift</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text"><span class="material-symbols-outlined">
+                                                    recent_actors
+                                                </span></span>
+                                                <input type="text" className="form-control" id="input31" placeholder="Shift" validate={{ required: true }} onChange={e => setShift(e.target.value)} />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="col-md-12">
-                                        <label for="input32" className="form-label">Operation</label>
-                                        <div className="input-group">
-                                            <span className="input-group-text"><span className="material-symbols-outlined">
-                                                crisis_alert
-                                            </span></span>
-                                            <select className="form-select" id="input32" onChange={e => setOperation(e.target.value)}>
-                                                <option value="">Select Operation</option>
-                                                <option value="LineEnd">LineEnd</option>
-                                                <option value="Operator">operator</option>
-                                                <option value="Pullout 1">Pullout 1</option>
-                                                <option value="Pullout 2">Pullout 2</option>
-                                            </select>
+                                        <div className="col-md-12">
+                                            <label for="input32" className="form-label">Operation</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text"><span className="material-symbols-outlined">
+                                                    crisis_alert
+                                                </span></span>
+                                                <select className="form-select" id="input32" onChange={e => setOperation(e.target.value)}>
+                                                    <option value="">Select Operation</option>
+                                                    <option value="LineEnd">LineEnd</option>
+                                                    <option value="Operator">operator</option>
+                                                    <option value="Pullout 1">Pullout 1</option>
+                                                    <option value="Pullout 2">Pullout 2</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="col-md-12">
-                                        <label for="input31" className="form-label">Smv</label>
-                                        <div className="input-group">
-                                            <span className="input-group-text"><span class="material-symbols-outlined">
-                                                nest_clock_farsight_analog
-                                            </span></span>
-                                            <input type="number" step="0.01" className="form-control" id="input31" placeholder="Smv(in minutes)" validate={{ required: true }} onChange={e => setSmv(e.target.value)} />
+                                        <div className="col-md-12">
+                                            <label for="input31" className="form-label">Smv</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text"><span class="material-symbols-outlined">
+                                                    nest_clock_farsight_analog
+                                                </span></span>
+                                                <input type="number" step="0.01" className="form-control" id="input31" placeholder="Smv(in minutes)" validate={{ required: true }} onChange={e => setSmv(e.target.value)} />
+                                            </div>
                                         </div>
-                                    </div>
-                                    {message && (
-                                        <div className="alert alert-success" role="alert">
-                                            {message}
-                                        </div>
-                                    )}
+                                        {message && (
+                                            <div className="alert alert-success" role="alert">
+                                                {message}
+                                            </div>
+                                        )}
 
-                                    <div className="col-md-12">
-                                        <div className="d-md-flex d-grid align-items-center gap-3">
-                                            <button type="submit" className="btn btn-primary px-4 w-auto">Submit</button>
-                                            <button type="button" className="btn btn-secondary px-4 w-auto">Reset</button>
-                                            <button type="button" className="btn btn-info px-4 w-auto" onClick={handleEdit}>Edit</button>
+                                        <div className="col-md-12">
+                                            <div className="d-md-flex d-grid align-items-center gap-3">
+                                                <button type="submit" className="btn btn-primary px-4 w-auto">Submit</button>
+                                                <button type="button" className="btn btn-secondary px-4 w-auto">Reset</button>
+                                                <button type="button" className="btn btn-info px-4 w-auto" onClick={handleEdit}>Edit</button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-            </div> : <div className='d-none'></div>}
+                </div> : <div className='d-none'></div>}
 
             {editMode && (
                 <div className='content'>
@@ -334,7 +349,7 @@ const OperatorAssign = () => {
                             </span>
                         </div>
                     </div>
-                    <div className='mx-0 w-auto' style={{marginTop:'-3rem'}}>
+                    <div className='mx-0 w-auto' style={{ marginTop: '-3rem' }}>
                         <button className='btn btn-danger w-auto radius-30 px-2 w-auto' onClick={handleClose}>Close</button>
                     </div>
                     <div className="table-responsive">
@@ -354,7 +369,7 @@ const OperatorAssign = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredPlans.map((plan, index) => (
+                                {currentRows.map((plan, index) => (
                                     <tr key={index} className="text-center">
                                         <td>{formatDate(plan.date)}</td>
                                         <td>{plan.sbu}</td>
@@ -380,6 +395,19 @@ const OperatorAssign = () => {
                                 ))}
                             </tbody>
                         </table>
+                    </div>
+                    <div className="d-flex justify-content-center">
+                        <nav>
+                            <ul className="pagination"  style={{ overflowX: 'auto', width: '100%', maxWidth: '500px' }}>
+                                {[...Array(totalPages).keys()].map(number => (
+                                    <li key={number + 1} className={`page-item ${currentPage === number + 1 ? 'active' : ''}`}>
+                                        <button onClick={() => handlePageChange(number + 1)} className="page-link">
+                                            {number + 1}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             )}

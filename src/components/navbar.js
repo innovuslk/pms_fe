@@ -37,7 +37,7 @@ function Navbar({ sendLanguage }) {
     useEffect(() => {
         // Fetch data from your backend when the component mounts
         const fetchData = async () => {
-            const username = window.location.pathname.split('/').pop();
+            const username = window.location.pathname.split('/').pop().replace('&admin=true', '');
             setUsername(username);
             try {
                 const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/info/getInfo`, {
@@ -74,7 +74,7 @@ function Navbar({ sendLanguage }) {
     useEffect(() => {
         // Fetch data from your backend when the component mounts
         const getStyle = async () => {
-            const username = window.location.pathname.split('/').pop();
+            const username = window.location.pathname.split('/').pop().replace('&admin=true', '');
             setUsername(username);
             try {
                 const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDailyTarget`, {

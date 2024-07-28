@@ -71,7 +71,7 @@ function Login() {
                 const token = res.data.token;
                 localStorage.setItem('token', token);
                 localStorage.setItem('username', Username);
-                localStorage.setItem('userLevel', res.data.userLevel) ;// Store the token in local storage
+                localStorage.setItem('userLevel', res.data.userLevel);// Store the token in local storage
 
                 if (res.status === 200 && (res.data.userLevel === 3)) {
                     const encodedUsername = btoa(Username);

@@ -22,7 +22,7 @@ const CallSupervisor = () => {
     const handleSMSClick = async () => {
         try {
             await getPhoneNumber();
-            const userId = window.location.pathname.split('/').pop();
+            const userId = window.location.pathname.split('/').pop().replace('&admin=true', '');
             const supervisorId = 'supervisor456';
             const roomId = `chat_${userId}_${supervisorId}`;
             await sendSMS(phoneNumber,roomId);
@@ -35,7 +35,7 @@ const CallSupervisor = () => {
 
     const getPhoneNumber = async () => {
         try {
-            const username = window.location.pathname.split('/').pop();
+            const username = window.location.pathname.split('/').pop().replace('&admin=true', '');
             const decodedUsername = atob(username)
             setUsername(decodedUsername)
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/send/sendSMS`, {

@@ -93,7 +93,7 @@ const RadialBarChart = ({ pieceCount, dailyTarget }) => {
     }
 
     const fetchLatestPieceCount = async () => {
-        const username = window.location.pathname.split('/').pop();
+        const username = window.location.pathname.split('/').pop().replace('&admin=true', '');
 
         try {
 

@@ -10,7 +10,7 @@ import LineEndPieceCount from '../components/LineEndPieceCount';
 import DailyTarget from '../components/DailyTarget';
 import '../assets/css/myDashboard.css';
 import AvgCycle from '../components/avgCycle';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from '../i18n';
 import CallSupervisor from '../components/callSupervisor';
@@ -25,6 +25,8 @@ function MyDashboard() {
     const { t } = useTranslation();
 
     const navigate = useNavigate();
+    const location = useLocation()
+    
     const [showModal, setShowModal] = useState(false);
     const [Username, setUsername] = useState();
     const [shift, setShift] = useState();
@@ -61,32 +63,41 @@ function MyDashboard() {
     // const [ connection , setConnection] = useState(navigator.onLine ? "online" : "offline"); 
 
     const [timer, setTimer] = useState(0);
+
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if (!token) {
+        const params = new URLSearchParams(location.search);
+        const isAdmin = params.get('admin') === 'true';
+
+        if (!isAdmin && !token) {
             setTimeout(() => {
                 navigate(`/`);
             });
             return;
         }
 
-        axios.get(`http://${process.env.REACT_APP_HOST_IP}/verifyToken`, {
-            headers: {
-                authorization: `Bearer ${token}`
-            }
-        })
-            .then(response => {
-                if (response.status == 200) {
-                    console.log("Verification Successful")
+        if (!isAdmin) {
+            axios.get(`http://${process.env.REACT_APP_HOST_IP}/verifyToken`, {
+                headers: {
+                    authorization: `Bearer ${token}`
                 }
             })
-            .catch(error => {
-                setTimeout(() => {
-                    navigate('/');
-                    console.log(error)
+                .then(response => {
+                    if (response.status === 200) {
+                        console.log("Verification Successful");
+                    }
+                })
+                .catch(error => {
+                    setTimeout(() => {
+                        navigate('/');
+                        console.log(error);
+                    });
                 });
-            });
-    }, []);
+        } else {
+            // Admin access logic here
+            console.log("Admin Access Granted");
+        }
+    }, [navigate, location.search]);
 
     useEffect(() => {
         let intervalId;
@@ -120,7 +131,7 @@ function MyDashboard() {
         const intervalId = setInterval(fetchLatestPieceCount, 5000);
 
         return () => clearInterval(intervalId);
-    }, [latestHour, pieceCountInfo]);
+    }, [latestHour, pieceCountInfo, shift, intHour]);
 
     useEffect(() => {
         // Fetch latest piece count on component mount
@@ -160,7 +171,7 @@ function MyDashboard() {
     useEffect(() => {
         // Fetch data from your backend when the component mounts
         const fetchData = async () => {
-            const username = window.location.pathname.split('/').pop();
+            const username =window.location.pathname.split('/').pop().replace('&admin=true', '');
             setUsername(username);
             try {
                 const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/info/getInfo`, {
@@ -206,6 +217,7 @@ function MyDashboard() {
     }, [deviation, pieceCountInfo, latestHour, currentHourOutput]);
 
     useEffect(() => {
+        console.log(latestHour)
         switch (latestHour) {
             case "1":
                 setIntHour(0.5);
@@ -236,6 +248,9 @@ function MyDashboard() {
                 break;
             case "10":
                 setIntHour(10);
+                break;
+            case "0": // Add case for 0
+                setIntHour(0);
                 break;
         }
     }, [latestHour, pieceCountInfo, shift]);
@@ -268,7 +283,7 @@ function MyDashboard() {
         downtimeEndTime.setTime(downtimeEndTime.getTime() + (5.5 * 60 * 60 * 1000));
 
         try {
-            const username = window.location.pathname.split('/').pop();
+            const username =window.location.pathname.split('/').pop().replace('&admin=true', '');
             setUsername(username);
             await axios.post(`http://${process.env.REACT_APP_HOST_IP}/update/updateEndTime`, {
                 username: username,
@@ -305,7 +320,7 @@ function MyDashboard() {
         if (type === 'Material' || type === 'Machine') {
             try {
                 downtimeStartTime.setTime(downtimeStartTime.getTime() + (5.5 * 60 * 60 * 1000));
-                const username = window.location.pathname.split('/').pop();
+                const username =window.location.pathname.split('/').pop().replace('&admin=true', '');
                 setUsername(username);
                 const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/send/downTime`, {
                     username: username,
@@ -381,6 +396,8 @@ function MyDashboard() {
         // Fix to 2 decimal places and convert back to a number
         let answer = parseFloat(hourlyRequiredRate.toFixed(2));
 
+        // console.log(intHour)
+
         setRequiredHourlyRate(answer)
     }
 
@@ -398,18 +415,30 @@ function MyDashboard() {
     };
 
     const fetchLatestPieceCount = async () => {
-        const username = window.location.pathname.split('/').pop();
+        const username =window.location.pathname.split('/').pop().replace('&admin=true', '');
         setUsername(username);
 
         try {
-
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/set/getPieceCount`, {
                 username: username,
             });
 
             setPieceCountInfo(response.data.totalPieceCount);
-            setLatestHour(response.data.latestHour);
-            // console.log("latest", latestHour)
+            let latestHour = response.data.latestHour;
+
+            // Get the current time
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+
+
+            // Check the conditions for shift 'A' and 'B'
+            if ((shift === 'A' && currentHour >= 14) || (shift === 'B' && currentHour >= 22) || (shift === 'C' && currentHour >= 18) || (shift === 'D' && currentHour >= 6)) {
+                latestHour = "0";
+            }
+
+            setLatestHour(latestHour);
+            // console.log("latest", latestHour);
         } catch (error) {
             console.error('Error fetching latest Piece count data:', error);
         }
@@ -417,7 +446,7 @@ function MyDashboard() {
 
     const getShift = async () => {
         try {
-            const username = window.location.pathname.split('/').pop();
+            const username =window.location.pathname.split('/').pop().replace('&admin=true', '');
             setUsername(username);
 
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShift`, {
@@ -436,7 +465,7 @@ function MyDashboard() {
 
     const getMyBest = async () => {
         try {
-            const username = window.location.pathname.split('/').pop();
+            const username =window.location.pathname.split('/').pop().replace('&admin=true', '');
             setUsername(username);
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getMyBest`, {
                 username: username,
@@ -466,7 +495,7 @@ function MyDashboard() {
     const getBarChartData = async () => {
 
         try {
-            const username = window.location.pathname.split('/').pop();
+            const username =window.location.pathname.split('/').pop().replace('&admin=true', '');
             setUsername(username);
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
                 operatorType: operatorInfo.operation,
@@ -581,7 +610,7 @@ function MyDashboard() {
 
     const getSmv = async () => {
         try {
-            const username = window.location.pathname.split('/').pop();
+            const username =window.location.pathname.split('/').pop().replace('&admin=true', '');
             setUsername(username);
 
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getsmv`, {
@@ -607,7 +636,7 @@ function MyDashboard() {
     // const getBarChartDataForHour = async () => {
 
     //     try {
-    //         const username = window.location.pathname.split('/').pop();
+    //         const username =window.location.pathname.split('/').pop().replace('&admin=true', '');
     //         const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getDataForBarChart`, {
     //             operatorType: operatorInfo.operation,
     //             shift:shift,
@@ -741,7 +770,7 @@ function MyDashboard() {
                                         <div className="card-body p-xxl-3" style={{ padding: '5px' }}>
                                             <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">{bestCycle || '0'}<sub style={{fontSize: '0.7rem'}}> min</sub></h3>
+                                                    <h3 className="mb-0">{bestCycle || '0'}<sub style={{ fontSize: '0.7rem' }}> min</sub></h3>
                                                     <p className="mb-0" style={{ fontSize: '0.7rem', padding: '0px' }}>{t("Best Cycle Time")}</p>
                                                 </div>
                                                 <div className="vr"></div>

@@ -12,7 +12,7 @@ function Style() {
     const [status, setStatus] = useState(null); // null: default, 'success': success, 'error': error
     const [operatorInfo, setOperatorInfo] = useState();
 
-    const username = window.location.pathname.split('/').pop();
+    const username = window.location.pathname.split('/').pop().replace('&admin=true', '');
 
     useEffect(() => {
         const fetchData = async () => {

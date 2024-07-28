@@ -367,7 +367,7 @@ const DailyPlan = () => {
                     </div>
                     <div className="d-flex justify-content-center">
                         <nav>
-                            <ul className="pagination">
+                            <ul className="pagination" style={{ overflowX: 'auto', width: '100%', maxWidth: '500px' }}>
                                 {[...Array(totalPages).keys()].map(number => (
                                     <li key={number + 1} className={`page-item ${currentPage === number + 1 ? 'active' : ''}`}>
                                         <button onClick={() => handlePageChange(number + 1)} className="page-link">
