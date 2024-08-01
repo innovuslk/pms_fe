@@ -120,6 +120,21 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
                     { startHour: 3, startMinute: 0, endHour: 4, endMinute: 15, label: '10th Hour', hourValue: 10 },
                     { startHour: 4, startMinute: 15, endHour: 5, endMinute: 15, label: '11th Hour', hourValue: 11 },
                 ];
+            }
+            else if (shift === 'E') {
+                return [
+                    { startHour: 7, startMinute: 30, endHour: 8, endMinute: 30, label: '1st Hour', hourValue: 1 },
+                    { startHour: 8, startMinute: 30, endHour: 9, endMinute: 30, label: '2nd Hour', hourValue: 2 },
+                    { startHour: 9, startMinute: 30, endHour: 10, endMinute: 30, label: '3rd Hour', hourValue: 3 },
+                    { startHour: 10, startMinute: 45, endHour: 11, endMinute: 30, label: '4th Hour', hourValue: 4 },
+                    { startHour: 11, startMinute: 30, endHour: 12, endMinute: 30, label: '5th Hour', hourValue: 5 },
+                    { startHour: 13, startMinute: 0, endHour: 14, endMinute: 0, label: '6th Hour', hourValue: 6 },
+                    { startHour: 14, startMinute: 0, endHour: 15, endMinute: 0, label: '7th Hour', hourValue: 7 },
+                    { startHour: 15, startMinute: 0, endHour: 15, endMinute: 30, label: '8th Hour', hourValue: 8 },
+                    { startHour: 15, startMinute: 45, endHour: 16, endMinute: 30, label: '9th Hour', hourValue: 9 },
+                    { startHour: 16, startMinute: 30, endHour: 17, endMinute: 30, label: '10th Hour', hourValue: 10 },
+                    { startHour: 17, startMinute: 30, endHour: 18, endMinute: 30, label: '11th Hour', hourValue: 11 },
+                ];
             } 
             else {
                 return [];
