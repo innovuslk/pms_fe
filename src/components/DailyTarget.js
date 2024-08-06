@@ -30,7 +30,7 @@ function DailyTarget() {
 
         }
         catch (error) {
-            console.error("Failed to dailyTarget",error);
+            // console.error("Failed to dailyTarget",error);
         }
     }
 

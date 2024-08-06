@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import '../assets/css/adminHome.css';
+import sampleExcel from '../assets/files/DailyPlanSample.xlsx';
 import axios from 'axios';
 
 function WeekPlanUpload() {
@@ -58,7 +59,7 @@ function WeekPlanUpload() {
     return (
         <div className="content">
             <div className='col-6 col-xl-6 col-md-8 mx-auto'>
-            <h6 className='align-items-center justify-content-center text-success font-21'>Select an excel file here for Week Daily Plan</h6>
+                <h6 className='align-items-center justify-content-center text-success font-21'>Select an excel file here for Week Daily Plan</h6>
                 <input
                     className='form-control mb-4'
                     id="formFile"
@@ -67,6 +68,13 @@ function WeekPlanUpload() {
                     onChange={handleFileUpload}
                     disabled={uploading}
                 />
+                <a
+                    className='btn btn-primary mb-4 text-decoration-underline mx-auto align-items-center justify-content-center'
+                    href={sampleExcel}
+                    download="DailyPlanSample.xlsx"
+                >
+                    Download Sample Excel File
+                </a>
             </div>
             {data.length > 0 && (
                 <table className="table">
