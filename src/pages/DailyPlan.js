@@ -19,6 +19,7 @@ const DailyPlan = () => {
     const [currentId, setCurrentId] = useState(null);
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [plannedTarget, setPlannedTarget] = useState('');
 
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 10;
@@ -38,7 +39,7 @@ const DailyPlan = () => {
 
     const handleSubmitDailyPlan = async (e) => {
         e.preventDefault();
-        const dailyPlan = { PDate, Sbu, SalesOrder, LineItem, LineNo, PlantName, DailyTarget, style, shift };
+        const dailyPlan = { PDate, Sbu, SalesOrder, LineItem, LineNo, PlantName, DailyTarget, style, shift, plannedTarget };
 
         try {
             if (editMode) {
@@ -283,6 +284,15 @@ const DailyPlan = () => {
                                             <input type="text" className="form-control" id="input34" placeholder="Shift" required onChange={e => setShift(e.target.value)} value={shift} />
                                         </div>
                                     </div>
+                                    <div className="col-md-12">
+                                    <label htmlFor="input34" className="form-label">Planned Efficiency</label>
+                                    <div className="input-group">
+                                        <span className="input-group-text"><span className="material-symbols-outlined">
+                                            percent
+                                        </span></span>
+                                        <input type="number" className="form-control" id="input34" placeholder="Efficiency" required onChange={e => setPlannedTarget(e.target.value)} value={plannedTarget} />
+                                    </div>
+                                </div>
                                     {message && (
                                         <div className="alert alert-success" role="alert">
                                             {message}
