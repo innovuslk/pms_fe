@@ -92,7 +92,6 @@ function SupervisorDashboard() {
                 username: username,
             });
             const plantNames = response.data.plantNames;
-            console.log(plantNames)
             setPlantsData(plantNames);
         } catch (error) {
             console.error('Error fetching plant names:', error);
@@ -107,7 +106,7 @@ function SupervisorDashboard() {
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getSupervisorDailyTarget`, {
                 username: username
             });
-            setDaillytarget(parseInt(response.data.dailyTarget));
+            setDaillytarget(response.data.dailyTargets);
         } catch (error) {
             console.error("Failed to dailyTarget");
         }
@@ -139,7 +138,7 @@ function SupervisorDashboard() {
                                                             <div className="d-flex flex-column align-items-center justify-content-center gap-1 mx-auto">
                                                                 <div style={{ width: '13rem' }}>
                                                                     <h3 className='text-center'>Efficiency</h3>
-                                                                    <SupervisorEfficiency pieceCount={linesData[index].totalPieceCount} dailyTarget={dailyTarget} latestHour={linesData[index].latestHour} />
+                                                                    <SupervisorEfficiency pieceCount={linesData[index].totalPieceCount} dailyTarget={dailyTarget.find(target => target.lineNo === linesData[index].lineNo)?.dailyTarget} latestHour={linesData[index].latestHour} />
                                                                 </div>
                                                             </div>
                                                             <div className="align-items-center justify-content-center gap-2">
@@ -186,7 +185,7 @@ function SupervisorDashboard() {
                                     <div className="card-body">
                                         <div className="d-flex align-items-center justify-content-between flex-wrap text-center cursor-pointer">
                                             {plantsData.map((plantName, index) => (
-                                                <div key={index} className="text-center cursor-pointer" onClick={() => setSelectedPlant(plantName)}>
+                                                <div key={index} className="card rounded-2 bg-secondary text-center cursor-pointer text-bg-dark p-1" onClick={() => setSelectedPlant(plantName)}>
                                                     Plant - {plantName}
                                                 </div>
                                             ))}

@@ -4,54 +4,38 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
 import axios from 'axios';
 
-const PlannedRadialBarChart = ({ Smv, dailyTarget, latestHour, shift }) => {
+const PlannedRadialBarChart = ({ Smv, dailyTarget, latestHour }) => {
     const { t } = useTranslation();
 
     const [intHour, setIntHour] = useState();
     const [efficiency, setEfficiency] = useState(0);
-    const [shiftHours, setShiftHours] = useState(0);
+    const [username, setUsername] = useState();
+    const [plannedEfficiency, setPlannedEfficiency] = useState(0);
 
     useEffect(() => {
-        const calculateEfficiency = () => {
-            if (shiftHours > 0) {
-                let targetRatePerHour = 60 * Smv;
-                let dailyTargetRate = dailyTarget / shiftHours;
-
-                let difference = targetRatePerHour - parseInt(dailyTargetRate);
-
-                let efficiency;
-                if (Math.round(difference) <= 0) {
-                    efficiency = 100;
-                } else {
-                    efficiency = 100 - Math.round((difference / targetRatePerHour) * 100);
-                }
-
-                // console.log(efficiency);
-                setEfficiency(efficiency);
-            }
-        };
-
-        const fetchShiftHours = async () => {
+        const fetchPlannedEfficiency = async () => {
             try {
-                // const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShiftHours`, {
-                //     shiftID: shift,
-                // });
-                // setShiftHours(response.data.ShiftHours);
+                const username = window.location.pathname.split('/').pop().replace('&admin=true', '');
+                setUsername(username);
+                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getPlannedTarget`, {
+                    username: username,
+                });
+                setPlannedEfficiency(response.data.dailyTarget);
             } catch (error) {
-                // console.error("Failed to get shift hours");
+                console.error("Failed to get planned efficiency");
             }
         };
 
-        calculateEfficiency();
-        fetchShiftHours();
+        // calculateEfficiency();
+        fetchPlannedEfficiency();
 
         const intervalId = setInterval(() => {
-            calculateEfficiency();
-            fetchShiftHours();
+            // calculateEfficiency();
+            fetchPlannedEfficiency();
         }, 10000);
 
         return () => clearInterval(intervalId);
-    }, [Smv, dailyTarget, shift, shiftHours]);
+    }, [Smv, dailyTarget]);
 
     useEffect(() => {
         const hourMapping = {
@@ -120,10 +104,8 @@ const PlannedRadialBarChart = ({ Smv, dailyTarget, latestHour, shift }) => {
 
     return (
         <div className='d-flex align-content-center justify-content-center'>
-            <h1 className='text-warning'>135%</h1>
+            <h1 className='text-warning'>{plannedEfficiency && plannedEfficiency}%</h1>
         </div>
-
-
 
     )
 };

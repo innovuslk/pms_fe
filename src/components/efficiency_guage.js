@@ -12,6 +12,7 @@ const RadialBarChart = ({ pieceCount, dailyTarget }) => {
     const [efficiency, setEfficiency] = useState();
     const [shiftHours, setShiftHours] = useState();
     const [latestHour, setLatestHour] = useState('');
+    const [plannedEfficiency, setPlannedEfficiency] = useState(0);
 
     useEffect(() => {
         let efficiency = calculateEfficiency()
@@ -24,6 +25,30 @@ const RadialBarChart = ({ pieceCount, dailyTarget }) => {
             clearInterval(intervalId);
         };
     }, [pieceCount, latestHour])
+
+    useEffect(() => {
+        const fetchPlannedEfficiency = async () => {
+            try {
+                const username = window.location.pathname.split('/').pop().replace('&admin=true', '');
+                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getPlannedTarget`, {
+                    username: username,
+                });
+                setPlannedEfficiency(response.data.dailyTarget);
+            } catch (error) {
+                console.error("Failed to get planned efficiency");
+            }
+        };
+
+        // calculateEfficiency();
+        fetchPlannedEfficiency();
+
+        const intervalId = setInterval(() => {
+            // calculateEfficiency();
+            fetchPlannedEfficiency();
+        }, 60000);
+
+        return () => clearInterval(intervalId);
+    }, [dailyTarget, shiftHours]);
 
     useEffect(() => {
         getShiftHours();
@@ -115,7 +140,7 @@ const RadialBarChart = ({ pieceCount, dailyTarget }) => {
         let currentHourlyRate = pieceCount / intHour;
 
         // Calculate efficiency
-        let efficiency = (currentHourlyRate / targetHourlyRate) * 135;
+        let efficiency = (currentHourlyRate / targetHourlyRate) * (plannedEfficiency ? plannedEfficiency : 135);
 
 
         return Math.round(efficiency);
