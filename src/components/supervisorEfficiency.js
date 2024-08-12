@@ -16,6 +16,7 @@ const SupervisorEfficiency = ({ pieceCount, dailyTarget, latestHour }) => {
         setPieceCount(pieceCount);
         setDailyTarget(dailyTarget);
         setLatestHour(latestHour);
+        console.log(pieceCount, dailyTarget, latestHour)
     }, [pieceCount, dailyTarget, latestHour]);
 
     useEffect(() => {
