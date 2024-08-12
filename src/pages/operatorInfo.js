@@ -9,7 +9,7 @@ function OperatorInfo() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedPlant, setSelectedPlant] = useState('All');
     const [loading, setLoading] = useState(true); 
-    const [dailyTarget, setDaillytarget] = useState();
+    const [dailyTarget, setDaillytarget] = useState([]);
 
     // Fetch all users and their data
     const getAllUsers = useCallback(async () => {
@@ -78,6 +78,11 @@ function OperatorInfo() {
         );
     }, [users, selectedPlant, searchQuery]);
 
+    const getMatchingDailyTarget = (userPlantName) => {
+        const target = dailyTarget.find(target => target.plantName === userPlantName);
+        return target ? target.dailyTarget : 'No Target'; // Provide a fallback if no match is found
+    };
+
     return (
         <div className="content">
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -118,7 +123,11 @@ function OperatorInfo() {
                                 <div className="card rounded-4">
                                     <div className="card-body d-flex flex-column align-items-center">
                                         <div className="mb-0">
-                                            <SupervisorEfficiency pieceCount={user.pieceCount} latestHour={user.latestHour} dailyTarget={dailyTarget[0].dailyTarget}/>
+                                            <SupervisorEfficiency 
+                                                pieceCount={user.pieceCount} 
+                                                latestHour={user.latestHour} 
+                                                dailyTarget={getMatchingDailyTarget(user.plantName)}
+                                            />
                                         </div>
                                         <div className="text-center">
                                             <p className="mb-1 text-bg-dark">UserName - {user.username}</p>
