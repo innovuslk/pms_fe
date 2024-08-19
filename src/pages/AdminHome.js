@@ -151,12 +151,12 @@ function AdminHome() {
     useEffect(() => {
         getDailyTarget();
 
-        const intervalId = setInterval(getDailyTarget, 10000);
+        const intervalId = setInterval(getDailyTarget, 60000);
 
         return () => {
             clearInterval(intervalId);
         };
-    }, [dailyTarget]);
+    }, []);
 
     useEffect(() => {
         // Fetch data from your backend when the component mounts

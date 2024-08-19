@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import '../assets/css/adminHome.css';
 import axios from 'axios';
-import RadialBarChart from '../components/efficiency_guage';
 import { ClipLoader } from 'react-spinners';
 import SupervisorEfficiency from '../components/supervisorEfficiency';
 
@@ -9,118 +8,80 @@ function OperatorInfo() {
     const [users, setUsers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedPlant, setSelectedPlant] = useState('All');
-    const [loading, setLoading] = useState(true); // Loading state
-    const [dailyTarget, setDaillytarget] = useState();
+    const [loading, setLoading] = useState(true); 
+    const [dailyTarget, setDaillytarget] = useState([]);
 
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            getAllUsers();
-        }, 60000);
-
-        return () => clearInterval(intervalId);
+    // Fetch all users and their data
+    const getAllUsers = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/getAllOperators`, {});
+            const usersData = await Promise.all(response.data.Users.map(async (user) => {
+                const [pieceCountRes, shiftRes, smvRes] = await Promise.all([
+                    axios.post(`http://${process.env.REACT_APP_HOST_IP}/set/getPieceCount`, { username: btoa(user.username) }),
+                    axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShift`, { username: btoa(user.username) }),
+                    axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getsmv`, { username: btoa(user.username) })
+                ]);
+                return {
+                    ...user,
+                    pieceCount: pieceCountRes.data.totalPieceCount,
+                    latestHour: pieceCountRes.data.latestHour,
+                    plantName: pieceCountRes.data.plantName,
+                    shift: shiftRes.data.Shift,
+                    smv: smvRes.data.smv
+                };
+            }));
+            setUsers(usersData);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            setLoading(false);
+        }
     }, []);
 
     useEffect(() => {
-        if (users.length > 0) {
-            Promise.all(users.map(async (user) => {
-                await fetchLatestPieceCount(user);
-                await getShift(user);
-                await getSmv(user);
-                return user;
-            })).then(updatedUsers => {
-                setUsers(updatedUsers);
-                setLoading(false); // Data loaded
+        getAllUsers();
+        const intervalId = setInterval(getAllUsers, 1000000);
+        return () => clearInterval(intervalId);
+    }, [getAllUsers]);
+
+    const getDailyTarget = useCallback(async () => {
+        try {
+            const username = window.location.pathname.split('/').pop();
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getSupervisorDailyTarget`, {
+                username: username 
             });
+            setDaillytarget(response.data.dailyTargets);
+        } catch (error) {
+            console.error("Failed to fetch daily target", error);
         }
-    }, [users]);
+    }, []);
 
     useEffect(() => {
         getDailyTarget();
-
         const intervalId = setInterval(getDailyTarget, 10000);
+        return () => clearInterval(intervalId);
+    }, [getDailyTarget]);
 
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, [dailyTarget]);
-
-    const getAllUsers = async () => {
-        setLoading(true); // Start loading
-        try {
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/getAllOperators`, {});
-            const usersData = response.data.Users; // Extract the Users array from the response
-            setUsers(usersData);
-        } catch (error) {
-            console.error('Error fetching users:', error);
-        }
-    };
-
-    const getDailyTarget = async () => {
-        try {
-            const username = window.location.pathname.split('/').pop();
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getSupervisorDailyTarget`,{
-                username:username
-            });
-            setDaillytarget(response.data.dailyTarget)
-
-        }
-        catch (error) {
-            console.error("Failed to dailyTarget");
-        }
-    }
-
-    const fetchLatestPieceCount = async (user) => {
-        try {
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/set/getPieceCount`, {
-                username: btoa(user.username),
-            });
-            user.pieceCount = response.data.totalPieceCount;
-            user.latestHour = response.data.latestHour;
-            user.plantName = response.data.plantName;
-        } catch (error) {
-            console.error('Error fetching latest Piece count data:', error);
-        }
-    };
-
-    const getShift = async (user) => {
-        try {
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getShift`, {
-                username: btoa(user.username),
-            });
-            user.shift = response.data.Shift;
-        } catch (error) {
-            console.error('Failed to get shift data:', error);
-        }
-    };
-
-    const getSmv = async (user) => {
-        try {
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getsmv`, {
-                username: btoa(user.username),
-            });
-            user.smv = response.data.smv;
-        } catch (error) {
-            console.error('Failed to get SMV data:', error);
-        }
-    };
-
-    const handleSearchChange = (event) => {
+    const handleSearchChange = useCallback((event) => {
         setSearchQuery(event.target.value);
-    };
+    }, []);
 
-    const handleFilterChange = (event) => {
+    const handleFilterChange = useCallback((event) => {
         setSelectedPlant(event.target.value);
-    };
+    }, []);
 
-    const filteredUsers = users.filter(user => {
-        if (selectedPlant === 'All' || '') {
-            return true;
-        }
-        return user.plantName === selectedPlant;
-    }).filter(user => {
-        return user.username.toLowerCase().includes(searchQuery.toLowerCase());
-    });
+    const filteredUsers = useMemo(() => {
+        return users.filter(user => 
+            (selectedPlant === 'All' || user.plantName === selectedPlant) &&
+            user.username.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [users, selectedPlant, searchQuery]);
+
+    const getMatchingDailyTarget = (userPlantName) => {
+        const target = dailyTarget.find(target => target.plantName === userPlantName);
+        return target ? target.dailyTarget : 'No Target'; // Provide a fallback if no match is found
+    };
 
     return (
         <div className="content">
@@ -155,14 +116,18 @@ function OperatorInfo() {
                 </div>
             ) : (
                 filteredUsers.map((user, index) => (
-                    index % 3 === 0 && // Start a new row for every third user
+                    index % 3 === 0 && 
                     <div key={index} className="row">
                         {filteredUsers.slice(index, index + 3).map((user, subIndex) => (
                             <div key={subIndex} className="col">
                                 <div className="card rounded-4">
                                     <div className="card-body d-flex flex-column align-items-center">
                                         <div className="mb-0">
-                                            <SupervisorEfficiency pieceCount={user.pieceCount} latestHour={user.latestHour} dailyTarget={dailyTarget}/>
+                                            <SupervisorEfficiency 
+                                                pieceCount={user.pieceCount} 
+                                                latestHour={user.latestHour} 
+                                                dailyTarget={getMatchingDailyTarget(user.plantName)}
+                                            />
                                         </div>
                                         <div className="text-center">
                                             <p className="mb-1 text-bg-dark">UserName - {user.username}</p>
