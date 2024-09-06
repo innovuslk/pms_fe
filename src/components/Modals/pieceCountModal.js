@@ -165,9 +165,10 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
             setHour(matchingRange.hourValue);
 
             const nextIndex = timeRanges.indexOf(matchingRange) + 1;
+            console.log(nextIndex,"nextIndex",nextHour)
             if (nextIndex < timeRanges.length) {
                 setNextHour(timeRanges[nextIndex].label);
-                setHour(matchingRange.hourValue);
+                setHour(matchingRange.hourValue+1);
             } else {
                 setNextHour('No data');
             }
