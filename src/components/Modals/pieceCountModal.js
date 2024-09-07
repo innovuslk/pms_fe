@@ -8,8 +8,10 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
     const [pieceCountInfo, setPieceCountInfo] = useState();
     const [shiftData, setShiftData] = useState({ shift: '' });
     const [currentHour, setCurrentHour] = useState('');
+    const [CurrentHourValue, setCurrentHourValue] = useState('');
     const [nextHour, setNextHour] = useState('');
     const [hour, setHour] = useState();
+    const [nextHourValue, setNextHourValue] = useState();
     const [selectedButton, setSelectedButton] = useState(null);
 
     useEffect(() => {
@@ -161,14 +163,15 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
         });
 
         if (matchingRange) {
+            console.log(matchingRange)
             setCurrentHour(matchingRange.label);
-            setHour(matchingRange.hourValue);
+            setCurrentHourValue(matchingRange.hourValue)
 
             const nextIndex = timeRanges.indexOf(matchingRange) + 1;
-            console.log(nextIndex,"nextIndex",nextHour)
+            console.log(nextIndex,"matchIndex")
             if (nextIndex < timeRanges.length) {
                 setNextHour(timeRanges[nextIndex].label);
-                setHour(matchingRange.hourValue+1);
+                setNextHourValue(timeRanges[nextIndex].hourValue);
             } else {
                 setNextHour('No data');
             }
@@ -179,8 +182,15 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
     }, [shiftData]);
 
     const handleButtonSelect = (label, hourValue) => {
-        setHour((label) => (selectedButton === label ? '' : hourValue));
-        setSelectedButton((prevButton) => (prevButton === label ? null : label));
+        // Update the selected button
+        setSelectedButton(label);
+        
+        // Set hour based on which button is selected
+        if (label === currentHour) {
+            setHour(CurrentHourValue); // Use current hour value
+        } else if (label === nextHour) {
+            setHour(nextHourValue); // Use next hour value
+        }
     };
 
     const handleOk = async () => {
@@ -190,6 +200,7 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
             onPieceCountUpdate(pieceCount);
             setPieceCount('');
             setSelectedButton(null);
+            setHour(null)
             return true;
         } catch (error) {
             console.error('Error handling OK:', error);
@@ -218,14 +229,14 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
                         <button
                             type="button"
                             className={`btn btn-secondary mx-2 ${selectedButton === currentHour ? 'btn btn-warning' : ''}`}
-                            onClick={() => handleButtonSelect(currentHour, hour)}
+                            onClick={() => handleButtonSelect(currentHour, CurrentHourValue)}
                         >
                             {currentHour}
                         </button>
                         <button
                             type="button"
                             className={`btn btn-secondary mx-2 ${selectedButton === nextHour ? 'active btn btn-warning' : ''}`}
-                            onClick={() => handleButtonSelect(nextHour, hour)}
+                            onClick={() => handleButtonSelect(nextHour, nextHourValue)}
                         >
                             {nextHour}
                         </button>
