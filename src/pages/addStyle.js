@@ -37,7 +37,7 @@ function AddStyle() {
                 }
             })
             .catch(err => {
-                console.log(err);
+                // console.log(err);
                 setMessage('Error Occurred (404)');
                 setTimeout(() => {
                     setMessage('');

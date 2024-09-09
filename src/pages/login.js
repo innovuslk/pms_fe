@@ -24,13 +24,13 @@ function Login() {
         })
             .then(response => {
                 if (response.status === 200) {
-                    console.log("Verification Successful")
+                    // console.log("Verification Successful")
                     setVerifiedToken(token)
                 }
             })
             .catch(error => {
                 setTimeout(() => {
-                    console.log(error)
+                    // console.log(error)
                 });
             });
 
@@ -94,7 +94,7 @@ function Login() {
                 }
             })
             .catch(err => {
-                console.log(err);
+                // console.log(err);
                 setErrorMessage('Invalid Username or Password');
                 setTimeout(() => {
                     setErrorMessage('');

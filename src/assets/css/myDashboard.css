@@ -14,3 +14,10 @@
     border-color: #dc3545; 
     color: #fff; 
 }
+
+
+@media (max-width: 720px) {
+    .button-row{
+        display:none;
+    }
+}
