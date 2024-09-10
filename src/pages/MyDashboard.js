@@ -84,7 +84,7 @@ function MyDashboard() {
             })
                 .then(response => {
                     if (response.status === 200) {
-                        console.log("Verification Successful");
+                        // console.log("Verification Successful");
                     }
                 })
                 .catch(error => {
@@ -217,7 +217,7 @@ function MyDashboard() {
     }, [deviation, pieceCountInfo, latestHour, currentHourOutput]);
 
     useEffect(() => {
-        console.log(latestHour)
+        // console.log(latestHour)
         switch (latestHour) {
             case "1":
                 setIntHour(0.5);
@@ -710,14 +710,14 @@ function MyDashboard() {
                         </button>
                     </div>}
                     <div className='row mx-1 mt-3'>
-                        <div style={{ height: '100dvh' }} className={downtimeClicked || machineClicked ? 'downtime-blur col-3 col-md-4' : 'col-3 col-md-5 '}>
+                        <div className={`col-sm-12 col-md-4 mb-2 ${downtimeClicked || machineClicked ? 'downtime-blur' : ''}`}>
                             <div className='row' >
-                                <div className="col" style={{ marginBottom: '-0.9rem' }}>
+                                <div className="col-12" style={{ marginBottom: '-0.9rem' }}>
                                     <div className="card rounded-3">
-                                        <div className="card-body align-items-center justify-content-center p-xxl-3" style={{ padding: '5px' }}>
+                                        <div className="card-body align-items-center justify-content-center p-2">
                                             <div className="d-flex align-items-center justify-content-around flex-wrap gap-2 ">
                                                 <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                                                    <h3 className="mb-0">{(pieceCountInfo) || '0'}</h3>
+                                                    <h3 className="mb-0">{pieceCountInfo || '0'}</h3>
                                                     <p className="mb-0" style={{ fontSize: '0.7rem', padding: '0px' }}>{t("Total Pieces Out")}</p>
                                                 </div>
                                                 <div className="vr"></div>
@@ -730,7 +730,7 @@ function MyDashboard() {
                                 </div>
                             </div>
                             <div className='row' >
-                                <div className="col" style={{ marginBottom: '-0.9rem' }}>
+                                <div className="col-12" style={{ marginBottom: '-0.9rem' }}>
                                     <div className="card rounded-3">
                                         <div className="card-body align-items-center justify-content-center p-xxl-3" style={{ padding: '5px' }}>
                                             <div className="d-flex align-items-center justify-content-around flex-wrap">
@@ -751,7 +751,7 @@ function MyDashboard() {
                                 </div>
                             </div>
                             <div className='row'>
-                                <div className="col" style={{ marginBottom: '-0.9rem' }}>
+                                <div className="col-12" style={{ marginBottom: '-0.9rem' }}>
                                     <div className="card rounded-3">
                                         <div className="card-body p-xxl-3" style={{ padding: '5px' }}>
                                             <div className="d-flex align-items-center justify-content-center flex-wrap">
@@ -771,7 +771,7 @@ function MyDashboard() {
                                 </div>
                             </div>
                             <div className='row'>
-                                <div className="col" style={{ marginBottom: '-0.9rem' }}>
+                                <div className="col-12" style={{ marginBottom: '-0.9rem' }}>
                                     <div className="card rounded-3">
                                         <div className="card-body p-xxl-3" style={{ padding: '5px' }}>
                                             <div className="d-flex align-items-center justify-content-around flex-wrap gap-2">
@@ -787,7 +787,7 @@ function MyDashboard() {
                                 </div>
                             </div>
                             <div className='row'>
-                                <div className="col" style={{ marginBottom: '-0.9rem' }}>
+                                <div className="col-12" style={{ marginBottom: '-0.9rem' }}>
                                     <div className="card rounded-3">
                                         <div className="card-body p-xxl-3" style={{ padding: '5px' }}>
                                             <div className="d-flex align-items-center justify-content-around flex-wrap">
@@ -806,7 +806,7 @@ function MyDashboard() {
                                 </div>
                             </div>
                             <div className='row'>
-                                <div className="col" style={{ marginBottom: '-0.9rem' }}>
+                                <div className="col-12" style={{ marginBottom: '-0.9rem' }}>
                                     <div className="card rounded-3">
                                         <div className="card-body p-xxl-3" style={{ padding: '5px' }}>
                                             <div className="d-flex align-items-center justify-content-around flex-wrap">
@@ -825,9 +825,9 @@ function MyDashboard() {
                                 </div>
                             </div>
                         </div>
-                        <div className={downtimeClicked || machineClicked ? 'downtime-blur col-6 mx-4' : 'col-5 mx-2'}>
+                        <div className={downtimeClicked || machineClicked ? 'downtime-blur col-6 col-sm-12 mx-4' : 'col-md-5 col-sm-12 mx-2'}>
                             <div className='row d-flex' style={{ marginBottom: '-0.9rem' }}>
-                                <div className='col-md-8 col-sm-6 d-flex align-items-center justify-content-center'>
+                                <div className='col-md-8 d-flex align-items-center justify-content-center'>
                                     <div className="card border-primary rounded-3 ">
                                         <div className="card-body p-xxl-3" style={{ padding: '5px' }}>
                                             <div className="d-flex align-items-center justify-content-around">
@@ -846,7 +846,7 @@ function MyDashboard() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className='col col-sm-3 d-flex align-items-center justify-content-around w-auto'>
+                                <div className='col d-flex align-items-center justify-content-around w-auto'>
                                     <div className={`card border-primary border-bottom rounded-3 ${(ActualRequiredRate > requiredRate || pieceCountInfo > dailyTarget || currentHourlyRate > requiredHourlyRate) ? 'bg-success' : 'bg-danger'}`}>
                                         <div className="card-body p-xxl-3" style={{ padding: '0.5rem' }}>
                                             <div className="d-flex align-items-center justify-content-between">
@@ -891,7 +891,7 @@ function MyDashboard() {
                             <LineEndPieceCount shift={shift} />
                         </div>
 
-                        <div className='col mx-1'>
+                        <div className='col mx-1 button-row'>
                             <div className="row">
                                 <button type="button" style={{ height: "3.5rem", fontWeight: "600", fontSize: "0.9rem" }} onClick={handleAddPieceCountClick}
                                     className={downtimeClicked ? 'downtime-blur btn ripple btn-primary col mb-4' : 'btn ripple btn-primary col mb-3'}>

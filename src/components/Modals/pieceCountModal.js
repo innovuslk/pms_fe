@@ -163,12 +163,12 @@ const Modal = ({ showModal, handleCloseModal, onPieceCountUpdate }) => {
         });
 
         if (matchingRange) {
-            console.log(matchingRange)
+            // console.log(matchingRange)
             setCurrentHour(matchingRange.label);
             setCurrentHourValue(matchingRange.hourValue)
 
             const nextIndex = timeRanges.indexOf(matchingRange) + 1;
-            console.log(nextIndex,"matchIndex")
+            // console.log(nextIndex,"matchIndex")
             if (nextIndex < timeRanges.length) {
                 setNextHour(timeRanges[nextIndex].label);
                 setNextHourValue(timeRanges[nextIndex].hourValue);

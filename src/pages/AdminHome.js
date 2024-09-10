@@ -82,13 +82,13 @@ function AdminHome() {
         })
             .then(response => {
                 if (response.status == 200) {
-                    console.log("Verification Successful")
+                    // console.log("Verification Successful")
                 }
             })
             .catch(error => {
                 setTimeout(() => {
                     navigate('/');
-                    console.log(error)
+                    // console.log(error)
                 });
             });
     }, []);
@@ -274,7 +274,7 @@ function AdminHome() {
 
             })
             .catch(err => {
-                console.log(err);
+                // console.log(err);
                 setMessage('Error Occured(404)');
                 setTimeout(() => {
                     setMessage('');

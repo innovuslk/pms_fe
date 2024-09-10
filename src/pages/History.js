@@ -34,7 +34,7 @@ function History() {
         try {
             const response = await axios.get(`http://${process.env.REACT_APP_HOST_IP}/get/getLineNumbers`);
             setLineNumbers(response.data);
-            console.log(lineNumbers)
+            // console.log(lineNumbers)
         } catch (error) {
             console.error('Error fetching line numbers:', error);
         }
@@ -59,7 +59,7 @@ function History() {
             });
             const data = response.data;
 
-            console.log(data);
+            // console.log(data);
 
             let labels = [];
             let datasets = {};
