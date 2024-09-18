@@ -594,7 +594,6 @@ function MyDashboard() {
                 });
             }
 
-
             const totalLineEndPieceCountByHour = response2.data.totalPieceCountByHour;
 
             Object.keys(totalLineEndPieceCountByHour).forEach(hour => {
