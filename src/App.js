@@ -11,6 +11,7 @@ import './assets/scss/theme.scss'
 import TopOperatorsTable from './pages/TopOperators';
 import ChatApp from './pages/chatRoom';
 import OperatorDashboard from './pages/APIOperatorDashboard';
+import OperatorInfo2 from './pages/operatorInfo2';
 
 function App() {
     return (
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/topUsers" element={<TopOperatorsTable />} />
                 <Route path="/chat-room/:roomId" element={<ChatApp />} />
                 <Route path="/operator/:username" element={<OperatorDashboard />} />
+                <Route path="/admin/operatorInfo2" element={<OperatorInfo2 />} />
             </Routes>
         </Router>
     );
