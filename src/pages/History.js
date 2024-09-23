@@ -23,6 +23,7 @@ function History() {
             }
         ]
     });
+    const [totalPieceCount, setTotalPieceCount] = useState(0); // Add state for total piece count
 
     useEffect(() => {
         if (sortBy === 'lineNo') {
@@ -34,7 +35,6 @@ function History() {
         try {
             const response = await axios.get(`http://${process.env.REACT_APP_HOST_IP}/get/getLineNumbers`);
             setLineNumbers(response.data);
-            // console.log(lineNumbers)
         } catch (error) {
             console.error('Error fetching line numbers:', error);
         }
@@ -59,23 +59,13 @@ function History() {
             });
             const data = response.data;
 
-            // console.log(data);
-
             let labels = [];
             let datasets = {};
             let lastDate = null;
+            let totalPieceCount = 0; // Initialize total piece count
 
             data.forEach(entry => {
                 const currentDate = new Date(entry.date).toLocaleDateString();
-
-                // Check if the date has changed
-                // if (lastDate && lastDate !== currentDate) {
-                //     // Insert a placeholder for the vertical line or extra space
-                //     labels.push('');
-                //     Object.keys(datasets).forEach(operation => {
-                //         datasets[operation].data.push(null);  // null or 0 can be used for spacing
-                //     });
-                // }
 
                 if (!labels.includes(currentDate)) {
                     labels.push(currentDate);
@@ -94,6 +84,7 @@ function History() {
                 }
 
                 datasets[entry.operation].data.push(entry.pieceCount);
+                totalPieceCount += entry.pieceCount; // Accumulate the piece count
                 lastDate = currentDate;
             });
 
@@ -101,6 +92,8 @@ function History() {
                 labels: labels,
                 datasets: Object.values(datasets),
             });
+
+            setTotalPieceCount(totalPieceCount); // Update the total piece count
         } catch (error) {
             console.error('Error fetching piece count data:', error);
         }
@@ -195,6 +188,10 @@ function History() {
                         <div className="chart-container1 rounded-2 p-3" style={{ backgroundColor: '#252B3B' }}>
                             <BarChart canvasId="chart2-facebook" data={chartData} />
                         </div>
+                    </div> 
+                    {/* Display total piece count below the chart */}
+                    <div className="total-piece-count mt-3 text-center text-white">
+                        <h5>Total Piece Count: {totalPieceCount}</h5>
                     </div>
                 </div>
             </div>
