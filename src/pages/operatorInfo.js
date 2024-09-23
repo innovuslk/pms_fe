@@ -114,7 +114,7 @@ function OperatorInfo() {
                                 <div className="col cursor-pointer" key={plant.style}>
                                     <div 
                                         className="card rounded-4"
-                                        onClick={() => handlePlantClick(selectedPlant)} // Pass the selected plant name
+                                        onClick={() => handlePlantClick(plant.plantName || selectedPlant)} // Pass the selected plant name
                                     >
                                         <div className="card-body">
                                             <h3 className="text-danger text-center">{plant.plantName || selectedPlant}</h3>
@@ -144,7 +144,8 @@ function OperatorInfo() {
                 </>
             ) : (
                 <OperatorInfo2 
-                    plantName={overlayPlantName} 
+                    plantName={selectedPlant} 
+                    date = {selectedDate}
                     onClose={handleCloseOverlay}
                 />
             )}

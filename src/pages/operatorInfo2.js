@@ -4,8 +4,9 @@ import { ClipLoader } from 'react-spinners';
 import axios from 'axios';
 import SupervisorEfficiency from '../components/supervisorEfficiency';
 import OperatorInfo3 from './operatorInfo3';
+import { use } from 'i18next';
 
-function OperatorInfo2({ plantName, onClose }) {
+function OperatorInfo2({ plantName, onClose, date }) {
     const [selectedDate, setSelectedDate] = useState('');
     const [styles, setStyles] = useState([]);
     const [lineNos, setLineNos] = useState([]);
