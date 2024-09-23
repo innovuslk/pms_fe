@@ -4,13 +4,12 @@ import { ClipLoader } from 'react-spinners';
 import axios from 'axios';
 import SupervisorEfficiency from '../components/supervisorEfficiency';
 import OperatorInfo3 from './operatorInfo3';
-import { use } from 'i18next';
 
-function OperatorInfo2({ plantName, onClose, date }) {
-    const [selectedDate, setSelectedDate] = useState('');
+function OperatorInfo2({ plantName, onClose, date, style }) {
+    const [selectedDate, setSelectedDate] = useState(date || ''); // Initialize with the passed date
     const [styles, setStyles] = useState([]);
     const [lineNos, setLineNos] = useState([]);
-    const [selectedStyle, setSelectedStyle] = useState('');
+    const [selectedStyle, setSelectedStyle] = useState(style || ''); // Initialize with passed style
     const [selectedLineNo, setSelectedLineNo] = useState('');
     const [loading, setLoading] = useState(false);
     const [latestHour, setLatestHour] = useState();
@@ -34,6 +33,7 @@ function OperatorInfo2({ plantName, onClose, date }) {
         }
     }, [selectedLineNo]);
 
+    // Fetch styles and line numbers for the plant
     const fetchPlantData = async (date) => {
         setLoading(true);
         try {
@@ -44,19 +44,24 @@ function OperatorInfo2({ plantName, onClose, date }) {
             setStyles(response.data.styles);
             setLineNos(response.data.lineNos);
             setDailyTarget(response.data.dailyTarget);
+
+            // Set the first line number as the default
+            if (response.data.lineNos.length > 0) {
+                setSelectedLineNo(response.data.lineNos[0]);
+            }
         } catch (error) {
             console.error('Error fetching styles and line numbers:', error);
         }
         setLoading(false);
     };
 
+    // Fetch latest hour data for the line
     const fetchLatestHour = async () => {
         try {
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/getPieceCountByLine`, {
                 lineNo: selectedLineNo,
             });
             setLatestHour(response.data.latestHour);
-            // console.log(response)
         } catch (error) {
             console.error('Error fetching latest hour:', error);
         }
@@ -74,11 +79,24 @@ function OperatorInfo2({ plantName, onClose, date }) {
         }
     };
 
+    useEffect(() => {
+        if (selectedDate) {
+            fetchPlantData(selectedDate); // Fetch data for the selected date when selectedDate changes
+        }
+    }, [selectedDate]);
+
+    useEffect(() => {
+        // Auto-submit when style and line number are set
+        if (selectedStyle && selectedLineNo) {
+            handleSubmit();
+        }
+    }, [selectedStyle, selectedLineNo]);
+
     const handleDateChange = (event) => {
         const selectedDate = event.target.value;
         setSelectedDate(selectedDate);
         if (selectedDate) {
-            fetchPlantData(selectedDate);
+            fetchPlantData(selectedDate); // Fetch data for the selected date
         }
     };
 
@@ -98,12 +116,12 @@ function OperatorInfo2({ plantName, onClose, date }) {
         setLoading(false);
     };
 
-    const handleLineClick = (plantName) => {
-        setIsOverlayVisible(true); // Show overlay and hide OperatorInfo
+    const handleLineClick = () => {
+        setIsOverlayVisible(true); // Show overlay for more details
     };
 
     const handleCloseOverlay = () => {
-        setIsOverlayVisible(false); // Hide overlay and show OperatorInfo
+        setIsOverlayVisible(false); // Close the overlay and show main content
     };
 
     return (
@@ -144,7 +162,7 @@ function OperatorInfo2({ plantName, onClose, date }) {
                         value={selectedLineNo}
                         onChange={(e) => setSelectedLineNo(e.target.value)}
                     >
-                        <option value="">Select LineNo</option>
+                        <option value="">Select Line No</option>
                         {lineNos.map((lineNo, index) => (
                             <option key={index} value={lineNo}>{lineNo}</option>
                         ))}
@@ -182,9 +200,9 @@ function OperatorInfo2({ plantName, onClose, date }) {
                                                 />
                                             </div>
                                             <div className="col-6 align-content-center">
-                                                <p className="text-bg-dark">LineNo - {data.lineNo}</p>
-                                                <p className="text-bg-dark">PieceCount - {data.pieceCount}</p>
-                                                <p className="text-bg-dark">SalesOrder - {data.salesOrder}</p>
+                                                <p className="text-bg-dark">Line No - {data.lineNo}</p>
+                                                <p className="text-bg-dark">Piece Count - {data.pieceCount}</p>
+                                                <p className="text-bg-dark">Sales Order - {data.salesOrder}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -195,7 +213,13 @@ function OperatorInfo2({ plantName, onClose, date }) {
                 )}
             </div>
         ) : (
-            <OperatorInfo3 onClose={handleCloseOverlay} plantName={plantName}/>
+            <OperatorInfo3
+                onClose={handleCloseOverlay}
+                plantName={plantName}
+                selectedDate={selectedDate}
+                selectedStyle={selectedStyle}
+                selectedLineNo={selectedLineNo}
+            />
         )
     );
 }

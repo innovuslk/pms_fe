@@ -12,6 +12,7 @@ function OperatorInfo() {
     const [plantStylesData, setPlantStylesData] = useState([]);
     const [isOverlayVisible, setIsOverlayVisible] = useState(false); // State for overlay visibility
     const [overlayPlantName, setOverlayPlantName] = useState(''); // State to hold the plant name
+    const [overlayStyle, setOverlayStyle] = useState(''); // State to hold the selected style
 
     // Fetch all plant details on component mount
     useEffect(() => {
@@ -20,7 +21,6 @@ function OperatorInfo() {
             try {
                 const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getAllPlantDetails`);
                 setPlantStylesData(response.data);
-                console.log(response)
             } catch (error) {
                 console.error('Error fetching all plant details', error);
             }
@@ -59,9 +59,10 @@ function OperatorInfo() {
         }
     };
 
-    // Handle plant click to open overlay and hide the parent component
-    const handlePlantClick = (plantName) => {
+    // Handle plant click to open overlay and pass selected style
+    const handlePlantClick = (plantName, plantStyle) => {
         setOverlayPlantName(plantName);
+        setOverlayStyle(plantStyle);
         setIsOverlayVisible(true); // Show overlay and hide OperatorInfo
     };
 
@@ -114,7 +115,7 @@ function OperatorInfo() {
                                 <div className="col cursor-pointer" key={plant.style}>
                                     <div 
                                         className="card rounded-4"
-                                        onClick={() => handlePlantClick(plant.plantName || selectedPlant)} // Pass the selected plant name
+                                        onClick={() => handlePlantClick(plant.plantName || selectedPlant, plant.style)} // Pass the selected plant name and style
                                     >
                                         <div className="card-body">
                                             <h3 className="text-danger text-center">{plant.plantName || selectedPlant}</h3>
@@ -144,8 +145,9 @@ function OperatorInfo() {
                 </>
             ) : (
                 <OperatorInfo2 
-                    plantName={selectedPlant} 
-                    date = {selectedDate}
+                    plantName={overlayPlantName} 
+                    date={selectedDate}
+                    style={overlayStyle} // Pass the selected style to OperatorInfo2
                     onClose={handleCloseOverlay}
                 />
             )}
