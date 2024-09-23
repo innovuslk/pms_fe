@@ -4,14 +4,14 @@ import { ClipLoader } from 'react-spinners';
 import axios from 'axios';
 import SupervisorEfficiency from '../components/supervisorEfficiency';
 
-function OperatorInfo3({ plantName, onClose }) {
+function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: initialStyle, selectedLineNo: initialLineNo, onClose }) {
     const [selectedDate, setSelectedDate] = useState('');
     const [styles, setStyles] = useState([]);
     const [lineNos, setLineNos] = useState([]);
     const [selectedStyle, setSelectedStyle] = useState('');
     const [selectedLineNo, setSelectedLineNo] = useState('');
     const [loading, setLoading] = useState(false);
-    const [data, setData] = useState([]);  // Update to store an array of operators
+    const [data, setData] = useState([]);
     const [dailyTarget, setDailyTarget] = useState(null);
     const [latestHour, setLatestHour] = useState();
 
@@ -31,6 +31,24 @@ function OperatorInfo3({ plantName, onClose }) {
         setLoading(false);
     };
 
+    // Set default values from the props coming from OperatorInfo2
+    useEffect(() => {
+        setSelectedDate(initialDate || '');
+        setSelectedStyle(initialStyle || '');
+        setSelectedLineNo(initialLineNo || '');
+
+        if (initialDate) {
+            fetchPlantData(initialDate); // Fetch data when date is set
+        }
+    }, [initialDate, initialStyle, initialLineNo]);
+
+    // Auto-submit when the selectedLineNo is set
+    useEffect(() => {
+        if (selectedDate && selectedStyle && selectedLineNo) {
+            handleSubmit();
+        }
+    }, [selectedDate, selectedStyle, selectedLineNo]);
+
     useEffect(() => {
         if (selectedLineNo) {
             fetchLatestHour();
@@ -47,7 +65,6 @@ function OperatorInfo3({ plantName, onClose }) {
         }
     }, [selectedLineNo]);
 
-    // Fetch operator data from the backend
     const handleSubmit = async () => {
         setLoading(true);
         try {
@@ -58,7 +75,6 @@ function OperatorInfo3({ plantName, onClose }) {
                 lineNo: selectedLineNo
             });
             setData(response.data.users);
-            // console.log(response)  // Store the retrieved user data
         } catch (error) {
             console.error('Error fetching operator data:', error);
         }
@@ -66,10 +82,10 @@ function OperatorInfo3({ plantName, onClose }) {
     };
 
     const handleDateChange = (event) => {
-        const selectedDate = event.target.value;
-        setSelectedDate(selectedDate);
-        if (selectedDate) {
-            fetchPlantData(selectedDate);
+        const date = event.target.value;
+        setSelectedDate(date);
+        if (date) {
+            fetchPlantData(date);
         }
     };
 
@@ -164,16 +180,14 @@ function OperatorInfo3({ plantName, onClose }) {
                             </div>
                         </div>
                         {data.map((operator, index) => (
-                            <div className="col">
+                            <div className="col" key={index}>
                                 <div className="card rounded-4">
                                     <div className="card-body d-flex flex-column align-items-center">
                                         <div className="text-center">
-                                            <div key={index} className="mb-3">
-                                                <SupervisorEfficiency dailyTarget={dailyTarget} pieceCount={operator.totalPieceCount} latestHour={latestHour}/>
-                                                <p className="mb-1 text-bg-dark">UserName: {operator.username}</p>
-                                                <p className="mb-1 text-bg-dark">Shift: {operator.shift}</p>
-                                                <p className="mb-1 text-bg-dark">PieceCount: {operator.totalPieceCount || 'N/A'}</p>
-                                            </div>
+                                            <SupervisorEfficiency dailyTarget={dailyTarget} pieceCount={operator.totalPieceCount} latestHour={latestHour}/>
+                                            <p className="mb-1 text-bg-dark">UserName: {operator.username}</p>
+                                            <p className="mb-1 text-bg-dark">Shift: {operator.shift}</p>
+                                            <p className="mb-1 text-bg-dark">PieceCount: {operator.totalPieceCount || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div>

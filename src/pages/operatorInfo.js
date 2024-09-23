@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import '../assets/css/adminHome.css';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
@@ -12,6 +12,23 @@ function OperatorInfo() {
     const [plantStylesData, setPlantStylesData] = useState([]);
     const [isOverlayVisible, setIsOverlayVisible] = useState(false); // State for overlay visibility
     const [overlayPlantName, setOverlayPlantName] = useState(''); // State to hold the plant name
+    const [overlayStyle, setOverlayStyle] = useState(''); // State to hold the selected style
+
+    // Fetch all plant details on component mount
+    useEffect(() => {
+        const fetchAllPlantDetails = async () => {
+            setLoading(true);
+            try {
+                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getAllPlantDetails`);
+                setPlantStylesData(response.data);
+            } catch (error) {
+                console.error('Error fetching all plant details', error);
+            }
+            setLoading(false);
+        };
+
+        fetchAllPlantDetails();
+    }, []); // Empty dependency array to run only once on mount
 
     // Handle plant selection
     const handleFilterChange = useCallback((event) => {
@@ -42,9 +59,10 @@ function OperatorInfo() {
         }
     };
 
-    // Handle plant click to open overlay and hide the parent component
-    const handlePlantClick = (plantName) => {
+    // Handle plant click to open overlay and pass selected style
+    const handlePlantClick = (plantName, plantStyle) => {
         setOverlayPlantName(plantName);
+        setOverlayStyle(plantStyle);
         setIsOverlayVisible(true); // Show overlay and hide OperatorInfo
     };
 
@@ -71,7 +89,7 @@ function OperatorInfo() {
                             onChange={handleFilterChange}
                             className="form-select mx-2"
                         >
-                            <option value="All">Select a Plant</option>
+                            <option value="All">All Plants</option>
                             <option value="UPLP">UPLP</option>
                             <option value="ExcelTech">ExcelTech</option>
                             <option value="PLC">PLC</option>
@@ -94,13 +112,13 @@ function OperatorInfo() {
                     ) : (
                         <div className="row">
                             {plantStylesData.map((plant) => (
-                                <div className="col" key={plant.style}>
+                                <div className="col cursor-pointer" key={plant.style}>
                                     <div 
                                         className="card rounded-4"
-                                        onClick={() => handlePlantClick(selectedPlant)} // Pass the selected plant name
+                                        onClick={() => handlePlantClick(plant.plantName || selectedPlant, plant.style)} // Pass the selected plant name and style
                                     >
                                         <div className="card-body">
-                                            <h3 className="text-danger text-center">{selectedPlant}</h3>
+                                            <h3 className="text-danger text-center">{plant.plantName || selectedPlant}</h3>
                                             
                                             <div className="mb-4">
                                                 <h5 className="text-bg-dark text-center p-2 rounded">
@@ -128,6 +146,8 @@ function OperatorInfo() {
             ) : (
                 <OperatorInfo2 
                     plantName={overlayPlantName} 
+                    date={selectedDate}
+                    style={overlayStyle} // Pass the selected style to OperatorInfo2
                     onClose={handleCloseOverlay}
                 />
             )}
