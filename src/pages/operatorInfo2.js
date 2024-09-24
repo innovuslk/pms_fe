@@ -187,7 +187,7 @@ function OperatorInfo2({ plantName, onClose, date, style }) {
                     data && (
                         <div className="row">
                             <div className="col">
-                                <div className="card rounded-4" onClick={handleLineClick}>
+                                <div className="card rounded-4 cursor-pointer" onClick={handleLineClick}>
                                     <div className="card-body">
                                         <h4 className="text-warning text-center">Style - {data.style}</h4>
                                         <div className="d-flex">

@@ -35,47 +35,46 @@ function OperatorInfo() {
     }, []);
 
     // Handle plant selection
-    const handleFilterChange = useCallback((event) => {
+    const handleFilterChange = (event) => {
         setSelectedPlant(event.target.value);
-    }, []);
+    };
+
+    // Fetch data based on selected date and plant whenever plant or date changes
+    useEffect(() => {
+        const fetchPlantStyles = async () => {
+            if (selectedPlant !== 'All' && selectedDate) {
+                setLoading(true);
+                try {
+                    const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getPlantStyles`, {
+                        date: selectedDate,
+                        plant: selectedPlant
+                    });
+                    setPlantStylesData(response.data);
+                } catch (error) {
+                    console.error('Error fetching plant styles data', error);
+                }
+                setLoading(false);
+            } else {
+                // Fetch all plant details if "All" is selected
+                const fetchAllPlantDetails = async () => {
+                    setLoading(true);
+                    try {
+                        const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getAllPlantDetails`);
+                        setPlantStylesData(response.data);
+                    } catch (error) {
+                        console.error('Error fetching all plant details', error);
+                    }
+                    setLoading(false);
+                };
+                fetchAllPlantDetails();
+            }
+        };
+        fetchPlantStyles();
+    }, [selectedPlant, selectedDate]); // Runs every time selectedPlant or selectedDate changes
 
     // Handle date selection
     const handleDateChange = (event) => {
         setSelectedDate(event.target.value);
-    };
-
-    // Fetch data based on selected date and plant
-    const handleSubmit = async () => {
-        if (selectedDate && selectedPlant !== 'All') {
-            setLoading(true);
-            try {
-                const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getPlantStyles`, {
-                    date: selectedDate,
-                    plant: selectedPlant
-                });
-                setPlantStylesData(response.data);
-            } catch (error) {
-                console.error('Error fetching plant styles data', error);
-            }
-            setLoading(false);
-        } else {
-            const fetchAllPlantDetails = async () => {
-                setLoading(true);
-                try {
-                    const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getAllPlantDetails`);
-                    setPlantStylesData(response.data);
-                } catch (error) {
-                    console.error('Error fetching all plant details', error);
-                }
-                setLoading(false);
-            };
-    
-            fetchAllPlantDetails();
-            
-            // Set today's date when component mounts
-            const today = new Date().toISOString().split('T')[0]; // Get YYYY-MM-DD format
-            setSelectedDate(today);
-        }
     };
 
     // Handle plant click to open overlay and pass selected style
@@ -92,7 +91,6 @@ function OperatorInfo() {
 
     return (
         <div className="content">
-            {/* Conditionally render OperatorInfo or OperatorInfo2 based on overlay visibility */}
             {!isOverlayVisible ? (
                 <>
                     <div className="d-flex justify-content-between align-items-center mb-3">
@@ -105,7 +103,7 @@ function OperatorInfo() {
                         />
                         <select
                             value={selectedPlant}
-                            onChange={handleFilterChange}
+                            onChange={handleFilterChange} // Trigger plant change
                             className="form-select mx-2"
                         >
                             <option value="All">All Plants</option>
@@ -113,14 +111,6 @@ function OperatorInfo() {
                             <option value="ExcelTech">ExcelTech</option>
                             <option value="PLC">PLC</option>
                         </select>
-
-                        <button 
-                            type="submit" 
-                            className="btn btn-primary px-4 w-auto mx-2 h-50"
-                            onClick={handleSubmit}
-                        >
-                            Submit
-                        </button>
                     </div>
 
                     {loading ? (
@@ -134,11 +124,10 @@ function OperatorInfo() {
                                 <div className="col cursor-pointer" key={plant.style}>
                                     <div 
                                         className="card rounded-4"
-                                        onClick={() => handlePlantClick(plant.plantName || selectedPlant, plant.style)} // Pass the selected plant name and style
+                                        onClick={() => handlePlantClick(plant.plantName || selectedPlant, plant.style)} 
                                     >
                                         <div className="card-body">
                                             <h3 className="text-danger text-center">{plant.plantName || selectedPlant}</h3>
-                                            
                                             <div className="mb-4">
                                                 <h5 className="text-bg-dark text-center p-2 rounded">
                                                     Style - {plant.style}
@@ -166,7 +155,7 @@ function OperatorInfo() {
                 <OperatorInfo2 
                     plantName={overlayPlantName} 
                     date={selectedDate}
-                    style={overlayStyle} // Pass the selected style to OperatorInfo2
+                    style={overlayStyle}
                     onClose={handleCloseOverlay}
                 />
             )}

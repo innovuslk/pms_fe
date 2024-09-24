@@ -187,6 +187,7 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
                                     <div className="card-body d-flex flex-column align-items-center">
                                         <div className="text-center">
                                             <SupervisorEfficiency dailyTarget={dailyTarget} pieceCount={operator.totalPieceCount} latestHour={latestHour}/>
+                                            <p className="mb-1 text-bg-dark text-warning font-weight-bold">Operation: {operator.operation}</p>
                                             <p className="mb-1 text-bg-dark">UserName: {operator.username}</p>
                                             <p className="mb-1 text-bg-dark">Shift: {operator.shift}</p>
                                             <p className="mb-1 text-bg-dark">PieceCount: {operator.totalPieceCount || 'N/A'}</p>
