@@ -13,6 +13,7 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
     const [dailyTarget, setDailyTarget] = useState(null);
+    const [plannedTarget, setPlannedTarget] = useState(null);
     const [latestHour, setLatestHour] = useState();
 
     // Fetch styles and line numbers based on the selected date
@@ -107,6 +108,7 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
                 date: selectedDate,
             });
             setDailyTarget(response.data.dailyTarget);
+            setPlannedTarget(response.data.plannedTarget);
         } catch (error) {
             console.error('Error fetching daily target:', error);
         }
@@ -173,7 +175,7 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
                     <div className="row">
                         <div className="d-flex mb-4">
                             <div className="rounded-4 bg-secondary w-auto h-auto mx-2 p-2">
-                                <h5>Planned Efficiency - 100</h5>
+                                <h5>Planned Efficiency - {plannedTarget || 'N/A'}</h5>
                             </div>
                             <div className="rounded-4 bg-secondary w-auto h-auto mx-2 p-2">
                                 <h5>Daily Target - {dailyTarget || 'N/A'}</h5>
