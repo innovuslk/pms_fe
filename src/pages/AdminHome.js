@@ -24,7 +24,7 @@ function AdminHome() {
 
     const navigate = useNavigate();
 
-    const [sideBarType, setSideBarType] = useState('Dashboard');
+    const [sideBarType, setSideBarType] = useState('OperatorInfo');
     const [ID, setID] = useState();
     const [Date, setDate] = useState('');
     const [Sbu, setSbu] = useState('');
@@ -328,13 +328,13 @@ function AdminHome() {
             </nav>
 
             <div className="sidebar rounded-3">
-                <a className='d-flex align-items-center' onClick={() => handleSideBarClick('Dashboard')}><span class="material-symbols-outlined mx-1">
+                <a className='d-flex align-items-center' onClick={() => handleSideBarClick('OperatorInfo')}><span class="material-symbols-outlined mx-1">
                     home
                 </span>Dashboard
                 </a>
-                <a className='d-flex align-items-center' onClick={() => handleSideBarClick('OperatorInfo')}><span class="material-symbols-outlined mx-1">
+                <a className='d-flex align-items-center' onClick={() => handleSideBarClick('Dashboard')}><span class="material-symbols-outlined mx-1">
                     groups_2
-                </span>Operator Info
+                </span>Plant Info
                 </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('DailyPlan')}><span class="material-symbols-outlined mx-1" >
                     assignment
