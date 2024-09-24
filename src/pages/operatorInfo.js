@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import '../assets/css/adminHome.css';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
-import OperatorInfo2 from '../pages/operatorInfo2'; // Import the overlay component
+import OperatorInfo2 from '../pages/operatorInfo2';
 
 function OperatorInfo() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -10,9 +10,9 @@ function OperatorInfo() {
     const [loading, setLoading] = useState(false);
     const [selectedDate, setSelectedDate] = useState('');
     const [plantStylesData, setPlantStylesData] = useState([]);
-    const [isOverlayVisible, setIsOverlayVisible] = useState(false); // State for overlay visibility
-    const [overlayPlantName, setOverlayPlantName] = useState(''); // State to hold the plant name
-    const [overlayStyle, setOverlayStyle] = useState(''); // State to hold the selected style
+    const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+    const [overlayPlantName, setOverlayPlantName] = useState('');
+    const [overlayStyle, setOverlayStyle] = useState('');
 
     // Fetch all plant details on component mount
     useEffect(() => {
@@ -28,7 +28,11 @@ function OperatorInfo() {
         };
 
         fetchAllPlantDetails();
-    }, []); // Empty dependency array to run only once on mount
+        
+        // Set today's date when component mounts
+        const today = new Date().toISOString().split('T')[0]; // Get YYYY-MM-DD format
+        setSelectedDate(today);
+    }, []);
 
     // Handle plant selection
     const handleFilterChange = useCallback((event) => {
@@ -55,7 +59,22 @@ function OperatorInfo() {
             }
             setLoading(false);
         } else {
-            alert('Please select a date and a plant.');
+            const fetchAllPlantDetails = async () => {
+                setLoading(true);
+                try {
+                    const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getAllPlantDetails`);
+                    setPlantStylesData(response.data);
+                } catch (error) {
+                    console.error('Error fetching all plant details', error);
+                }
+                setLoading(false);
+            };
+    
+            fetchAllPlantDetails();
+            
+            // Set today's date when component mounts
+            const today = new Date().toISOString().split('T')[0]; // Get YYYY-MM-DD format
+            setSelectedDate(today);
         }
     };
 
@@ -129,7 +148,7 @@ function OperatorInfo() {
                                                         className="text-center text-bg-secondary w-50 mx-auto" 
                                                         key={line.lineNumber}
                                                     >
-                                                        {line.lineNumber} - PC: {line.pieceCount}
+                                                        {line.lineNumber} - Pieces: {line.pieceCount}
                                                     </p>
                                                 ))}
                                                 <p className="text-center text-bg-primary w-50 mx-auto">
