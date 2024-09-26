@@ -208,9 +208,9 @@ function OperatorInfo2({ plantName, onClose, date, style }) {
                                                 <p className="text-bg-dark">Line No - {data.lineNo}</p>
                                                 <p className="text-bg-dark">Piece Count - {data.pieceCount}</p>
                                                 <p className="text-bg-dark">Sales Order - {data.salesOrder}</p>
-                                                <div className={`w-25 mx-auto text-center ${getStatus(data.pieceCount) === 'OK' ? 'bg-success' : 'bg-danger'}`}>
+                                                <p className={`rounded-5 ${getStatus(data.pieceCount) === 'OK' ? 'bg-success' : 'bg-danger'}`}>
                                                     {getStatus(data.pieceCount)}
-                                                </div>
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
