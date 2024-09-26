@@ -114,6 +114,16 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
         }
     };
 
+    const encodeCredentials = (username) => {
+        const encodedUsername = btoa(username);
+        return { encodedUsername };
+    };
+
+    const getStatus = (pieceCount) => {
+        // Return 'OK' if piece count exceeds or equals the target, otherwise 'Behind'
+        return pieceCount > 5 ? 'OK' : 'Behind';
+    };
+
     return (
         <div>
             <button className="btn btn-danger w-auto" onClick={onClose}>Close</button>
@@ -181,21 +191,35 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
                                 <h5>Daily Target - {dailyTarget || 'N/A'}</h5>
                             </div>
                         </div>
-                        {data.map((operator, index) => (
-                            <div className="col" key={index}>
-                                <div className="card rounded-4">
-                                    <div className="card-body d-flex flex-column align-items-center">
-                                        <div className="text-center">
-                                            <SupervisorEfficiency dailyTarget={dailyTarget} pieceCount={operator.totalPieceCount} latestHour={latestHour}/>
-                                            <p className="mb-1 text-bg-dark text-warning font-weight-bold">Operation: {operator.operation}</p>
-                                            <p className="mb-1 text-bg-dark">UserName: {operator.username}</p>
-                                            <p className="mb-1 text-bg-dark">Shift: {operator.shift}</p>
-                                            <p className="mb-1 text-bg-dark">PieceCount: {operator.totalPieceCount || 'N/A'}</p>
+                        {data.map((operator, index) => {
+                            const { encodedUsername } = encodeCredentials(operator.username);
+                            return (
+                                <div className="col" key={index}>
+                                    <div className="card rounded-4">
+                                        <div className="card-body d-flex flex-column align-items-center">
+                                            <div className="text-center">
+                                                <SupervisorEfficiency dailyTarget={dailyTarget} pieceCount={operator.totalPieceCount} latestHour={latestHour} />
+                                                <p className="mb-1 text-bg-dark text-warning font-weight-bold">Operation: {operator.operation}</p>
+                                                <p className="mb-1 text-bg-dark">UserName: {operator.username}</p>
+                                                <p className="mb-1 text-bg-dark">Shift: {operator.shift}</p>
+                                                <p className="mb-1 text-bg-dark">PieceCount: {operator.totalPieceCount || 'N/A'}</p>
+                                                <div className={`w-50 mx-auto text-center ${getStatus(operator.pieceCount) === 'OK' ? 'bg-success' : 'bg-danger'}`}>
+                                                {getStatus(data.pieceCount)}
+                                            </div>
+                                                <a
+                                                    href={`http://${process.env.REACT_APP_HOST_IP2}/user-info/${encodedUsername}&admin=true`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="btn btn-info mt-2"
+                                                >
+                                                Visit Dashboard
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            )
+                        })}
                     </div>
                 )
             )}
