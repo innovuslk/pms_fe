@@ -124,6 +124,11 @@ function OperatorInfo2({ plantName, onClose, date, style }) {
         setIsOverlayVisible(false); // Close the overlay and show main content
     };
 
+    const getStatus = (pieceCount) => {
+        // Return 'OK' if piece count exceeds or equals the target, otherwise 'Behind'
+        return pieceCount > 5 ? 'OK' : 'Behind';
+    };
+
     return (
         !isOverlayVisible ? (
             <div>
@@ -203,6 +208,9 @@ function OperatorInfo2({ plantName, onClose, date, style }) {
                                                 <p className="text-bg-dark">Line No - {data.lineNo}</p>
                                                 <p className="text-bg-dark">Piece Count - {data.pieceCount}</p>
                                                 <p className="text-bg-dark">Sales Order - {data.salesOrder}</p>
+                                                <div className={`w-25 mx-auto text-center ${getStatus(data.pieceCount) === 'OK' ? 'bg-success' : 'bg-danger'}`}>
+                                                    {getStatus(data.pieceCount)}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

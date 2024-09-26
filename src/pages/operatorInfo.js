@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../assets/css/adminHome.css';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
@@ -28,7 +28,7 @@ function OperatorInfo() {
         };
 
         fetchAllPlantDetails();
-        
+
         // Set today's date when component mounts
         const today = new Date().toISOString().split('T')[0]; // Get YYYY-MM-DD format
         setSelectedDate(today);
@@ -70,7 +70,7 @@ function OperatorInfo() {
             }
         };
         fetchPlantStyles();
-    }, [selectedPlant, selectedDate]); // Runs every time selectedPlant or selectedDate changes
+    }, [selectedPlant, selectedDate]);
 
     // Handle date selection
     const handleDateChange = (event) => {
@@ -89,17 +89,24 @@ function OperatorInfo() {
         setIsOverlayVisible(false); // Hide overlay and show OperatorInfo
     };
 
+    // Helper function to determine the status based on dailyTarget and pieceCount
+    const getStatus = (dailyTarget, pieceCount) => {
+        const requiredHourlyRate = dailyTarget / 10;
+        const actualRate = pieceCount / 10;
+        return actualRate >= requiredHourlyRate && pieceCount > 0 ? 'OK' : 'Behind';
+    };
+
     return (
         <div className="content">
             {!isOverlayVisible ? (
                 <>
                     <div className="d-flex justify-content-between align-items-center mb-3">
-                        <input 
-                            type="date" 
-                            className="form-control mx-2" 
+                        <input
+                            type="date"
+                            className="form-control mx-2"
                             value={selectedDate}
                             onChange={handleDateChange}
-                            required 
+                            required
                         />
                         <select
                             value={selectedPlant}
@@ -122,9 +129,9 @@ function OperatorInfo() {
                         <div className="row">
                             {plantStylesData.map((plant) => (
                                 <div className="col cursor-pointer" key={plant.style}>
-                                    <div 
+                                    <div
                                         className="card rounded-4"
-                                        onClick={() => handlePlantClick(plant.plantName || selectedPlant, plant.style)} 
+                                        onClick={() => handlePlantClick(plant.plantName || selectedPlant, plant.style)}
                                     >
                                         <div className="card-body">
                                             <h3 className="text-danger text-center">{plant.plantName || selectedPlant}</h3>
@@ -132,14 +139,21 @@ function OperatorInfo() {
                                                 <h5 className="text-bg-dark text-center p-2 rounded">
                                                     Style - {plant.style}
                                                 </h5>
-                                                {plant.lineData.map((line) => (
-                                                    <p 
-                                                        className="text-center text-bg-secondary w-50 mx-auto" 
-                                                        key={line.lineNumber}
-                                                    >
-                                                        {line.lineNumber} - Pieces: {line.pieceCount}
-                                                    </p>
-                                                ))}
+                                                {plant.lineData.map((line) => {
+                                                    const status = getStatus(line.dailyTarget, line.pieceCount);
+                                                    return (
+                                                        <div
+                                                            key={line.lineNumber}
+                                                        >
+                                                            <p className="text-center text-bg-secondary w-50 mx-auto" >
+                                                                {line.lineNumber} - Pieces: {line.pieceCount}
+                                                                <div className={`w-25 mx-auto ${status === 'OK' && line.pieceCount > 0 ? 'bg-success' : 'bg-danger'}`}>
+                                                                    {status}
+                                                                </div>
+                                                            </p>
+                                                        </div>
+                                                    );
+                                                })}
                                                 <p className="text-center text-bg-primary w-50 mx-auto">
                                                     Total Piece Count: {plant.totalPieceCount}
                                                 </p>
@@ -152,8 +166,8 @@ function OperatorInfo() {
                     )}
                 </>
             ) : (
-                <OperatorInfo2 
-                    plantName={overlayPlantName} 
+                <OperatorInfo2
+                    plantName={overlayPlantName}
                     date={selectedDate}
                     style={overlayStyle}
                     onClose={handleCloseOverlay}
