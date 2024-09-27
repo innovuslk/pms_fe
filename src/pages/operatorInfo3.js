@@ -117,9 +117,9 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
         return { encodedUsername };
     };
 
-    const getStatus = (pieceCount, dailyTarget) => {
+    const getStatus = (pieceCount, dailyTarget, latestHour) => {
         const requiredHourlyRate = dailyTarget / 10;
-        const actualRate = pieceCount / 10;
+        const actualRate = pieceCount / latestHour;
         return actualRate >= requiredHourlyRate && pieceCount > 0 ? 'OK' : 'Behind';
     };
 
@@ -202,8 +202,8 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
                                                 <p className="mb-1 text-bg-dark">UserName: {operator.username}</p>
                                                 <p className="mb-1 text-bg-dark">Shift: {operator.shift}</p>
                                                 <p className="mb-1 text-bg-dark">PieceCount: {operator.totalPieceCount || 'N/A'}</p>
-                                                <div className={`w-50 mx-auto text-center rounded-5 ${getStatus(operator.totalPieceCount, dailyTarget) === 'OK' ? 'bg-success' : 'bg-danger'}`}>
-                                                {getStatus(operator.totalPieceCount, dailyTarget)}
+                                                <div className={`w-50 mx-auto text-center rounded-5 ${getStatus(operator.totalPieceCount, dailyTarget, latestHour) === 'OK' ? 'bg-success' : 'bg-danger'}`}>
+                                                {getStatus(operator.totalPieceCount, dailyTarget, latestHour)}
                                             </div>
                                                 <a
                                                     href={`http://${process.env.REACT_APP_HOST_IP2}/user-info/${encodedUsername}&admin=true`}
