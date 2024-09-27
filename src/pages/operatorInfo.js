@@ -147,7 +147,7 @@ function OperatorInfo() {
                                                         >
                                                             <p className="text-center text-bg-secondary w-50 mx-auto" >
                                                                 {line.lineNumber} - Pieces: {line.pieceCount}
-                                                                <div className={`w-25 mx-auto ${status === 'OK' && line.pieceCount > 0 ? 'bg-success' : 'bg-danger'}`}>
+                                                                <div className={`w-25 mx-auto rounded ${status === 'OK' && line.pieceCount > 0 ? 'bg-success' : 'bg-danger'}`}>
                                                                     {status}
                                                                 </div>
                                                             </p>

@@ -59,12 +59,10 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
     }, [selectedLineNo]);
 
     useEffect(() => {
-        if (selectedLineNo) {
+        if (selectedDate && selectedLineNo) {
             getDailyTarget();
-            const intervalId = setInterval(getDailyTarget, 10000);
-            return () => clearInterval(intervalId);
         }
-    }, [selectedLineNo]);
+    }, [selectedDate, selectedLineNo]);
 
     const handleSubmit = async () => {
         setLoading(true);
@@ -203,8 +201,8 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
                                                 <p className="mb-1 text-bg-dark">UserName: {operator.username}</p>
                                                 <p className="mb-1 text-bg-dark">Shift: {operator.shift}</p>
                                                 <p className="mb-1 text-bg-dark">PieceCount: {operator.totalPieceCount || 'N/A'}</p>
-                                                <div className={`w-50 mx-auto text-center ${getStatus(operator.pieceCount) === 'OK' ? 'bg-success' : 'bg-danger'}`}>
-                                                {getStatus(data.pieceCount)}
+                                                <div className={`w-50 mx-auto text-center rounded-5 ${getStatus(operator.totalPieceCount) === 'OK' ? 'bg-success' : 'bg-danger'}`}>
+                                                {getStatus(operator.totalPieceCount)}
                                             </div>
                                                 <a
                                                     href={`http://${process.env.REACT_APP_HOST_IP2}/user-info/${encodedUsername}&admin=true`}
