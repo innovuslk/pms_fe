@@ -90,9 +90,9 @@ function OperatorInfo() {
     };
 
     // Helper function to determine the status based on dailyTarget and pieceCount
-    const getStatus = (dailyTarget, pieceCount) => {
+    const getStatus = (dailyTarget, pieceCount, latestHour) => {
         const requiredHourlyRate = dailyTarget / 10;
-        const actualRate = pieceCount / 10;
+        const actualRate = pieceCount / latestHour;
         return actualRate >= requiredHourlyRate && pieceCount > 0 ? 'OK' : 'Behind';
     };
 
@@ -140,7 +140,7 @@ function OperatorInfo() {
                                                     Style - {plant.style}
                                                 </h5>
                                                 {plant.lineData.map((line) => {
-                                                    const status = getStatus(line.dailyTarget, line.pieceCount);
+                                                    const status = getStatus(line.dailyTarget, line.pieceCount, line.latestHour);
                                                     return (
                                                         <div
                                                             key={line.lineNumber}

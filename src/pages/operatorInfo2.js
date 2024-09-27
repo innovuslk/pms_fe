@@ -124,9 +124,9 @@ function OperatorInfo2({ plantName, onClose, date, style }) {
         setIsOverlayVisible(false); // Close the overlay and show main content
     };
 
-    const getStatus = (pieceCount, dailyTarget) => {
+    const getStatus = (pieceCount, dailyTarget, latestHour) => {
         const requiredHourlyRate = dailyTarget / 10;
-        const actualRate = pieceCount / 10;
+        const actualRate = pieceCount / latestHour;
         return actualRate >= requiredHourlyRate && pieceCount > 0 ? 'OK' : 'Behind';
     };
 
@@ -209,8 +209,8 @@ function OperatorInfo2({ plantName, onClose, date, style }) {
                                                 <p className="text-bg-dark">Line No - {data.lineNo}</p>
                                                 <p className="text-bg-dark">Piece Count - {data.pieceCount}</p>
                                                 <p className="text-bg-dark">Sales Order - {data.salesOrder}</p>
-                                                <p className={`rounded-5 ${getStatus(data.pieceCount, dailyTarget) === 'OK' ? 'bg-success' : 'bg-danger'}`}>
-                                                    {getStatus(data.pieceCount, dailyTarget)}
+                                                <p className={`rounded-5 ${getStatus(data.pieceCount, dailyTarget, latestHour) === 'OK' ? 'bg-success' : 'bg-danger'}`}>
+                                                    {getStatus(data.pieceCount, dailyTarget, latestHour)}
                                                 </p>
                                             </div>
                                         </div>
