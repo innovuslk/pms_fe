@@ -1,0 +1,46 @@
+.gauge-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+.gauge {
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    background: conic-gradient(
+        var(--gauge-color, #4caf50) calc(var(--efficiency) * 1%), 
+        #e0e0e0 calc(var(--efficiency) * 1%)
+    );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.gauge-inner {
+    width: 80%;
+    height: 80%;
+    background-color: rgb(58, 58, 59);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gauge-label {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.gauge[data-efficiency='low'] {
+    --gauge-color: #f44336; /* Red for low efficiency */
+}
+
+.gauge[data-efficiency='medium'] {
+    --gauge-color: #ff9800; /* Orange for medium efficiency */
+}
+
+.gauge[data-efficiency='high'] {
+    --gauge-color: #4caf50; /* Green for high efficiency */
+}

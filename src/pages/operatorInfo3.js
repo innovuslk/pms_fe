@@ -126,9 +126,11 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
     return (
         <div>
             <button className="btn btn-danger w-auto" onClick={onClose}>Close</button>
-            <h2 className="text-center mb-4">Details for Plant: {plantName}</h2>
+            <h2 className="text-center mb-4">Plant Details: <span className="text-info">{plantName}</span></h2>
 
+            {/* Form controls for Date, Style, Line No, and Submit */}
             <div className="d-flex justify-content-between align-items-center mb-3">
+                {/* Date Input */}
                 <div className="input-group">
                     <span className="input-group-text">
                         <span className="material-symbols-outlined">badge</span>
@@ -142,6 +144,7 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
                     />
                 </div>
 
+                {/* Style Selector */}
                 <select
                     className="form-select mx-2"
                     value={selectedStyle}
@@ -153,6 +156,7 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
                     ))}
                 </select>
 
+                {/* Line No Selector */}
                 <select
                     className="form-select mx-2"
                     value={selectedLineNo}
@@ -164,6 +168,7 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
                     ))}
                 </select>
 
+                {/* Submit Button */}
                 <button
                     type="submit"
                     className="btn btn-primary px-4 w-auto mx-2 h-50"
@@ -174,6 +179,7 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
                 </button>
             </div>
 
+            {/* Loading Spinner */}
             {loading ? (
                 <div className="d-flex justify-content-center align-items-center">
                     <ClipLoader size={50} color={"white"} loading={loading} />
@@ -182,42 +188,60 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
             ) : (
                 data && (
                     <div className="row">
+                        {/* Information display with bullet list */}
                         <div className="d-flex mb-4">
-                            <div className="rounded-4 bg-secondary w-auto h-auto mx-2 p-2">
+                            <div className="rounded-3 bg-dark w-auto h-auto mx-2 p-2">
                                 <h5>Planned Efficiency - {plannedTarget || 'N/A'}</h5>
                             </div>
-                            <div className="rounded-4 bg-secondary w-auto h-auto mx-2 p-2">
+                            <div className="rounded-3 bg-dark w-auto h-auto mx-2 p-2">
                                 <h5>Daily Target - {dailyTarget || 'N/A'}</h5>
                             </div>
                         </div>
+
+                        {/* Operator Information Cards */}
                         {data.map((operator, index) => {
                             const { encodedUsername } = encodeCredentials(operator.username);
                             return (
-                                <div className="col" key={index}>
-                                    <div className="card rounded-4">
-                                        <div className="card-body d-flex flex-column align-items-center">
-                                            <div className="text-center">
+                                <div className="col-md-4 mb-4" key={index}>
+                                    <div className="card rounded-4 border-primary shadow-sm hover-shadow">
+                                        <div className="card-header bg-primary text-white text-center">
+                                            <h5 className="mb-1 font-weight-bold"> {operator.operation}</h5>
+                                        </div>
+
+                                        <div className="card-body">
+                                            <div className='w-auto mb-0'>
                                                 <SupervisorEfficiency dailyTarget={dailyTarget} pieceCount={operator.totalPieceCount} latestHour={latestHour} />
-                                                <p className="mb-1 text-bg-dark text-warning font-weight-bold">Operation: {operator.operation}</p>
-                                                <p className="mb-1 text-bg-dark">UserName: {operator.username}</p>
-                                                <p className="mb-1 text-bg-dark">Shift: {operator.shift}</p>
-                                                <p className="mb-1 text-bg-dark">PieceCount: {operator.totalPieceCount || 'N/A'}</p>
-                                                <div className={`w-50 mx-auto text-center rounded-5 ${getStatus(operator.totalPieceCount, dailyTarget, latestHour) === 'OK' ? 'bg-success' : 'bg-danger'}`}>
+                                            </div>
+                                            <ul className="list-unstyled mx-4">
+                                                <li className="d-flex justify-content-between mb-2">
+                                                    <strong>• UserName:</strong>
+                                                    <span className='text-info'>{operator.username}</span>
+                                                </li>
+                                                <li className="d-flex justify-content-between mb-2">
+                                                    <strong>• Shift:</strong>
+                                                    <span className='text-success'>{operator.shift}</span>
+                                                </li>
+                                                <li className="d-flex justify-content-between mb-2">
+                                                    <strong>• PieceCount:</strong>
+                                                    <span className='text-warning'>{operator.totalPieceCount || 'N/A'}</span>
+                                                </li>
+                                            </ul>
+
+                                            <div className={`w-auto p-2 mx-auto text-center rounded-5 mt-1 ${getStatus(operator.totalPieceCount, dailyTarget, latestHour) === 'OK' ? 'bg-success text-dark' : 'bg-warning text-dark'}`}>
                                                 {getStatus(operator.totalPieceCount, dailyTarget, latestHour)}
                                             </div>
-                                                <a
-                                                    href={`http://${process.env.REACT_APP_HOST_IP2}/user-info/${encodedUsername}&admin=true`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="btn btn-info mt-2"
-                                                >
-                                                Visit Dashboard
-                                                </a>
-                                            </div>
                                         </div>
+                                        <a
+                                            href={`http://${process.env.REACT_APP_HOST_IP2}/user-info/${encodedUsername}&admin=true`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="btn text-decoration-underline text-center"
+                                        >
+                                            Visit Dashboard
+                                        </a>
                                     </div>
                                 </div>
-                            )
+                            );
                         })}
                     </div>
                 )
