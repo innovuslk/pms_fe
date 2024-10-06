@@ -150,7 +150,7 @@ function Deviation({ shift, shiftHours, latestHour, pieceCount, sendDataToParent
 
     return (
         <div className="d-flex flex-column align-items-center justify-content-center gap-2 ">
-            <h3 className="mb-0">{deviation < 0 ? '0' : deviation || 'null'}</h3>
+            <h3 className="mb-0">{deviation < 0 ? '0' : deviation || '0'}</h3>
             <p className="mb-0" style={{ fontSize: '0.7rem', padding: '0px' }}>{t("Deviation")}</p>
         </div>
     )

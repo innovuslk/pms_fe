@@ -97,66 +97,84 @@ function OperatorInfo() {
     };
 
     return (
-        <div className="content">
+        <div className="content mt-5">
             {!isOverlayVisible ? (
                 <>
-                    <div className="d-flex justify-content-between align-items-center mb-3">
-                        <input
-                            type="date"
-                            className="form-control mx-2"
-                            value={selectedDate}
-                            onChange={handleDateChange}
-                            required
-                        />
-                        <select
-                            value={selectedPlant}
-                            onChange={handleFilterChange} // Trigger plant change
-                            className="form-select mx-2"
-                        >
-                            <option value="All">All Plants</option>
-                            <option value="UPLP">UPLP</option>
-                            <option value="ExcelTech">ExcelTech</option>
-                            <option value="PLC">PLC</option>
-                        </select>
+                    <div className="row mb-4 mt-2">
+                        <div className="col-md-6 mb-2">
+                            <input
+                                type="date"
+                                className="form-control"
+                                value={selectedDate}
+                                onChange={handleDateChange}
+                                style={{ fontWeight: 'bold' }}
+                            />
+                        </div>
+                        <div className="col-md-6 mb-2">
+                            <select
+                                value={selectedPlant}
+                                onChange={handleFilterChange}
+                                className="form-select"
+                                style={{ fontWeight: 'bold' }}
+                            >
+                                <option value="All">All Plants</option>
+                                <option value="UPLP">UPLP</option>
+                                <option value="ExcelTech">ExcelTech</option>
+                                <option value="PLC">PLC</option>
+                            </select>
+                        </div>
                     </div>
-
+    
                     {loading ? (
                         <div className="d-flex justify-content-center align-items-center">
-                            <ClipLoader size={50} color={"white"} loading={loading} />
-                            <h6>Loading, please wait...</h6>
+                            <ClipLoader size={50} color={"#007bff"} loading={loading} />
+                            <span className="ms-2 text-primary">Loading, please wait...</span>
                         </div>
                     ) : (
-                        <div className="row">
-                            {plantStylesData.map((plant) => (
-                                <div className="col cursor-pointer" key={plant.style}>
+                        <div className="row g-4">
+                            {plantStylesData.map((plant, index) => (
+                                <div className="col-md-6 mb-4" key={index}>
                                     <div
-                                        className="card rounded-4"
+                                        className="card h-100 border-primary shadow-sm"
                                         onClick={() => handlePlantClick(plant.plantName || selectedPlant, plant.style)}
+                                        style={{ cursor: 'pointer' }}
                                     >
+                                        <div className="card-header bg-primary text-white text-center">
+                                            <h4>{plant.plantName || selectedPlant}</h4>
+                                        </div>
                                         <div className="card-body">
-                                            <h3 className="text-danger text-center">{plant.plantName || selectedPlant}</h3>
-                                            <div className="mb-4">
-                                                <h5 className="text-bg-dark text-center p-2 rounded">
-                                                    Style - {plant.style}
-                                                </h5>
-                                                {plant.lineData.map((line) => {
-                                                    const status = getStatus(line.dailyTarget, line.pieceCount, line.latestHour);
-                                                    return (
-                                                        <div
-                                                            key={line.lineNumber}
-                                                        >
-                                                            <p className="text-center text-bg-secondary w-50 mx-auto" >
-                                                                {line.lineNumber} - Pieces: {line.pieceCount}
-                                                                <div className={`w-25 mx-auto rounded ${status === 'OK' && line.pieceCount > 0 ? 'bg-success' : 'bg-danger'}`}>
-                                                                    {status}
-                                                                </div>
-                                                            </p>
-                                                        </div>
-                                                    );
-                                                })}
-                                                <p className="text-center text-bg-primary w-50 mx-auto">
-                                                    Total Piece Count: {plant.totalPieceCount}
-                                                </p>
+                                            <h5 className="text-muted mb-3 text-center">Style - {plant.style}</h5>
+    
+                                            <table className="table table-hover table-bordered text-center">
+                                                <thead className="table-primary">
+                                                    <tr>
+                                                        <th scope="col">Line</th>
+                                                        <th scope="col">Pieces</th>
+                                                        <th scope="col">Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {plant.lineData.map((line) => {
+                                                        const status = getStatus(line.dailyTarget, line.pieceCount, line.latestHour);
+                                                        return (
+                                                            <tr key={line.lineNumber}>
+                                                                <td>• {line.lineNumber}</td>
+                                                                <td>{line.pieceCount}</td>
+                                                                <td>
+                                                                    <span className={`badge ${status === 'OK' ? 'bg-success' : 'bg-warning text-dark'}`}>
+                                                                        {status}
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                            <hr className="bg-primary" />
+                                            <div className="text-center">
+                                                <span className="badge bg-primary p-2">
+                                                    Total Pieces: {plant.totalPieceCount}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>

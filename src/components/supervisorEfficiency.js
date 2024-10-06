@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useTranslation } from "react-i18next";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './../assets/css/guage.css'
 
 const SupervisorEfficiency = ({ pieceCount, dailyTarget, latestHour }) => {
     const { t } = useTranslation();
@@ -16,7 +18,6 @@ const SupervisorEfficiency = ({ pieceCount, dailyTarget, latestHour }) => {
         setPieceCount(pieceCount);
         setDailyTarget(dailyTarget);
         setLatestHour(latestHour);
-        console.log(pieceCount, dailyTarget, latestHour)
     }, [pieceCount, dailyTarget, latestHour]);
 
     useEffect(() => {
@@ -66,11 +67,21 @@ const SupervisorEfficiency = ({ pieceCount, dailyTarget, latestHour }) => {
     };
 
     return (
-        <div className='d-flex align-content-center justify-content-center'>
+        <div className="d-flex align-items-center justify-content-center" style={{ minHeight: '200px' }}>
             {loading ? (
-                <div>Loading...</div>
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
             ) : (
-                <h1 className='text-danger'>{efficiency !== null ? efficiency : 'N/A'}%</h1>
+                <div className="gauge-container text-center">
+                    <div className="gauge" style={{ '--efficiency': efficiency }}>
+                        <div className="gauge-inner">
+                            <span className="gauge-label">
+                                {efficiency !== null ? `${efficiency}%` : 'N/A'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

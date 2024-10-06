@@ -133,8 +133,8 @@ function OperatorInfo2({ plantName, onClose, date, style }) {
     return (
         !isOverlayVisible ? (
             <div>
-                <button className="btn btn-danger w-auto" onClick={onClose}>Close</button>
-                <h2 className="text-center mb-4">Details for Plant: {plantName}</h2>
+                <button className="btn btn-danger w-auto mt-2" onClick={onClose}>Close</button>
+                <h2 className="text-center mb-4">Plant Details: <span className="text-info">{plantName}</span></h2>
 
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <div className="input-group">
@@ -193,9 +193,9 @@ function OperatorInfo2({ plantName, onClose, date, style }) {
                     data && (
                         <div className="row">
                             <div className="col">
-                                <div className="card rounded-4 cursor-pointer" onClick={handleLineClick}>
+                                <div className="card rounded-4 cursor-pointer border-primary shadow-sm hover-shadow" onClick={handleLineClick}>
                                     <div className="card-body">
-                                        <h4 className="text-warning text-center">Style - {data.style}</h4>
+                                        <h4 className="text-info text-center">Style - {data.style}</h4>
                                         <div className="d-flex">
                                             <div className="col-6 align-content-center">
                                                 <h5 className="mx-auto text-center">Efficiency</h5>
@@ -209,7 +209,7 @@ function OperatorInfo2({ plantName, onClose, date, style }) {
                                                 <p className="text-bg-dark">Line No - {data.lineNo}</p>
                                                 <p className="text-bg-dark">Piece Count - {data.pieceCount}</p>
                                                 <p className="text-bg-dark">Sales Order - {data.salesOrder}</p>
-                                                <p className={`rounded-5 ${getStatus(data.pieceCount, dailyTarget, latestHour) === 'OK' ? 'bg-success' : 'bg-danger'}`}>
+                                                <p className={`rounded-4 w-100 ${getStatus(data.pieceCount, dailyTarget, latestHour) === 'OK' ? 'bg-success' : 'bg-warning text-dark'}`}>
                                                     {getStatus(data.pieceCount, dailyTarget, latestHour)}
                                                 </p>
                                             </div>

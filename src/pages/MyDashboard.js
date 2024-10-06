@@ -50,7 +50,7 @@ function MyDashboard() {
     const [currentHourOutput, setCurrentHourOutput] = useState();
     const [MyBest, setMyBest] = useState();
     const [MASBest, setMASBest] = useState();
-    const [bestCycle, setBestCycle] = useState(Infinity);
+    const [bestCycle, setBestCycle] = useState(0);
     const [intHour, setIntHour] = useState();
     const [deviation, setDeviation] = useState();
     const [requiredHourlyRate, setRequiredHourlyRate] = useState();
