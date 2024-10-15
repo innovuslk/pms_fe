@@ -14,7 +14,6 @@ function OperatorInfo() {
     const [overlayPlantName, setOverlayPlantName] = useState('');
     const [overlayStyle, setOverlayStyle] = useState('');
 
-    // Fetch all plant details on component mount
     useEffect(() => {
         const fetchAllPlantDetails = async () => {
             setLoading(true);
@@ -29,17 +28,14 @@ function OperatorInfo() {
 
         fetchAllPlantDetails();
 
-        // Set today's date when component mounts
-        const today = new Date().toISOString().split('T')[0]; // Get YYYY-MM-DD format
+        const today = new Date().toISOString().split('T')[0];
         setSelectedDate(today);
     }, []);
 
-    // Handle plant selection
     const handleFilterChange = (event) => {
         setSelectedPlant(event.target.value);
     };
 
-    // Fetch data based on selected date and plant whenever plant or date changes
     useEffect(() => {
         const fetchPlantStyles = async () => {
             if (selectedPlant !== 'All' && selectedDate) {
@@ -47,7 +43,7 @@ function OperatorInfo() {
                 try {
                     const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getPlantStyles`, {
                         date: selectedDate,
-                        plant: selectedPlant
+                        plant: selectedPlant,
                     });
                     setPlantStylesData(response.data);
                 } catch (error) {
@@ -55,7 +51,6 @@ function OperatorInfo() {
                 }
                 setLoading(false);
             } else {
-                // Fetch all plant details if "All" is selected
                 const fetchAllPlantDetails = async () => {
                     setLoading(true);
                     try {
@@ -72,29 +67,39 @@ function OperatorInfo() {
         fetchPlantStyles();
     }, [selectedPlant, selectedDate]);
 
-    // Handle date selection
     const handleDateChange = (event) => {
         setSelectedDate(event.target.value);
     };
 
-    // Handle plant click to open overlay and pass selected style
     const handlePlantClick = (plantName, plantStyle) => {
         setOverlayPlantName(plantName);
         setOverlayStyle(plantStyle);
-        setIsOverlayVisible(true); // Show overlay and hide OperatorInfo
+        setIsOverlayVisible(true);
     };
 
-    // Handle closing the overlay
     const handleCloseOverlay = () => {
-        setIsOverlayVisible(false); // Hide overlay and show OperatorInfo
+        setIsOverlayVisible(false);
     };
 
-    // Helper function to determine the status based on dailyTarget and pieceCount
     const getStatus = (dailyTarget, pieceCount, latestHour) => {
         const requiredHourlyRate = dailyTarget / 10;
         const actualRate = pieceCount / latestHour;
         return actualRate >= requiredHourlyRate && pieceCount > 0 ? 'OK' : 'Behind';
     };
+
+    // Group data by plantName
+    const groupedPlantStyles = plantStylesData.reduce((acc, plant) => {
+        if (!acc[plant.plantName]) {
+            acc[plant.plantName] = {
+                plantName: plant.plantName,
+                totalPieceCount: 0,
+                styles: [],
+            };
+        }
+        acc[plant.plantName].styles.push(plant);
+        acc[plant.plantName].totalPieceCount += plant.totalPieceCount;
+        return acc;
+    }, {});
 
     return (
         <div className="content mt-5">
@@ -124,7 +129,7 @@ function OperatorInfo() {
                             </select>
                         </div>
                     </div>
-    
+
                     {loading ? (
                         <div className="d-flex justify-content-center align-items-center">
                             <ClipLoader size={50} color={"#007bff"} loading={loading} />
@@ -132,44 +137,47 @@ function OperatorInfo() {
                         </div>
                     ) : (
                         <div className="row g-4">
-                            {plantStylesData.map((plant, index) => (
+                            {Object.values(groupedPlantStyles).map((plant, index) => (
                                 <div className="col-md-6 mb-4" key={index}>
                                     <div
                                         className="card h-100 border-primary shadow-sm"
-                                        onClick={() => handlePlantClick(plant.plantName || selectedPlant, plant.style)}
+                                        onClick={() => handlePlantClick(plant.plantName, plant.styles.map(s => s.style).join(', '))}
                                         style={{ cursor: 'pointer' }}
                                     >
                                         <div className="card-header bg-primary text-white text-center">
-                                            <h4>{plant.plantName || selectedPlant}</h4>
+                                            <h4>{plant.plantName}</h4>
                                         </div>
                                         <div className="card-body">
-                                            <h5 className="text-muted mb-3 text-center">Style - {plant.style}</h5>
-    
-                                            <table className="table table-hover table-bordered text-center">
-                                                <thead className="table-primary">
-                                                    <tr>
-                                                        <th scope="col">Line</th>
-                                                        <th scope="col">Pieces</th>
-                                                        <th scope="col">Status</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {plant.lineData.map((line) => {
-                                                        const status = getStatus(line.dailyTarget, line.pieceCount, line.latestHour);
-                                                        return (
-                                                            <tr key={line.lineNumber}>
-                                                                <td>• {line.lineNumber}</td>
-                                                                <td>{line.pieceCount}</td>
-                                                                <td>
-                                                                    <span className={`badge ${status === 'OK' ? 'bg-success' : 'bg-warning text-dark'}`}>
-                                                                        {status}
-                                                                    </span>
-                                                                </td>
+                                            {plant.styles.map((styleData, styleIndex) => (
+                                                <div key={styleIndex}>
+                                                    <h5 className="mb-3 text-center text-info">Style - {styleData.style}</h5>
+                                                    <table className="table table-hover table-bordered text-center rounded-3">
+                                                        <thead className="table-dark">
+                                                            <tr>
+                                                                <th scope="col">Line</th>
+                                                                <th scope="col">Pieces</th>
+                                                                <th scope="col">Status</th>
                                                             </tr>
-                                                        );
-                                                    })}
-                                                </tbody>
-                                            </table>
+                                                        </thead>
+                                                        <tbody>
+                                                            {styleData.lineData.map((line) => {
+                                                                const status = getStatus(line.dailyTarget, line.pieceCount, line.latestHour);
+                                                                return (
+                                                                    <tr key={line.lineNumber}>
+                                                                        <td>• {line.lineNumber}</td>
+                                                                        <td>{line.pieceCount}</td>
+                                                                        <td>
+                                                                            <span className={`badge ${status === 'OK' ? 'bg-success' : 'bg-warning text-dark'}`}>
+                                                                                {status}
+                                                                            </span>
+                                                                        </td>
+                                                                    </tr>
+                                                                );
+                                                            })}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            ))}
                                             <hr className="bg-primary" />
                                             <div className="text-center">
                                                 <span className="badge bg-primary p-2">
