@@ -56,6 +56,7 @@ function OperatorInfo() {
                     try {
                         const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getAllPlantDetails`);
                         setPlantStylesData(response.data);
+                        console.log(response)
                     } catch (error) {
                         console.error('Error fetching all plant details', error);
                     }
@@ -141,7 +142,7 @@ function OperatorInfo() {
                                 <div className="col-md-6 mb-4" key={index}>
                                     <div
                                         className="card h-100 border-primary shadow-sm"
-                                        onClick={() => handlePlantClick(plant.plantName, plant.styles.map(s => s.style).join(', '))}
+                                        onClick={() => handlePlantClick(plant.plantName, plant.styles[0]?.style)}
                                         style={{ cursor: 'pointer' }}
                                     >
                                         <div className="card-header bg-primary text-white text-center">
