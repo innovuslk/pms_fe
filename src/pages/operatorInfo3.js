@@ -66,6 +66,7 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
 
     const handleSubmit = async () => {
         setLoading(true);
+        setData([]); // Clear previous data before fetching new data
         try {
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/getAllOperators`, {
                 date: selectedDate,
@@ -73,12 +74,21 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
                 style: selectedStyle,
                 lineNo: selectedLineNo
             });
-            setData(response.data.users);
+            
+            // Check if data is returned for the selected lineNo
+            if (response.data.users.length > 0) {
+                setData(response.data.users);
+                console.log(response.data.users); // Updated: Log response data correctly
+            } else {
+                setData([]); // Clear previous data if no new data is available
+                console.log('No data available for the selected lineNo.');
+            }
         } catch (error) {
             console.error('Error fetching operator data:', error);
         }
         setLoading(false);
     };
+    
 
     const handleDateChange = (event) => {
         const date = event.target.value;
@@ -118,6 +128,8 @@ function OperatorInfo3({ plantName, selectedDate: initialDate, selectedStyle: in
     };
 
     const getStatus = (pieceCount, dailyTarget, latestHour) => {
+
+        console.log(pieceCount,dailyTarget,latestHour)
         const requiredHourlyRate = dailyTarget / 10;
         const actualRate = pieceCount / latestHour;
         return actualRate >= requiredHourlyRate && pieceCount > 0 ? 'OK' : 'Behind';
