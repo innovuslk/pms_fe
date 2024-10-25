@@ -57,7 +57,7 @@ const UserManagement = () => {
                 </div>
             </div>
             <div className="table-responsive">
-                <table className="rounded col-6 col-xl-6 col-md-8 mx-auto z-index-1">
+                <table className="rounded col-12 col-xl-6 col-md-8 mx-auto z-index-1">
                     <thead className="thead-dark">
                         <tr>
                             <th scope="col" className="text-center">User ID</th>

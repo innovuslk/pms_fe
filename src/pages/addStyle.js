@@ -66,7 +66,7 @@ function AddStyle() {
 
         <div className='content'>
             <div>
-                <div className="col-6 col-xl-6 col-md-8 mx-auto my-3">
+                <div className="col-12 col-xl-6 col-md-8 mx-auto my-3">
                     <div className="card">
                         <div className="card-body p-4">
                             <h5 className="mb-4">Add Style</h5>

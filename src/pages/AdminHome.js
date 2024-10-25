@@ -48,6 +48,7 @@ function AdminHome() {
     const [supervisors, setSupervisors] = useState();
     const [dailyTarget, setDaillytarget] = useState();
     const [shiftHours, setShiftHours] = useState();
+    const [sidebarVisible, setSidebarVisible] = useState(false);
 
     useEffect(() => {
         // Fetch data from your backend when the component mounts
@@ -206,9 +207,14 @@ function AdminHome() {
 
     const handleSideBarClick = (type) => {
         setSideBarType(type)
+        setSidebarVisible(false);
     }
     const handleReset = () => {
         resetForm();
+    };
+
+    const toggleSidebar = () => {
+        setSidebarVisible(prev => !prev);
     };
 
     const resetForm = () => {
@@ -297,6 +303,11 @@ function AdminHome() {
             <input type="checkbox" id="check" />
             <nav className="navbar navbar-expand-lg navbar-dark position-fixed w-100 top-0 end-0 z-2" style={{ backgroundColor: "#011e29" }}>
                 <div className="container-fluid">
+                    <button className="btn btn-primary rounded-5 d-md-none me-2 text-center" onClick={toggleSidebar}>
+                        <span class="material-symbols-outlined">
+                            arrow_forward_ios
+                        </span>
+                    </button>
                     <a className="navbar-brand mx-2 rounded" href="#">PMS</a>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent2" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
@@ -327,7 +338,7 @@ function AdminHome() {
                 </div>
             </nav>
 
-            <div className="sidebar rounded-3">
+            <div className={`sidebar rounded-3 ${sidebarVisible ? 'show' : ''}`}>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('OperatorInfo')}><span class="material-symbols-outlined mx-1">
                     home
                 </span>Dashboard
@@ -376,10 +387,10 @@ function AdminHome() {
                     User Management
                 </a>
                 <a className='d-flex align-items-center' onClick={() => handleSideBarClick('History')}><span class="material-symbols-outlined mx-1">
-                history
-            </span>
-                History
-            </a>
+                    history
+                </span>
+                    History
+                </a>
                 {/*<a className='d-flex align-items-center' onClick={() => handleSideBarClick('Chat')}><span class="material-symbols-outlined mx-1">
                 message
                 </span>
