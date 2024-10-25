@@ -58,7 +58,7 @@ function WeekPlanUpload() {
 
     return (
         <div className="content">
-            <div className='col-6 col-xl-6 col-md-8 mx-auto'>
+            <div className='col-12 col-xl-6 col-md-8 mx-auto'>
                 <h6 className='align-items-center justify-content-center text-success font-21'>Select an excel file here for Week Daily Plan</h6>
                 <input
                     className='form-control mb-4'

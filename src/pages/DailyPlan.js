@@ -193,7 +193,7 @@ const DailyPlan = () => {
         <div>
             {!editMode ?
                 <div className="content"><div>
-                    <div className="col-6 col-xl-6 col-md-8 mx-auto z-index-1">
+                    <div className="col-6 col-xl-6 col-md-8 col-12 mx-auto z-index-1">
                         <div className="card">
                             <div className="card-body p-4">
                                 <h5 className="mb-4">Daily Plan</h5>
