@@ -11,6 +11,7 @@ function History() {
     const [sortBy, setSortBy] = useState('date'); // Default sorting option
     const [lineNumbers, setLineNumbers] = useState([]);
     const [selectedLineNumber, setSelectedLineNumber] = useState('');
+    const [selectedStyle, setSelectedStyle] = useState('');
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [
@@ -51,49 +52,83 @@ function History() {
 
     const fetchPieceCountData = async () => {
         try {
-            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getHistory`, {
+            const requestData = {
                 startDate,
                 endDate,
                 sortBy,
-                lineNo: selectedLineNumber
-            });
+                lineNo: selectedLineNumber,
+            };
+    
+            // Add selectedStyle only when sorting by plantName
+            if (sortBy === 'plantName') {
+                requestData.style = selectedStyle;
+            }
+    
+            const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getHistory`, requestData);
             const data = response.data;
-
+    
             let labels = [];
             let datasets = {};
-            let lastDate = null;
-            let totalPieceCount = 0; // Initialize total piece count
-
-            data.forEach(entry => {
-                const currentDate = new Date(entry.date).toLocaleDateString();
-
-                if (!labels.includes(currentDate)) {
-                    labels.push(currentDate);
-                }
-
-                if (!datasets[entry.operation]) {
-                    const ctx = document.createElement('canvas').getContext('2d');
-                    datasets[entry.operation] = {
-                        label: entry.operation,
-                        data: [],
-                        backgroundColor: getRandomColor(),
-                        tension: 0,
-                        borderColor: getRandomColor(),
-                        borderWidth: 0
-                    };
-                }
-
-                datasets[entry.operation].data.push(entry.pieceCount);
-                totalPieceCount += entry.pieceCount; // Accumulate the piece count
-                lastDate = currentDate;
-            });
-
-            setChartData({
-                labels: labels,
-                datasets: Object.values(datasets),
-            });
-
-            setTotalPieceCount(totalPieceCount); // Update the total piece count
+            let totalPieceCount = 0;
+    
+            if (sortBy === 'plantName') {
+                // When sorting by plantName, use plant names as labels and group data by plant name
+                const plantNames = new Set();
+    
+                data.forEach(entry => {
+                    plantNames.add(entry.plantName);
+    
+                    if (!datasets[entry.date]) {
+                        datasets[entry.date] = {
+                            label: new Date(entry.date).toLocaleDateString(),
+                            data: [],
+                            backgroundColor: getRandomColor(),
+                            tension: 0,
+                            borderColor: getRandomColor(),
+                            borderWidth: 0,
+                        };
+                    }
+    
+                    datasets[entry.date].data.push(entry.pieceCount);
+                    totalPieceCount += entry.pieceCount;
+                });
+    
+                labels = Array.from(plantNames);
+                setChartData({
+                    labels,
+                    datasets: Object.values(datasets),
+                });
+            } else {
+                // Default case for other sortBy options
+                data.forEach(entry => {
+                    const currentDate = new Date(entry.date).toLocaleDateString();
+    
+                    if (!labels.includes(currentDate)) {
+                        labels.push(currentDate);
+                    }
+    
+                    if (!datasets[entry.operation]) {
+                        datasets[entry.operation] = {
+                            label: entry.operation,
+                            data: [],
+                            backgroundColor: getRandomColor(),
+                            tension: 0,
+                            borderColor: getRandomColor(),
+                            borderWidth: 0,
+                        };
+                    }
+    
+                    datasets[entry.operation].data.push(entry.pieceCount);
+                    totalPieceCount += entry.pieceCount;
+                });
+    
+                setChartData({
+                    labels,
+                    datasets: Object.values(datasets),
+                });
+            }
+    
+            setTotalPieceCount(totalPieceCount);
         } catch (error) {
             console.error('Error fetching piece count data:', error);
         }
@@ -174,6 +209,30 @@ function History() {
                                         {lineNo}
                                     </option>
                                 ))}
+                            </select>
+                        </div>
+                    </div>
+                )}
+                {sortBy === 'plantName' && (
+                    <div className="col-md-2">
+                        <div className="form-group">
+                            <label htmlFor="style">Style</label>
+                            <select
+                                id="style"
+                                className="form-control"
+                                value={selectedStyle}
+                                onChange={(e) => setSelectedStyle(e.target.value)}
+                            >
+                                    <option value={'R623-796(R1)'}>
+                                    R623-796(R1)                                        
+                                    </option>
+                                    <option value={'GamerTech'}>
+                                    GamerTech                                        
+                                    </option>
+                                    <option value={'Therabody Rework'}>
+                                    Therabody Rework                                        
+                                    </option>
+
                             </select>
                         </div>
                     </div>
