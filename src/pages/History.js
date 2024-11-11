@@ -12,6 +12,7 @@ function History() {
     const [lineNumbers, setLineNumbers] = useState([]);
     const [selectedLineNumber, setSelectedLineNumber] = useState('');
     const [selectedStyle, setSelectedStyle] = useState('');
+    const [selectedPlant, setSelectedPlant] = useState('ExcelTech');
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [
@@ -61,7 +62,8 @@ function History() {
     
             // Add selectedStyle only when sorting by plantName
             if (sortBy === 'plantName') {
-                requestData.style = selectedStyle;
+                requestData.style = selectedStyle
+                requestData.plant = selectedPlant
             }
     
             const response = await axios.post(`http://${process.env.REACT_APP_HOST_IP}/get/getHistory`, requestData);
@@ -235,7 +237,29 @@ function History() {
 
                             </select>
                         </div>
+
+                        <div className="form-group">
+                        <label htmlFor="style">Plant</label>
+                        <select
+                            id="style"
+                            className="form-control"
+                            value={selectedPlant}
+                            onChange={(e) => setSelectedPlant(e.target.value)}
+                        >
+                                <option value={'ExcelTech'}>
+                                ExcelTech                                        
+                                </option>
+                                <option value={'UPLP'}>
+                                UPLP                                        
+                                </option>
+                                <option value={'PLC'}>
+                                PLC                                        
+                                </option>
+
+                        </select>
                     </div>
+                    </div>
+                    
                 )}
                 <div className="col-md-2 d-flex align-items-end">
                     <button onClick={fetchPieceCountData} className="btn btn-primary w-auto">Get Data</button>
